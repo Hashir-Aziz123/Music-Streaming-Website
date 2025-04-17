@@ -1,0 +1,163 @@
+.sideBarContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background-color: #121212;
+    padding: 16px;
+    color: white
+}
+
+.libraryTitle {
+    margin-top: 10px;
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #F72585
+}
+
+.createButtonContainer {
+    display: flex;
+    justify-content: flex-end; /* Push to the right */
+    margin-bottom: 16px;
+    gap: 120px;
+}
+
+.createSelectBox {
+    background-color: #282828;
+    color: #b3b3b3;
+    border: none;
+    font-size: 14px;
+    border-radius: 20px; /* More rounded */
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.selectors {
+    display: flex;
+    gap: 8px; /* Adjust gap */
+    margin-bottom: 20px; /* Add more margin */
+}
+
+.filterBtn {
+    border: none;
+    background: #282828 none;
+    color: #b3b3b3;
+    padding: 8px 16px; /* Adjust padding */
+    border-radius: 20px; /* More rounded */
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px;
+}
+
+.filterBtn:hover,
+.filterBtn.active {
+    background-color: black;
+    color: white;
+}
+
+.active {
+    background-color: #1db954;
+    color: white;
+}
+
+.options {
+    display: flex;
+    align-items: center; /* Align search and order vertically */
+    gap: 12px;
+    margin-bottom: 20px; /* Add more margin */
+    padding-bottom: 20px;
+    border-bottom: black solid 5px;
+}
+
+.searchBar {
+    flex-grow: 1; /* Allow search bar to take up available width */
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    background-color: #282828;
+    padding: 6px 12px; /* Adjust padding */
+    border-radius: 20px;
+}
+
+.searchIcon {
+    color: #b3b3b3;
+    margin-right: 8px; /* Add some spacing for the icon */
+}
+
+.searchInput {
+    background: transparent;
+    border: none;
+    color: white;
+    margin-left: 8px;
+    width: 100%;
+    outline: none;
+}
+
+.orderButtonContainer {
+    /* No specific styling needed for the container in this layout */
+}
+
+.orderSelectBox {
+    background-color: #282828;
+    color: #b3b3b3;
+    border: none;
+    font-size: 14px;
+    border-radius: 20px; /* More rounded */
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.scrollSection {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+.scrollSection::-webkit-scrollbar {
+    width: 8px; /* WebKit: Make it thinner */
+}
+
+.scrollSection::-webkit-scrollbar-track {
+    background-color: #111; /* WebKit: Darker gray track */
+}
+
+.scrollSection::-webkit-scrollbar-thumb {
+    background-color: #918989; /* WebKit: Light gray thumb */
+    border-radius: 2px; /* WebKit: Rounded corners for the thumb */
+    height: 20px;
+}
+
+.scrollSection::-webkit-scrollbar-thumb:hover {
+    background-color: #bbb; /* WebKit: Slightly lighter on hover */
+    height: 20px;
+}
+
+.itemList {
+    list-style: none;
+    padding-left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.itemList li {
+    cursor: pointer;
+    color: #b3b3b3;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.itemList li:hover {
+    color: white;
+}
+
+img{
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+}
