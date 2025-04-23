@@ -2,6 +2,7 @@ import styles from "./Home.module.css";
 import TopBar from "./TopBar/TopBar.jsx";
 import CurrentlyPlayingSection from "./CurrentlyPlayingSection/CurrentlyPlayingSection.jsx";
 import SideBar from "./SideBar/SideBar.jsx";
+import MediaControlBar from "./MediaControlBar/MediaControlBar.jsx";
 
 function Home() {
 
@@ -33,7 +34,7 @@ function Home() {
                 </div>
             </div>
             <div className={styles.bottomSection}>
-                <p>Hi</p>
+                <MediaControlBar></MediaControlBar>
             </div>
         </div>
     )

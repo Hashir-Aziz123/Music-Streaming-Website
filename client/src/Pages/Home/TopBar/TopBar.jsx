@@ -16,7 +16,6 @@ function TopBar() {
             </div>
 
             <div className={styles.right}>
-                <button>Explore premium</button>
                 <Download size={20} className={styles.icon} />
                 <div className={styles.avatar}>H</div>
             </div>
