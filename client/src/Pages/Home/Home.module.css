@@ -1,0 +1,208 @@
+.pageContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.topSection {
+    background-color: black;
+    width: 100%;
+    height: 10vh;
+}
+
+.midSection {
+    display: flex;
+    background-color: black;
+    gap: 1rem;
+    width: 100%;
+    height: 80vh;
+
+}
+
+.leftMiddle{
+    background-color: #111;;
+    width: 25%;
+}
+
+.centerMiddle{
+    background: linear-gradient(0deg, #111 55%, #323232);
+    width: 55%;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.rightMiddle{
+    background-color: #111;;
+    width: 20%;
+}
+
+.bottomSection {
+    background-color: black ;
+    width: 100%;
+    height: 10vh;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* Song list styling */
+.songsContainer {
+    padding: 20px 10px;
+}
+
+.songsContainer h1 {
+    font-size: 28px;
+    margin-bottom: 30px;
+    font-weight: 700;
+    color: #F72585;
+    text-align: center;
+}
+
+.songsList {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 songs per row */
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.songCard {
+    background-color: rgba(18, 18, 18, 0.8);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.songCard:hover {
+    background-color: rgba(40, 40, 40, 0.9);
+}
+
+.songImageContainer {
+    position: relative;
+    overflow: hidden;
+    padding-top: 100%; /* 1:1 aspect ratio */
+}
+
+.songImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.songInfo {
+    padding: 12px;
+}
+
+.songTitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 5px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.songArtist, .songGenre, .songDuration {
+    font-size: 13px;
+    margin: 3px 0;
+    color: #b3b3b3;
+}
+
+/* Play button overlay styling */
+.playButtonOverlay {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 63px;
+    height: 63px;
+    background-color: rgba(247, 37, 133, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    z-index: 2;
+}
+
+/* Show the button when song card is hovered */
+.songCard:hover .playButtonOverlay {
+    opacity: 0.95;
+}
+
+/* Keep the button visible when song is playing */
+.playButtonOverlay.playing {
+    opacity: 0.95;
+}
+
+.playButtonOverlay:hover {
+    transform: scale(1.05);
+    background-color: rgb(247, 37, 133); /* Full saturation when hovered */
+    cursor: pointer;
+}
+
+.playIcon {
+    font-size: 24px;
+    color: white;
+}
+
+/* Loading and error states */
+.loadingMessage, .errorMessage, .noSongsMessage {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #b3b3b3;
+}
+
+.errorMessage {
+    color: #ff4d4d;
+}
+
+/* Animation for loading */
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.loadingMessage {
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Make sure grid is responsive */
+@media (max-width: 1200px) {
+    .songsList {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1000px) {
+    .songsList {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .songsList {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .songsList {
+        grid-template-columns: 1fr;
+    }
+}
+
+

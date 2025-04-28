@@ -1,0 +1,55 @@
+.customCard {
+    background: linear-gradient(0deg, #111, #F72585); /* base-100 */
+    width: 21rem; /* w-96 */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* shadow-sm */
+    border-radius: 0.5rem;
+    overflow: hidden;
+    font-family: Poppins, sans-serif;
+    font-weight: bold;
+    transition: transform 0.3s ease-in-out;
+}
+
+.customCard:hover {
+    /* Scale the card up slightly (e.g., 5% bigger) */
+    transform: scale(1.05);
+    /* You could add other hover effects here too, like a subtle box-shadow change */
+     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.customCardImage {
+    padding: 2.5rem 2.5rem 0 2.5rem; /* px-10 pt-10 */
+    text-align: center;
+}
+
+
+.customImg {
+    border: black solid 10px;
+    box-shadow: 5px 5px #121212;
+    border-radius: 0.75rem; /* rounded-xl */
+    width: 100%;
+    height: 150px;
+}
+
+.customCardBody {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.customCardTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.customCardText {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+
+
+
+
