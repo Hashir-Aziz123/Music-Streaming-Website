@@ -1,7 +1,7 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LabelList } from 'recharts';
-import MusicNotes from '../MusicNotes/MusicNotes.jsx';
+import MusicNotes from './MusicNotes.jsx';
 import styles from "./UserStats.module.css";
-import CustomCard from "../CustomCard/CustomCard.jsx";
+import CustomCard from "./CustomCard.jsx";
 
 function ProfileUserStats() {
 

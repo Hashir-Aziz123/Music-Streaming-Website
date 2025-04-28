@@ -1,5 +1,5 @@
 import { useState } from "react";
-import modernLogo2 from "../../assets/modernLogo2.png";
+import logo from "../../assets/logo.png";
 import styles from "./Login.module.css";
 
 function Login() {
@@ -15,7 +15,7 @@ function Login() {
         <div className={styles.loginContainer}>
             {/* Drift Logo & Sign In Heading */}
             <div className={styles.header}>
-                <img src={modernLogo2} alt="Drift Logo" className={styles.logo} />
+                <img src={logo} alt="Drift Logo" className={styles.logo} />
                 <h1 className={styles.heading}>Listen In</h1>
             </div>
 

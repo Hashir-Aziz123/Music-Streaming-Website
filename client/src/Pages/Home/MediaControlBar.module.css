@@ -75,25 +75,26 @@
 }
 
 .playButton {
-    background-color: #F72585;
-    /*color: #000000;*/
+    background-color: rgba(247, 37, 133, 0.9);
     border: none;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 16px;
+    width: 45px;
+    height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-
 .playButton:hover {
-    background-color: #F72585;
-    /*color: #ffffff;*/
-    transform: scale(1.1);
+    transform: scale(1.05);
+    background-color: rgb(247, 37, 133);
+}
+
+.playButton i {
+    font-size: 24px;
+    color: white;
 }
 
 .progressContainer {
@@ -136,7 +137,6 @@
 .volumeSlider {
     width: 80px;
     cursor: pointer;
-    -webkit-appearance: none;
     background-color: #444;
     height: 5px;
     border-radius: 5px;

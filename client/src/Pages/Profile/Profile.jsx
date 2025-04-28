@@ -1,7 +1,7 @@
 import styles from "./Profile.module.css";
 import { FaUserCircle } from "react-icons/fa";
-import modernLogo2 from "../../assets/modernLogo2.png"
-import UserStats from "./UserStats/UserStats.jsx";
+import logo from "../../assets/logo.png"
+import UserStats from "./UserStats.jsx";
 
 
 function Profile() {
@@ -17,7 +17,7 @@ function Profile() {
         <div className={styles.profileContainer}>
             {/* Navbar */}
             <nav className={styles.navbar}>
-                <img src={modernLogo2} alt="Drift Logo" className={styles.logo} />
+                <img src={logo} alt="Drift Logo" className={styles.logo} />
 
                 <div className={styles.navRight}>
                     <a href="#" className={styles.navLink}>Home</a>

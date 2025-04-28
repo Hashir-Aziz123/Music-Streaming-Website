@@ -1,5 +1,4 @@
 import styles from "./SideBar.module.css";
-import modernLogo2 from "../../../assets/modernLogo2.png";
 import { Search } from "lucide-react";
 import { useState } from "react";
 
@@ -12,14 +11,16 @@ function SideBar() {
         setActiveTab(tab);
     };
 
+    const testImgURL = "https://www.publicdomainpictures.net/pictures/410000/velka/black-and-white-gradient-background.jpg";
+
     return (
         <div className={styles.sideBarContainer}>
             <div className={styles.createButtonContainer}>
                 <h2 className={styles.libraryTitle}>Your Library</h2>
                 <button  className={styles.createSelectBox}>Create +</button>
-                {/*<select className={styles.createSelectBox}>*/}
-                {/*    <option>+ Create</option>*/}
-                {/*</select>*/}
+                {/* <select className={styles.createSelectBox}>
+                   <option>+ Create</option>
+                </select> */}
             </div>
 
             {/* Filter Buttons */}
@@ -60,49 +61,34 @@ function SideBar() {
             <div className={styles.scrollSection}>
                 {/* You'll populate this dynamically later */}
                 <ul className={styles.itemList}>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
+                    <li><img src={testImgURL}/>
                         Study Music
                     </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
+                    <li><img src={testImgURL}/>
                         Study Music
                     </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
+                    <li><img src={testImgURL}/>
                         Study Music
                     </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
+                    <li><img src={testImgURL}/>
                         Study Music
                     </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
+                    <li><img src={testImgURL}/>
                         Study Music
                     </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
+                    <li><img src={testImgURL}/>
                         Study Music
                     </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
+                    <li><img src={testImgURL}/>
                         Study Music
                     </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
+                    <li><img src={testImgURL}/>
                         Study Music
                     </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
+                    <li><img src={testImgURL}/>
                         Study Music
                     </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
-                        Study Music
-                    </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
-                        Study Music
-                    </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
-                        Study Music
-                    </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
-                        Study Music
-                    </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
-                        Study Music
-                    </li>
-                    <li><img src={"https://www.billboard.com/wp-content/uploads/media/tyler-the-creator-igor-album-art-2019-billboard-embed.jpg?w=600"}/>
+                    <li><img src={testImgURL}/>
                         Study Music
                     </li>
                 </ul>

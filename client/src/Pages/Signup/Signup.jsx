@@ -1,5 +1,5 @@
 import { useState } from "react";
-import modernLogo2 from "../../assets/modernLogo2.png";
+import logo from "../../assets/logo.png";
 import styles from "./Signup.module.css";
 
 function Signup() {
@@ -31,7 +31,7 @@ function Signup() {
     return (
         <div className={styles.signupContainer}>
             <div className={styles.header}>
-                <img src={modernLogo2} alt="Drift Logo" className={styles.logo} />
+                <img src={logo} alt="Drift Logo" className={styles.logo} />
                 <h1 className={styles.heading}>Join the Vibe</h1>
             </div>
 
