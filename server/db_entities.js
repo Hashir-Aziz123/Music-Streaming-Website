@@ -197,8 +197,9 @@ const listeningHistorySchema = new mongoose.Schema({
 });
 
 const ListeningHistory = mongoose.model('ListeningHistory', listeningHistorySchema);
+const Artist = mongoose.model('Artist', artistSchema);
 const Album = mongoose.model('Album', albumSchema);
 const Playlist = mongoose.model('Playlist', playlistSchema);
 const User = mongoose.model("User", userSchema);
 const Song = mongoose.model('Song', song_schema);
-export {Song , User , Playlist , Album , ListeningHistory};
+export {Song , User , Playlist , Album , ListeningHistory , Artist};
