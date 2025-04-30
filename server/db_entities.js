@@ -95,7 +95,11 @@ const userSchema = new mongoose.Schema({
     liked_songs: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Song'
-    }]
+    }],
+    role: {
+        type: String,
+        required: true
+    }
 });
 
 const playlistSchema = new mongoose.Schema({
@@ -202,4 +206,5 @@ const Album = mongoose.model('Album', albumSchema);
 const Playlist = mongoose.model('Playlist', playlistSchema);
 const User = mongoose.model("User", userSchema);
 const Song = mongoose.model('Song', song_schema);
-export {Song , User , Playlist , Album , ListeningHistory , Artist};
+
+export {Song, User, Playlist, Album, ListeningHistory, Artist};
