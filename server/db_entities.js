@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const song_schema = new mongoose.Schema(
@@ -13,7 +12,7 @@ const song_schema = new mongoose.Schema(
         [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "Artist",
+                ref: "User",
                 required: true,
                 index: true
             }
@@ -71,7 +70,6 @@ const song_schema = new mongoose.Schema(
     }
 );
 
-
 const user_schema = new mongoose.Schema(
     {
         username: 
@@ -110,7 +108,17 @@ const user_schema = new mongoose.Schema(
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Song'
             }
-        ]
+        ],
+        bio:
+        {
+            type: String,
+            default: ""
+        },
+        role:
+        {
+            type: String,
+            enum: ['normal', 'artist', 'admin']
+        }
     }
 );
 
@@ -168,7 +176,7 @@ const album_schema = new mongoose.Schema(
         artist: 
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Artist',
+            ref: 'User',
             required: true
         },
         cover_image_url: 
@@ -196,29 +204,6 @@ const album_schema = new mongoose.Schema(
     }, 
     { 
         timestamps: true 
-    }
-);
-
-
-const artist_schema = new mongoose.Schema(
-    {
-        name: 
-        {
-            type: String,
-            required: true,
-            index: true,
-            trim: true
-        },
-        bio: 
-        {
-            type: String,
-            default: ""
-        },
-        profile_picture_url: 
-        {
-            type: String,
-            default: ""
-        },
     }
 );
 
@@ -250,10 +235,9 @@ const listening_history_schema = new mongoose.Schema(
 );
 
 const Listening_History = mongoose.model('ListeningHistory', listening_history_schema);
-const Artist = mongoose.model('Artist', artist_schema);
 const Album = mongoose.model('Album', album_schema);
 const Playlist = mongoose.model('Playlist', playlist_schema);
 const User = mongoose.model("User", user_schema);
 const Song = mongoose.model('Song', song_schema);
 
-export {Song , User , Playlist , Album , Listening_History , Artist};
+export {Song, User, Playlist, Album, Listening_History};
