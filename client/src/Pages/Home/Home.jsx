@@ -114,30 +114,19 @@ function Home() {
                     )}
                 </div>
 
-                <div className={styles.rightMiddle}>
+                {<div className={styles.rightMiddle}>
                     <CurrentlyPlayingSection
-                        title={currentSong?.title || "No song selected"}
-                        artist={currentSong?.artist || ""}
-                        albumArt={currentSong?.cover_image_url || defaultCoverImage}
-                        credits={currentSong ? [
-                            `Artist: ${currentSong.artist}`,
-                            currentSong.album ? `Album: ${currentSong.album}` : null,
-                            `Duration: ${Math.floor(currentSong.duration_seconds / 60)}:${(currentSong.duration_seconds % 60).toString().padStart(2, '0')}`,
-                        ].filter(Boolean) : []}
+                        song={currentSong}
                     />
-                </div>
+                </div>}
             </div>
-            <div className={styles.bottomSection}>
+            {currentSong && <div className={styles.bottomSection}>
                 <MediaControlBar
                     currentSong={currentSong}
-                    title={currentSong?.title}
-                    artist={currentSong?.artist}
-                    albumArt={currentSong?.cover_image_url}
-                    audioUrl={currentSong?.audio_url}
                     isPlaying={isPlaying}
                     setIsPlaying={setIsPlaying}
                 />
-            </div>
+            </div>}
         </div>
     );
 }

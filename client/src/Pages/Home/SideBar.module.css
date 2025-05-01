@@ -3,136 +3,170 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
-    background-color: #121212;
+    background-color: #000000;
     padding: 16px;
-    color: white
+    color: white;
+}
+
+.libraryHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
 }
 
 .libraryTitle {
-    margin-top: 10px;
-    margin-bottom: 16px;
-    font-size: 20px;
-    font-weight: bold;
-    color: #F72585
-}
-
-.createButtonContainer {
-    display: flex;
-    justify-content: flex-end; /* Push to the right */
-    margin-bottom: 16px;
-    gap: 120px;
-}
-
-.createSelectBox {
-    background-color: #282828;
+    font-size: 16px;
+    font-weight: 700;
     color: #b3b3b3;
+}
+
+.createButton {
+    background: none;
     border: none;
-    font-size: 14px;
-    border-radius: 20px; /* More rounded */
-    padding: 8px 16px;
+    color: #b3b3b3;
+    font-size: 24px;
     cursor: pointer;
+    transition: color 0.2s;
+}
+
+.createButton:hover {
+    color: #ffffff;
 }
 
 .selectors {
     display: flex;
-    gap: 8px; /* Adjust gap */
-    margin-bottom: 20px; /* Add more margin */
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
 }
 
 .filterBtn {
     border: none;
-    background: #282828 none;
+    background: transparent;
     color: #b3b3b3;
-    padding: 8px 16px; /* Adjust padding */
-    border-radius: 20px; /* More rounded */
+    padding: 6px 12px;
+    border-radius: 20px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.2s;
     font-size: 14px;
 }
 
-.filterBtn:hover,
-.filterBtn.active {
-    background-color: black;
+.filterBtn:hover {
     color: white;
 }
 
-.active {
-    background-color: #1db954;
+.filterBtn.active {
+    background-color: #e75454;
     color: white;
 }
 
 .options {
     display: flex;
-    align-items: center; /* Align search and order vertically */
+    align-items: center;
     gap: 12px;
-    margin-bottom: 20px; /* Add more margin */
-    padding-bottom: 20px;
-    border-bottom: black solid 5px;
+    margin-bottom: 16px;
+    width: 100%;
 }
 
 .searchBar {
-    flex-grow: 1; /* Allow search bar to take up available width */
+    flex-grow: 1;
+    width: 70%;
 }
 
-.left {
+.searchContainer {
     display: flex;
     align-items: center;
-    background-color: #282828;
-    padding: 6px 12px; /* Adjust padding */
-    border-radius: 20px;
+    background-color: #242424;
+    padding: 4px 10px; /* Reduced padding to make it slimmer */
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    width: 100%;
+}
+
+.searchContainer:focus-within {
+    background-color: #333333;
+    outline: none; /* Removes the default focus outline */
 }
 
 .searchIcon {
     color: #b3b3b3;
-    margin-right: 8px; /* Add some spacing for the icon */
+    margin-right: 8px;
 }
 
 .searchInput {
     background: transparent;
     border: none;
     color: white;
-    margin-left: 8px;
     width: 100%;
     outline: none;
+    font-size: 14px;
+    height: 28px; /* Explicit height to make it slimmer */
 }
 
-.orderButtonContainer {
-    /* No specific styling needed for the container in this layout */
+.searchInput::placeholder {
+    color: #b3b3b3;
 }
 
-.orderSelectBox {
-    background-color: #282828;
+.searchInput:focus {
+    outline: none; /* Remove the outline when focused */
+}
+
+.orderSelectContainer {
+    position: relative;
+    width: 30%;
+    min-width: 90px;
+}
+
+.orderSelect {
+    appearance: none;
+    background: #242424;
     color: #b3b3b3;
     border: none;
     font-size: 14px;
-    border-radius: 20px; /* More rounded */
-    padding: 8px 16px;
     cursor: pointer;
+    padding: 4px 24px 4px 10px; /* Adjusted padding to make it slimmer */
+    border-radius: 4px;
+    width: 100%;
+    height: 36px; /* Explicit height to make it slimmer */
+}
+
+.orderSelect:focus {
+    background-color: #333333;
+    outline: none; /* Removes the outline when focused */
+}
+
+.orderSelectContainer::after {
+    content: '▼';
+    font-size: 8px;
+    color: #b3b3b3;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
 }
 
 .scrollSection {
     flex: 1;
     overflow-y: auto;
-    margin-top: 10px;
 }
 
 .scrollSection::-webkit-scrollbar {
-    width: 8px; /* WebKit: Make it thinner */
+    width: 8px;
 }
 
 .scrollSection::-webkit-scrollbar-track {
-    background-color: #111; /* WebKit: Darker gray track */
+    background-color: transparent;
 }
 
 .scrollSection::-webkit-scrollbar-thumb {
-    background-color: #918989; /* WebKit: Light gray thumb */
-    border-radius: 2px; /* WebKit: Rounded corners for the thumb */
-    height: 20px;
+    background-color: #535353;
+    border-radius: 4px;
 }
 
 .scrollSection::-webkit-scrollbar-thumb:hover {
-    background-color: #bbb; /* WebKit: Slightly lighter on hover */
-    height: 20px;
+    background-color: #7e7e7e;
 }
 
 .itemList {
@@ -140,24 +174,43 @@
     padding-left: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 16px;
 }
 
 .itemList li {
-    cursor: pointer;
-    color: #b3b3b3;
-    transition: color 0.2s;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .itemList li:hover {
-    color: white;
+    background-color: #242424;
 }
 
-img{
-    width: 50px;
-    height: 50px;
-    border-radius: 5px;
+.itemList li img {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.itemContent {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.itemTitle {
+    font-size: 14px;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.itemSubtitle {
+    font-size: 12px;
+    color: #b3b3b3;
 }

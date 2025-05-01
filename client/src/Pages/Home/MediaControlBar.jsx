@@ -1,23 +1,32 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styles from './MediaControlBar.module.css';
 import PropTypes from 'prop-types';
 
 function MediaControlBar({ 
-    currentSong, 
-    title, 
-    artist, 
-    albumArt, 
-    audioUrl, 
+    currentSong,
     isPlaying, 
     setIsPlaying 
 }) {
-    const [volume, setVolume] = useState(1); // Default volume is 100%
-    const audioRef = useRef(null); // Ref to access the audio element
+    const [volume, setVolume] = useState(0.7); // Default volume is 70%
+    const audioRef = useRef(null);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
-    const [isDragging, setIsDragging] = useState(false); // New state to track dragging
-    const [seekTime, setSeekTime] = useState(0);       // New state to store seek time
+    const [isDraggingProgress, setIsDraggingProgress] = useState(false);
+    const [isDraggingVolume, setIsDraggingVolume] = useState(false);
+    const [seekTime, setSeekTime] = useState(0);
 
+    // Progress bar and volume elements
+    const progressBarContainerRef = useRef(null);
+    const progressBarFillRef = useRef(null);
+    const volumeBarContainerRef = useRef(null);
+    const volumeBarFillRef = useRef(null);
+    
+    // Extract necessary properties from currentSong
+    const title = currentSong?.title;
+    const artist = currentSong?.artist;
+    const albumArt = currentSong?.cover_image_url;
+    const audioUrl = currentSong?.audio_url;
+    
     // Update audio source when song changes
     useEffect(() => {
         if (currentSong && audioRef.current) {
@@ -32,30 +41,55 @@ function MediaControlBar({
                 }, 100);
             }
         }
-    }, [currentSong, audioUrl]);
+    }, [currentSong, audioUrl, isPlaying]);
 
     // Handle play/pause state changes
     useEffect(() => {
         if (audioRef.current) {
             if (isPlaying) {
                 audioRef.current.play().catch(e => console.error("Error playing audio:", e));
-            } else {
+            }
+            else {
                 audioRef.current.pause();
             }
         }
     }, [isPlaying]);
 
+    // Update progress fill effect
+    useEffect(() => {
+        if (progressBarContainerRef.current && progressBarFillRef.current) {
+            const percent = duration 
+                ? ((isDraggingProgress ? seekTime : currentTime) / duration) * 100
+                : 0;
+            
+            progressBarFillRef.current.style.width = `${percent}%`;
+        }
+    }, [currentTime, duration, isDraggingProgress, seekTime]);
+
+    // Update volume fill effect
+    useEffect(() => {
+        if (volumeBarContainerRef.current && volumeBarFillRef.current) {
+            volumeBarFillRef.current.style.width = `${volume * 100}%`;
+        }
+    }, [volume]);
+
+    // Audio event handlers
     useEffect(() => {
         const audioElement = audioRef.current;
 
         const updateTime = () => {
-            if (!isDragging) { // Only update currentTime if not dragging
+            if (!isDraggingProgress && audioElement) {
                 setCurrentTime(audioElement.currentTime);
             }
         };
 
         const updateDuration = () => {
-            setDuration(audioElement.duration);
+            if (audioElement) {
+                setDuration(audioElement.duration);
+                if (audioElement.volume !== volume) {
+                    audioElement.volume = volume;
+                }
+            }
         };
 
         const handleEnded = () => {
@@ -73,45 +107,121 @@ function MediaControlBar({
                 audioElement.removeEventListener('ended', handleEnded);
             };
         }
-    }, [isDragging, setIsPlaying]);
+    }, [isDraggingProgress, setIsPlaying, volume]);
 
     const togglePlayPause = () => {
-        if (!audioUrl) return; // Don't do anything if no song is loaded
+        if (!audioUrl) return;
         setIsPlaying(!isPlaying);
     };
 
-    const handleVolumeChange = (event) => {
-        const volumeValue = event.target.value / 100; // Convert to range 0-1
-        setVolume(volumeValue);
+    // Progress bar drag handlers - improved version
+    const handleProgressMouseDown = (e) => {
+        if (!audioRef.current || !progressBarContainerRef.current || !audioUrl) return;
+        
+        e.preventDefault();
+        setIsDraggingProgress(true);
+        document.addEventListener('mousemove', handleProgressMouseMove);
+        document.addEventListener('mouseup', handleProgressMouseUp);
+        
+        // Calculate initial position
+        const rect = progressBarContainerRef.current.getBoundingClientRect();
+        const clickPosition = Math.max(0, Math.min((e.clientX - rect.left) / rect.width, 1));
+        const newTime = clickPosition * duration;
+        setSeekTime(newTime);
+    };
+    
+    const handleProgressMouseMove = (e) => {
+        if (!progressBarContainerRef.current || !duration) return;
+        
+        const rect = progressBarContainerRef.current.getBoundingClientRect();
+        const clickPosition = Math.max(0, Math.min((e.clientX - rect.left) / rect.width, 1));
+        const newTime = clickPosition * duration;
+        setSeekTime(newTime);
+    };
+    
+    const handleProgressMouseUp = () => {
+        setIsDraggingProgress(false);
+        document.removeEventListener('mousemove', handleProgressMouseMove);
+        document.removeEventListener('mouseup', handleProgressMouseUp);
+        
         if (audioRef.current) {
-            audioRef.current.volume = volumeValue; // Update volume of the audio element
+            audioRef.current.currentTime = seekTime;
+            setCurrentTime(seekTime);
+        }
+    };
+
+    // Volume drag handlers - improved version
+    const handleVolumeMouseDown = (e) => {
+        if (!volumeBarContainerRef.current) return;
+        
+        e.preventDefault();
+        setIsDraggingVolume(true);
+        document.addEventListener('mousemove', handleVolumeMouseMove);
+        document.addEventListener('mouseup', handleVolumeMouseUp);
+        
+        // Calculate initial position
+        const rect = volumeBarContainerRef.current.getBoundingClientRect();
+        const clickPosition = Math.max(0, Math.min((e.clientX - rect.left) / rect.width, 1));
+        
+        setVolume(clickPosition);
+        if (audioRef.current) {
+            audioRef.current.volume = clickPosition;
+        }
+    };
+    
+    const handleVolumeMouseMove = (e) => {
+        if (!volumeBarContainerRef.current) return;
+        
+        const rect = volumeBarContainerRef.current.getBoundingClientRect();
+        const clickPosition = Math.max(0, Math.min((e.clientX - rect.left) / rect.width, 1));
+        
+        setVolume(clickPosition);
+        if (audioRef.current) {
+            audioRef.current.volume = clickPosition;
+        }
+    };
+    
+    const handleVolumeMouseUp = () => {
+        setIsDraggingVolume(false);
+        document.removeEventListener('mousemove', handleVolumeMouseMove);
+        document.removeEventListener('mouseup', handleVolumeMouseUp);
+    };
+
+    // Click handlers (without dragging) for both controls
+    const handleProgressClick = (e) => {
+        if (isDraggingProgress) return; // Skip if we're already dragging
+        
+        const rect = progressBarContainerRef.current.getBoundingClientRect();
+        const clickPosition = Math.max(0, Math.min((e.clientX - rect.left) / rect.width, 1));
+        const newTime = clickPosition * duration;
+        
+        if (audioRef.current) {
+            audioRef.current.currentTime = newTime;
+            setCurrentTime(newTime);
+        }
+    };
+    
+    const handleVolumeClick = (e) => {
+        if (isDraggingVolume) return; // Skip if we're already dragging
+        
+        const rect = volumeBarContainerRef.current.getBoundingClientRect();
+        const clickPosition = Math.max(0, Math.min((e.clientX - rect.left) / rect.width, 1));
+        
+        setVolume(clickPosition);
+        if (audioRef.current) {
+            audioRef.current.volume = clickPosition;
         }
     };
 
     const formatTime = (seconds) => {
+        if (isNaN(seconds) || seconds < 0) return "0:00";
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = Math.floor(seconds % 60).toString().padStart(2, '0');
         return `${minutes}:${remainingSeconds}`;
     };
 
-    const handleProgressChange = (event) => {
-        setSeekTime(parseFloat(event.target.value))
-    };
-
-    const handleProgressMouseDown = () => {
-        setIsDragging(true); // Set dragging to true when mouse button is pressed down
-    };
-
-    const handleProgressMouseUp = () => {
-        if (isDragging && audioRef.current) {
-            audioRef.current.currentTime = seekTime; // Update audio's currentTime on mouse up
-            setCurrentTime(seekTime); // Update the displayed currentTime immediately
-        }
-        setIsDragging(false); // Set dragging to false when mouse button is released
-    };
-
-    // Default placeholder image for when no album art is available
-    const defaultAlbumArt = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMg5hJqZQ8aoIRfBaHXE6yxdTmQ1uj7Eq2ug&s";
+    // Default placeholder image
+    const defaultAlbumArt = "https://placehold.co/400x400/111/e75454?text=Music";
 
     return (
         <div className={styles.mediaControlBar}>
@@ -128,7 +238,7 @@ function MediaControlBar({
                 </div>
                 {currentSong && (
                     <div className={styles.likeIcon}>
-                        <i className="fas fa-check-circle" style={{ color: '#1DB954' }}></i>
+                        <i className="fas fa-heart" style={{ color: '#e75454' }}></i>
                     </div>
                 )}
             </div>
@@ -153,43 +263,69 @@ function MediaControlBar({
                 </div>
 
                 <div className={styles.progressContainer}>
-                    <span className={styles.time}>{formatTime(currentTime)}</span>
-                    <input
-                        type="range"
-                        className={styles.progressBar}
-                        min="0"
-                        max={duration || 1} // Set the maximum to the duration of the song or 1 to avoid issues
-                        value={isDragging ? seekTime : currentTime} // Set the current value to the current time
-                        onChange={handleProgressChange}
-                        onMouseDown={handleProgressMouseDown} // Track when dragging starts
-                        onMouseUp={handleProgressMouseUp}
-                        disabled={!audioUrl}
-                    />
-                    <span className={styles.time}>{formatTime(duration-currentTime)}</span>
+                    <span className={styles.time}>{formatTime(isDraggingProgress ? seekTime : currentTime)}</span>
+                    
+                    {/* Custom progress bar implementation */}
+                    <div 
+                        className={styles.progressBarContainer} 
+                        ref={progressBarContainerRef}
+                        onClick={handleProgressClick}
+                        onMouseDown={handleProgressMouseDown}
+                    >
+                        <div className={styles.progressBarBackground}></div>
+                        <div 
+                            className={styles.progressBarFill} 
+                            ref={progressBarFillRef}
+                            style={{ 
+                                width: `${duration ? ((isDraggingProgress ? seekTime : currentTime) / duration) * 100 : 0}%` 
+                            }}
+                        ></div>
+                        <div 
+                            className={styles.progressBarThumb}
+                            style={{ 
+                                left: `${duration ? ((isDraggingProgress ? seekTime : currentTime) / duration) * 100 : 0}%`,
+                                opacity: isDraggingProgress ? 1 : undefined  
+                            }}
+                        ></div>
+                    </div>
+                    
+                    <span className={styles.time}>{formatTime(duration)}</span>
                 </div>
             </div>
 
             {/* RIGHT: Extra Controls */}
             <div className={styles.extraControls}>
                 <div className={styles.volumeControl}>
-                    <i className="fas fa-volume-up" />
-                    <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={volume * 100} // Volume as percentage
-                        onChange={handleVolumeChange}
-                        className={styles.volumeSlider}
-                    />
+                    <i className={`fas ${volume === 0 ? 'fa-volume-mute' : volume < 0.5 ? 'fa-volume-down' : 'fa-volume-up'}`} />
+                    
+                    {/* Custom volume slider implementation */}
+                    <div 
+                        className={styles.volumeBarContainer}
+                        ref={volumeBarContainerRef}
+                        onClick={handleVolumeClick}
+                        onMouseDown={handleVolumeMouseDown}
+                    >
+                        <div className={styles.volumeBarBackground}></div>
+                        <div 
+                            className={styles.volumeBarFill}
+                            ref={volumeBarFillRef}
+                            style={{ width: `${volume * 100}%` }}
+                        ></div>
+                        <div 
+                            className={styles.volumeBarThumb}
+                            style={{ 
+                                left: `${volume * 100}%`,
+                                opacity: isDraggingVolume ? 1 : undefined
+                            }}
+                        ></div>
+                    </div>
                 </div>
+                
                 <div className={styles.shuffleControl}>
                     <i className={`fas fa-random ${styles.shuffleIcon}`} />
                 </div>
                 <div className={styles.repeatControl}>
                     <i className={`fas fa-redo-alt ${styles.repeatIcon}`} />
-                </div>
-                <div className={styles.fullscreenControl}>
-                    <i className="fas fa-expand-alt" />
                 </div>
             </div>
 
@@ -197,6 +333,7 @@ function MediaControlBar({
             <audio 
                 ref={audioRef} 
                 src={audioUrl || ""} 
+                preload="metadata"
             />
         </div>
     );
@@ -204,10 +341,6 @@ function MediaControlBar({
 
 MediaControlBar.propTypes = {
     currentSong: PropTypes.object,
-    title: PropTypes.string,
-    artist: PropTypes.string,
-    albumArt: PropTypes.string,
-    audioUrl: PropTypes.string,
     isPlaying: PropTypes.bool,
     setIsPlaying: PropTypes.func
 };

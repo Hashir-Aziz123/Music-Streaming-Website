@@ -1,43 +1,41 @@
-import styles from "./CustomCard.module.css";
-import PropTypes from "prop-types"
+import styles from './CustomCard.module.css';
+import PropTypes from 'prop-types';
 
-function CustomCard(props){
-    return(
-        <div className={styles.customCard}>
-            <figure className={styles.customCardImage}>
-                <img
-                    src={props.imgSrc}
-                    alt="Shoes"
-                    className={styles.customImg}
+function CustomCard({ title, imgSrc, artist, album, releaseYear, timesListened }) {
+    // Default image if none provided
+    const defaultImage = "https://placehold.co/400x400/111/e75454?text=Music";
+    
+    return (
+        <div className={styles.card}>
+            <div className={styles.imageContainer}>
+                <img 
+                    src={imgSrc || defaultImage} 
+                    alt={title} 
+                    className={styles.image} 
                 />
-            </figure>
-            <div className={styles.customCardBody}>
-                <h2 className={styles.customCardTitle}> {props.tile}</h2>
-                <p className={styles.customCardText}>
-                    Artist: {props.artist}
-                </p>
-                <p className={styles.customCardText}>
-                    Album: {props.album}
-                </p>
-                <p className={styles.customCardText}>
-                    Release: {props.releaseYear}
-                </p>
-                <p className={styles.customCardText}>
-                    Listened: {props.timesListened} times
-                </p>
+                <div className={styles.overlay}>
+                    <span className={styles.playCount}>{timesListened} plays</span>
+                </div>
+            </div>
+            <div className={styles.cardContent}>
+                <h4 className={styles.title}>{title}</h4>
+                <p className={styles.artist}>{artist}</p>
+                <div className={styles.details}>
+                    <span className={styles.album}>{album}</span>
+                    {releaseYear && <span className={styles.year}>{releaseYear}</span>}
+                </div>
             </div>
         </div>
-
     );
 }
 
 CustomCard.propTypes = {
-    title: PropTypes.string,
+    title: PropTypes.string.isRequired,
     imgSrc: PropTypes.string,
-    artist: PropTypes.string,
+    artist: PropTypes.string.isRequired,
     album: PropTypes.string,
     releaseYear: PropTypes.string,
-    timesListened: PropTypes.number,
-}
+    timesListened: PropTypes.number
+};
 
 export default CustomCard;
