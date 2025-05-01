@@ -1,10 +1,5 @@
 import express from "express";
-
-import { 
-    getSongs, 
-    getSongById, 
-    insertSong 
-} from "../controllers/songs.js";
+import {getSongs, getSongById, insertSong} from "../controllers/songs.js";
 
 const router = express.Router();
 
