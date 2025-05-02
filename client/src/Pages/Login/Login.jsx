@@ -6,7 +6,7 @@ import styles from "./Login.module.css";
 
 function Login() {
     const [formData, setFormData] = useState({
-        email: "",
+        username: "",
         password: ""
     });
     const [showPassword, setShowPassword] = useState(false);
@@ -20,10 +20,31 @@ function Login() {
         setShowPassword((prev) => !prev);
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Form submission logic will go here
-        console.log("Login attempt with:", formData);
+    const handleSubmit = async (e) => {
+        e.preventDefault(); 
+
+        try {
+            const response = await fetch("http://localhost:3000/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({ username: formData.username, password: formData.password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("Login successful:", data);
+            } else {
+                console.error("Login failed:", data.message);
+                alert(data.message || "Login failed.");
+            }
+        } catch (err) {
+            console.error("Error logging in:", err);
+            alert("An error occurred during login.");
+        }
     };
 
     return (
@@ -39,11 +60,11 @@ function Login() {
             {/* Login Form */}
             <form className={styles.form} onSubmit={handleSubmit}>
                 <input
-                    type="email"
-                    name="email"
+                    type="text"
+                    name="username"
                     className={styles.input}
-                    placeholder="Email address"
-                    value={formData.email}
+                    placeholder="Username"
+                    value={formData.username}
                     onChange={handleChange}
                     required
                 />

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import styles from "./Signup.module.css";
 
 function Signup() {
     const [formData, setFormData] = useState({
-        name: "",
+        username: "",
         email: "",
         password: "",
         dob: "",
@@ -24,10 +25,39 @@ function Signup() {
         setShowPassword((prev) => !prev);
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Form submission logic will go here
-        console.log("Sign up attempt with:", formData);
+    const navigate = useNavigate();
+    const handleSubmit = async (e) => {
+        e.preventDefault(); 
+
+        try {
+            const response = await fetch("http://localhost:3000/api/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    username: formData.username,
+                    email: formData.email,
+                    password: formData.password,
+                    dob: formData.dob,
+                    country: formData.country
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("Registration successful:", data);
+                navigate('/');
+            } else {
+                console.error("Registration failed:", data.message);
+                alert(data.message || "Registration failed.");
+            }
+        } catch (err) {
+            console.error("Error while registering user:", err);
+            alert("An error occurred during registration.");
+        }
     };
 
     const countries = [
@@ -48,7 +78,7 @@ function Signup() {
             <form className={styles.form} onSubmit={handleSubmit}>
                 <input
                     type="text"
-                    name="name"
+                    name="username"
                     className={styles.input}
                     placeholder="Username"
                     value={formData.name}

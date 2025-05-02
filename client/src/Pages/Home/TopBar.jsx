@@ -32,7 +32,7 @@ function TopBar() {
                     <Bell size={20} />
                 </div>
                 
-                <Link to="/profile/1">
+                <Link to="/profile">
                     <div className={styles.userIcon}>
                         <User size={18} />
                     </div>
