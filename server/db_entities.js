@@ -109,6 +109,13 @@ const user_schema = new mongoose.Schema(
                 ref: 'Song'
             }
         ],
+        playlists:
+        [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Playlist'
+            }
+        ],
         bio:
         {
             type: String,
@@ -118,6 +125,17 @@ const user_schema = new mongoose.Schema(
         {
             type: String,
             enum: ['normal', 'artist', 'admin']
+        },
+        dob: 
+        {
+            type: Date,
+            requied: true
+        },
+        country: 
+        {
+            type: String,
+            trim: true,
+            required: true
         }
     }
 );
@@ -139,12 +157,6 @@ const playlist_schema = new mongoose.Schema(
         {
             type: String,
             default: ""
-        },
-        creator: 
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-            required: true
         },
         songs: 
         [
