@@ -20,17 +20,18 @@
 }
 
 .leftMiddle {
-    width: 240px;
+    width: 320px;
     background-color: #000000;
     overflow: hidden;
 }
 
 .centerMiddle {
     flex: 1;
-    background: linear-gradient(180deg, #3c3c3c 0%, #121212 20%);
+    background: linear-gradient(180deg, rgba(66, 40, 40, 0.8) 0%, #070707 20%);
     overflow-y: auto;
     padding: 24px;
     padding-bottom: 120px; /* Allow space for the media controls */
+    border-radius: 10px;
 }
 
 .rightMiddle {

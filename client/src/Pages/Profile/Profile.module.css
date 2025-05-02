@@ -220,7 +220,7 @@ button:hover {
 
 .contentSection {
     flex: 1;
-    background: linear-gradient(180deg, #3c3c3c 0%, #121212 20%);
+    background: linear-gradient(180deg, rgba(66, 40, 40, 0.8) 0%, #070707 20%);
     overflow-y: auto;
     padding: 30px;
     padding-bottom: 100px; /* Space for media controls */
@@ -323,7 +323,7 @@ button:hover {
 }
 
 .section {
-    background-color: #181818;
+    background-color: #000;
     border-radius: 8px;
     padding: 30px;
     margin-bottom: 30px;
