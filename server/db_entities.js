@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const song_schema = new mongoose.Schema(
     {
+        trackId:{
+            type: Number,
+            required:true
+        },
         title:
         {
             type: String,
@@ -11,16 +15,14 @@ const song_schema = new mongoose.Schema(
         artist:
         [
             {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
+                type: Number,
                 required: true,
                 index: true
             }
         ],
         album:
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Album",
+            type: Number,
             default: ""
         },
         genre:
@@ -124,12 +126,12 @@ const user_schema = new mongoose.Schema(
         role:
         {
             type: String,
-            enum: ['normal', 'artist', 'admin']
+            enum: ['endUser', 'admin']
         },
         dob: 
         {
             type: Date,
-            requied: true
+            required: true
         },
         country: 
         {
@@ -178,6 +180,10 @@ const playlist_schema = new mongoose.Schema(
 
 const album_schema = new mongoose.Schema(
     {
+        album_id:{
+            type: Number,
+            required: true
+        },
         title: 
         {
             type: String,
@@ -187,8 +193,7 @@ const album_schema = new mongoose.Schema(
         },
         artist: 
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
+            type: Number,
             required: true
         },
         cover_image_url: 
@@ -199,20 +204,14 @@ const album_schema = new mongoose.Schema(
         release_date: 
         {
             type: Date,
-            required: true
         },
         songs: 
         [
             {
-                type: mongoose.Schema.Types.ObjectId,
+                type: [Number],
                 ref: 'Song'
             }
         ],
-        description: 
-        {
-            type: String,
-            default: ""
-        }
     }, 
     { 
         timestamps: true 
@@ -246,10 +245,30 @@ const listening_history_schema = new mongoose.Schema(
     }
 );
 
+const artist_schema = new mongoose.Schema(
+    {
+            artistID:{
+                type: Number,
+                index:true,
+                required: true
+            },
+            name:{
+                type: String,
+                required: true,
+                index: true
+            },
+            bio:{
+                type: String,
+            },
+            songs:[ Number]
+    }
+);
+
+const Artist = mongoose.model('Artist', artist_schema);
 const Listening_History = mongoose.model('ListeningHistory', listening_history_schema);
 const Album = mongoose.model('Album', album_schema);
 const Playlist = mongoose.model('Playlist', playlist_schema);
 const User = mongoose.model("User", user_schema);
 const Song = mongoose.model('Song', song_schema);
 
-export {Song, User, Playlist, Album, Listening_History};
+export {Song, User, Playlist, Album, Listening_History , Artist};
