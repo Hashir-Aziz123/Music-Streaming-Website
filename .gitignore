@@ -1,9 +1,7 @@
 .vscode/
 .idea/
-/server/node_modules/
-/client/node_modules/
-/server/uploads/songs/
-/server/data/
-/server/fma_small2.zip
-
-
+server/node_modules/
+client/node_modules/
+server/uploads/songs/
+server/data/
+server/fma_small2.zip

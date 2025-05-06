@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 function MediaControlBar({ 
     currentSong,
     isPlaying, 
-    setIsPlaying 
+    setIsPlaying,
+    artistsMap
 }) {
     const [volume, setVolume] = useState(0.7); // Default volume is 70%
     const audioRef = useRef(null);
@@ -23,7 +24,23 @@ function MediaControlBar({
     
     // Extract necessary properties from currentSong
     const title = currentSong?.title;
-    const artist = currentSong?.artist;
+    
+    // Format artist display - handle array of artist IDs
+    const formatArtist = (artistIds) => {
+        if (!artistIds) return "Unknown Artist";
+        
+        // Handle array of artists
+        if (Array.isArray(artistIds)) {
+            return artistIds
+                .map(id => artistsMap?.[id]?.name || `Artist ${id}`)
+                .join(', ');
+        }
+        
+        // Handle single artist
+        return artistsMap?.[artistIds]?.name || `Artist ${artistIds}`;
+    };
+    
+    const artist = currentSong?.artist ? formatArtist(currentSong.artist) : "Artist";
     const albumArt = currentSong?.cover_image_url;
     const audioUrl = currentSong?.audio_url;
     
@@ -234,7 +251,7 @@ function MediaControlBar({
                 />
                 <div className={styles.songMeta}>
                     <span className={styles.songTitle}>{title || "No song selected"}</span>
-                    <span className={styles.songArtist}>{artist || "Artist"}</span>
+                    <span className={styles.songArtist}>{artist}</span>
                 </div>
                 {currentSong && (
                     <div className={styles.likeIcon}>
@@ -332,8 +349,13 @@ function MediaControlBar({
             {/* Audio Element */}
             <audio 
                 ref={audioRef} 
-                src={audioUrl || ""} 
+                src={`http://localhost:3000${audioUrl}` || ""} 
                 preload="metadata"
+                onError={(e) => {
+                    console.error("Audio playback error:", e);
+                    console.error("Error details:", e.target.error);
+                    console.error("Source URL:", audioUrl);
+                }}
             />
         </div>
     );
@@ -342,7 +364,8 @@ function MediaControlBar({
 MediaControlBar.propTypes = {
     currentSong: PropTypes.object,
     isPlaying: PropTypes.bool,
-    setIsPlaying: PropTypes.func
+    setIsPlaying: PropTypes.func,
+    artistsMap: PropTypes.object
 };
 
 export default MediaControlBar;

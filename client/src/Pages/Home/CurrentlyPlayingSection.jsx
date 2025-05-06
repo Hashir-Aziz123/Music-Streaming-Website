@@ -1,9 +1,30 @@
 import styles from './CurrentlyPlayingSection.module.css';
 import PropTypes from 'prop-types';
 
-function CurrentlyPlayingSection({ song }) {
+function CurrentlyPlayingSection({ song, artistsMap, albumsMap }) {
     // Default placeholder image
     const defaultAlbumArt = "https://placehold.co/400x400/111/e75454?text=Music";
+    
+    // Format artist display - handle array of artist IDs
+    const formatArtist = (artistIds) => {
+        if (!artistIds) return "Unknown Artist";
+        
+        // Handle array of artists
+        if (Array.isArray(artistIds)) {
+            return artistIds
+                .map(id => artistsMap[id]?.name || `Artist ${id}`)
+                .join(', ');
+        }
+        
+        // Handle single artist
+        return artistsMap[artistIds]?.name || `Artist ${artistIds}`;
+    };
+
+    // Format album display
+    const formatAlbum = (albumId) => {
+        if (!albumId) return "Unknown Album";
+        return albumsMap[albumId]?.title || `Album ${albumId}`;
+    };
 
     return (
         <div className={styles.sidebar}>
@@ -27,8 +48,8 @@ function CurrentlyPlayingSection({ song }) {
                     
                     <div className={styles.songInfo}>
                         <h3 className={styles.songTitle}>{song.title}</h3>
-                        <p className={styles.songArtist}>{song.artist}</p>
-                        {song.genre && <p className={styles.songGenre}>{song.genre.join ? song.genre.join(', ') : song.genre}</p>}
+                        <p className={styles.songArtist}>{formatArtist(song.artist)}</p>
+                        {song.genre && <p className={styles.songGenre}>{Array.isArray(song.genre) ? song.genre.join(', ') : song.genre}</p>}
                     </div>
                     
                     {song.description && (
@@ -61,7 +82,7 @@ function CurrentlyPlayingSection({ song }) {
                     {song.album && (
                         <div className={styles.infoSection}>
                             <h4 className={styles.sectionHeader}>Album</h4>
-                            <p className={styles.albumName}>{song.album}</p>
+                            <p className={styles.albumName}>{formatAlbum(song.album)}</p>
                         </div>
                     )}
 
@@ -91,7 +112,9 @@ function CurrentlyPlayingSection({ song }) {
 }
 
 CurrentlyPlayingSection.propTypes = {
-    song: PropTypes.object
+    song: PropTypes.object,
+    artistsMap: PropTypes.object,
+    albumsMap: PropTypes.object
 };
 
 export default CurrentlyPlayingSection;

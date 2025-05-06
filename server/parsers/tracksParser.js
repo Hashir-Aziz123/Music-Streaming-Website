@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Paths
-const zipFilePath = path.join(__dirname, "../fma_small2.zip");
+const zipFilePath = path.join(__dirname, "../fma_small.zip");
 const extractPath = path.join(__dirname, "../uploads/songs");
 const csvFilePath = path.join(__dirname, "../data/clean_tracks.csv");
 
@@ -103,14 +103,9 @@ async function parseAndUploadSongs() {
 
 async function main() {
     try {
-        await mongoose.connect("mongodb://localhost:27017/driftDB", {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
-
-        await unzipSongs();
+        await mongoose.connect("mongodb://localhost:27017/driftDB");
+        // await unzipSongs();
         await parseAndUploadSongs();
-
         await mongoose.disconnect();
     } catch (err) {
         console.error("❌ Error:", err);
