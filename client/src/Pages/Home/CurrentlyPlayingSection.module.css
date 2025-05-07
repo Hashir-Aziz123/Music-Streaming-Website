@@ -146,6 +146,29 @@
     margin: 0;
 }
 
+.clickableAlbum {
+    font-size: 14px;
+    color: #b3b3b3;
+    margin: 0;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.clickableAlbum:hover {
+    color: #e75454;
+    text-decoration: underline;
+}
+
+.clickableArtist {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.clickableArtist:hover {
+    color: #e75454;
+    text-decoration: underline;
+}
+
 .statSection {
     display: flex;
     justify-content: space-around;

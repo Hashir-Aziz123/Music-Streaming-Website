@@ -247,17 +247,20 @@ const listening_history_schema = new mongoose.Schema(
 
 const artist_schema = new mongoose.Schema(
     {
-            artistID:{
+            artistID:
+            {
                 type: Number,
                 index:true,
                 required: true
             },
-            name:{
+            name:
+            {
                 type: String,
                 required: true,
                 index: true
             },
-            bio:{
+            bio:
+            {
                 type: String,
             },
             songs:[ Number]

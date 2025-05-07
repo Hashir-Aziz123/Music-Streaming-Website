@@ -1,7 +1,7 @@
 import styles from './CurrentlyPlayingSection.module.css';
 import PropTypes from 'prop-types';
 
-function CurrentlyPlayingSection({ song, artistsMap, albumsMap }) {
+function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onAlbumClick, onArtistClick }) {
     // Default placeholder image
     const defaultAlbumArt = "https://placehold.co/400x400/111/e75454?text=Music";
     
@@ -11,13 +11,28 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap }) {
         
         // Handle array of artists
         if (Array.isArray(artistIds)) {
-            return artistIds
-                .map(id => artistsMap[id]?.name || `Artist ${id}`)
-                .join(', ');
+            return artistIds.map(id => (
+                <span key={id}>
+                    <span 
+                        className={styles.clickableArtist} 
+                        onClick={() => onArtistClick(id)}
+                    >
+                        {artistsMap[id]?.name || `Artist ${id}`}
+                    </span>
+                    {artistIds.indexOf(id) < artistIds.length - 1 ? ', ' : ''}
+                </span>
+            ));
         }
         
         // Handle single artist
-        return artistsMap[artistIds]?.name || `Artist ${artistIds}`;
+        return (
+            <span 
+                className={styles.clickableArtist}
+                onClick={() => onArtistClick(artistIds)}
+            >
+                {artistsMap[artistIds]?.name || `Artist ${artistIds}`}
+            </span>
+        );
     };
 
     // Format album display
@@ -82,7 +97,12 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap }) {
                     {song.album && (
                         <div className={styles.infoSection}>
                             <h4 className={styles.sectionHeader}>Album</h4>
-                            <p className={styles.albumName}>{formatAlbum(song.album)}</p>
+                            <p 
+                                className={styles.clickableAlbum} 
+                                onClick={() => onAlbumClick(song.album)}
+                            >
+                                {formatAlbum(song.album)}
+                            </p>
                         </div>
                     )}
 
@@ -114,7 +134,9 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap }) {
 CurrentlyPlayingSection.propTypes = {
     song: PropTypes.object,
     artistsMap: PropTypes.object,
-    albumsMap: PropTypes.object
+    albumsMap: PropTypes.object,
+    onAlbumClick: PropTypes.func,
+    onArtistClick: PropTypes.func
 };
 
 export default CurrentlyPlayingSection;
