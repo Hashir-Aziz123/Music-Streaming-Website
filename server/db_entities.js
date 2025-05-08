@@ -7,105 +7,105 @@ const song_schema = new mongoose.Schema(
             required:true
         },
         title:
-        {
-            type: String,
-            index: true,
-            required: true
-        },
-        artist:
-        [
-            {
-                type: Number,
-                required: true,
-                index: true
-            }
-        ],
-        album:
-        {
-            type: Number,
-            default: ""
-        },
-        genre:
-        [
             {
                 type: String,
-                default: "",
-                index: true
-            }
-        ],
+                index: true,
+                required: true
+            },
+        artist:
+            [
+                {
+                    type: Number,
+                    required: true,
+                    index: true
+                }
+            ],
+        album:
+            {
+                type: Number,
+                default: ""
+            },
+        genre:
+            [
+                {
+                    type: String,
+                    default: "",
+                    index: true
+                }
+            ],
         duration_seconds:
-        {
-            type: Number,
-            required: true
-        },
+            {
+                type: Number,
+                required: true
+            },
         audio_url:
-        {
-            type: String,
-            required: true
-        },
+            {
+                type: String,
+                required: true
+            },
         cover_image_url:
-        {
-            type: String,
-            default: ""
-        },
+            {
+                type: String,
+                default: ""
+            },
         uploaded_at:
-        {
-            type: Date,
-            default: Date.now
-        },
+            {
+                type: Date,
+                default: Date.now
+            },
         likes_count:
-        {
-            type: Number,
-            default: 0
-        },
+            {
+                type: Number,
+                default: 0
+            },
         play_count:
-        {
-            type: Number,
-            default: 0
-        },
+            {
+                type: Number,
+                default: 0
+            },
         description:
-        {
-            type: String,
-            maxlength: 500,
-            default: ""
-        }
+            {
+                type: String,
+                maxlength: 500,
+                default: ""
+            }
     }
 );
 
 
 const playlist_schema = new mongoose.Schema(
     {
-        name: 
-        {
-            type: String,
-            required: true,
-            trim: true
-        },
-        description: 
-        {
-            type: String,
-            default: ""
-        },
-        cover_image_url: 
-        {
-            type: String,
-            default: ""
-        },
-        songs: 
-        [
+        name:
             {
-                type: [Number],
-                ref: 'Song'
+                type: String,
+                required: true,
+                trim: true
+            },
+        description:
+            {
+                type: String,
+                default: ""
+            },
+        cover_image_url:
+            {
+                type: String,
+                default: ""
+            },
+        songs:
+            [
+                {
+                    type: [Number],
+                    ref: 'Song'
+                }
+            ],
+        is_public:
+            {
+                type: Boolean,
+                default: true
             }
-        ],
-        is_public: 
-        {
-            type: Boolean,
-            default: true
-        }
-    }, 
+    },
     {
-        timestamps: true 
+        timestamps: true
     }
 );
 
@@ -115,37 +115,37 @@ const album_schema = new mongoose.Schema(
             type: Number,
             required: true
         },
-        title: 
-        {
-            type: String,
-            required: true,
-            index: true,
-            trim: true
-        },
-        artist: 
-        {
-            type: Number,
-            required: true
-        },
-        cover_image_url: 
-        {
-            type: String,
-            default: ""
-        },
-        release_date: 
-        {
-            type: Date,
-        },
-        songs: 
-        [
+        title:
             {
-                type: [Number],
-                ref: 'Song'
-            }
-        ],
-    }, 
-    { 
-        timestamps: true 
+                type: String,
+                required: true,
+                index: true,
+                trim: true
+            },
+        artist:
+            {
+                type: Number,
+                required: true
+            },
+        cover_image_url:
+            {
+                type: String,
+                default: ""
+            },
+        release_date:
+            {
+                type: Date,
+            },
+        songs:
+            [
+                {
+                    type: [Number],
+                    ref: 'Song'
+                }
+            ],
+    },
+    {
+        timestamps: true
     }
 );
 
@@ -256,28 +256,28 @@ const user_schema = new mongoose.Schema(
 
 const listening_history_schema = new mongoose.Schema(
     {
-        user: 
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-            required: true
-        },
-        song: 
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Song',
-            required: true
-        },
-        listened_at: 
-        {
-            type: Date,
-            default: Date.now
-        },
-        duration_listened: 
-        {
-            type: Number, // in seconds
-            default: 0
-        }
+        user:
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+                required: true
+            },
+        song:
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Song',
+                required: true
+            },
+        listened_at:
+            {
+                type: Date,
+                default: Date.now
+            },
+        duration_listened:
+            {
+                type: Number, // in seconds
+                default: 0
+            }
     }
 );
 
