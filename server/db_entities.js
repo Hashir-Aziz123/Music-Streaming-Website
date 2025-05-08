@@ -72,75 +72,6 @@ const song_schema = new mongoose.Schema(
     }
 );
 
-const user_schema = new mongoose.Schema(
-    {
-        username: 
-        {
-            type: String,
-            required: true,
-            unique: true,
-            trim: true
-        },
-        email: 
-        {
-            type: String,
-            required: true,
-            unique: true,
-            trim: true,
-            lowercase: true
-        },
-        password_hash: 
-        {
-            type: String,
-            required: true
-        },
-        profile_picture_url: 
-        {
-            type: String,
-            default: ""
-        },
-        date_joined: 
-        {
-            type: Date,
-            default: Date.now
-        },
-        liked_songs: 
-        [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Song'
-            }
-        ],
-        playlists:
-        [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Playlist'
-            }
-        ],
-        bio:
-        {
-            type: String,
-            default: ""
-        },
-        role:
-        {
-            type: String,
-            enum: ['endUser', 'admin']
-        },
-        dob: 
-        {
-            type: Date,
-            required: true
-        },
-        country: 
-        {
-            type: String,
-            trim: true,
-            required: true
-        }
-    }
-);
 
 const playlist_schema = new mongoose.Schema(
     {
@@ -163,7 +94,7 @@ const playlist_schema = new mongoose.Schema(
         songs: 
         [
             {
-                type: mongoose.Schema.Types.ObjectId,
+                type: [Number],
                 ref: 'Song'
             }
         ],
@@ -218,6 +149,111 @@ const album_schema = new mongoose.Schema(
     }
 );
 
+const artist_schema = new mongoose.Schema(
+    {
+        artistID:{
+            type: Number,
+            index:true,
+            required: true
+        },
+        name:{
+            type: String,
+            required: true,
+            index: true
+        },
+        bio:{
+            type: String,
+        },
+        songs:[ Number]
+    }
+);
+
+
+const user_schema = new mongoose.Schema(
+    {
+        username:
+            {
+                type: String,
+                required: true,
+                unique: true,
+                trim: true
+            },
+        email:
+            {
+                type: String,
+                required: true,
+                unique: true,
+                trim: true,
+                lowercase: true
+            },
+        password_hash:
+            {
+                type: String,
+                required: true
+            },
+        profile_picture_url:
+            {
+                type: String,
+                default: ""
+            },
+        date_joined:
+            {
+                type: Date,
+                default: Date.now
+            },
+        playlists:
+            [
+                {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'Playlist'
+                }
+            ],
+        bio:
+            {
+                type: String,
+                default: ""
+            },
+        role:
+            {
+                type: String,
+                enum: ['endUser', 'admin']
+            },
+        dob:
+            {
+                type: Date,
+                required: true
+            },
+        country:
+            {
+                type: String,
+                trim: true,
+                required: true
+            },
+
+        //     new attributes for keeping listening habit summary
+        topGenres: [String],
+        topArtists: [String],
+        liked_songs:
+            [
+                {
+                    type: Number,
+                    ref: 'Song'
+                }
+            ],
+        mostPlayedSongs: [
+            [
+                {
+                    type: Number,
+                    ref: 'Song'
+                }
+            ]
+        ],
+        avgSongDurationSeconds: Number
+
+    }
+);
+
+
 const listening_history_schema = new mongoose.Schema(
     {
         user: 
@@ -245,25 +281,25 @@ const listening_history_schema = new mongoose.Schema(
     }
 );
 
-const artist_schema = new mongoose.Schema(
-    {
-            artistID:{
-                type: Number,
-                index:true,
-                required: true
-            },
-            name:{
-                type: String,
-                required: true,
-                index: true
-            },
-            bio:{
-                type: String,
-            },
-            songs:[ Number]
+const user_song_score_schema = new mongoose.Schema({
+    userId: {
+        type: String,
+        index: true,
+        ref: 'User'
+    },
+    trackId: {
+        type: Number,
+        ref: 'Song'
+    },
+    score: Number,
+    computedAt: {
+        type: Date,
+        default: Date.now
     }
-);
 
+});
+
+const UserSongScore = mongoose.model('UserSongScore', user_song_score_schema);
 const Artist = mongoose.model('Artist', artist_schema);
 const Listening_History = mongoose.model('ListeningHistory', listening_history_schema);
 const Album = mongoose.model('Album', album_schema);
@@ -271,4 +307,4 @@ const Playlist = mongoose.model('Playlist', playlist_schema);
 const User = mongoose.model("User", user_schema);
 const Song = mongoose.model('Song', song_schema);
 
-export {Song, User, Playlist, Album, Listening_History , Artist};
+export {Song, User, Playlist, Album, Listening_History , Artist , UserSongScore};

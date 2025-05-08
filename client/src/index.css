@@ -10,8 +10,8 @@
 html, body {
     min-height: 100%; /* Use min-height to cover at least the viewport */
     width: 100%;
-    scrollbar-color: rgb(250, 60, 92) black;
-    scrollbar-width: thin;
+    /*scrollbar-color: rgb(250, 60, 92) black;*/
+    /*scrollbar-width: thin;*/
 }
 
 body {

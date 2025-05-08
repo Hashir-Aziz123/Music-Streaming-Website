@@ -7,6 +7,8 @@ import { fileURLToPath } from "url";
 
 import songRoutes from './routes/songs.js';
 import authRoutes from './routes/auth.js';
+import recommendationRoutes from './routes/recommendationRoutes.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,9 +33,10 @@ app.use('/uploads', express.static(`${__dirname}/uploads`));
 
 app.use('/api/songs', songRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api', recommendationRoutes);
 
 // connect to db and start listening
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect("mongodb://localhost:27017/driftDB")
 .then(() => {
     console.log("Connected to DB");
 })
