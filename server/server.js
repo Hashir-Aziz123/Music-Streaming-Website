@@ -35,6 +35,8 @@ app.use('/uploads', express.static(`${__dirname}/uploads`));
 
 app.use('/api/songs', songRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api', recommendationRoutes);
+
 // temp testing endpoint
 app.get('/api/playlists/:id', (req, res) => {
     const playlists = [
@@ -46,7 +48,6 @@ app.get('/api/playlists/:id', (req, res) => {
     ];
     res.send(playlists);
 });
-app.use('/api', recommendationRoutes);
 
 // connect to db and start listening
 mongoose.connect("mongodb://localhost:27017/driftDB")

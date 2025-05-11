@@ -124,6 +124,23 @@
     text-overflow: ellipsis;
 }
 
+.songAlbum {
+    font-size: 14px;
+    color: #a7a7a7;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.clickableAlbum {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.clickableAlbum:hover {
+    color: #e75454;
+}
+
 /* Play button overlay styling */
 .playButtonOverlay {
     position: absolute;
@@ -224,6 +241,330 @@
     }
 }
 
+/* Album view styles */
+.albumViewContainer {
+    padding: 20px 0;
+}
+
+.albumHeader {
+    margin-bottom: 30px;
+}
+
+.backButton {
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.backButton:hover {
+    background: rgba(231, 84, 84, 0.7);
+}
+
+.albumInfo {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.albumCover {
+    width: 200px;
+    height: 200px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.albumCover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.albumDetails h2 {
+    font-size: 28px;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.albumDetails p {
+    color: #a7a7a7;
+    font-size: 16px;
+}
+
+.albumSongsList {
+    width: 100%;
+}
+
+.songsTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.songsTable th {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #a7a7a7;
+    border-bottom: 1px solid #282828;
+    font-weight: 500;
+}
+
+.songsTable td {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid #282828;
+}
+
+.songsTable .indexColumn {
+    width: 40px;
+    text-align: center;
+}
+
+.songRow {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.songRow:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.playingRow {
+    background-color: rgba(231, 84, 84, 0.2);
+}
+
+.playingRow:hover {
+    background-color: rgba(231, 84, 84, 0.3);
+}
+
+.songTitleWrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.songRowImage {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.titleColumn {
+    max-width: 300px;
+}
+
+/* Artist view styles */
+.artistViewContainer {
+    padding: 20px 0;
+}
+
+.artistHeader {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin: 30px 0;
+}
+
+.artistImageContainer {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.artistImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.artistInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.artistInfo h1 {
+    font-size: 40px;
+    margin: 0;
+    font-weight: 700;
+}
+
+.artistInfo p {
+    color: #a7a7a7;
+    font-size: 16px;
+    margin: 0;
+}
+
+.artistBio {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.artistBio h3 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #e75454;
+    margin-bottom: 10px;
+}
+
+.artistBio p {
+    line-height: 1.6;
+    color: #e0e0e0;
+    margin: 0;
+}
+
+.tabsContainer {
+    margin-top: 30px;
+}
+
+.tabs {
+    display: flex;
+    gap: 20px;
+    border-bottom: 1px solid #282828;
+    margin-bottom: 20px;
+}
+
+.tabButton {
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 0;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.tabButton:hover {
+    color: white;
+}
+
+.activeTab {
+    color: white;
+}
+
+.activeTab::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #e75454;
+    border-radius: 3px 3px 0 0;
+}
+
+.tabContent {
+    min-height: 200px;
+}
+
+.noContentMessage {
+    color: #a7a7a7;
+    text-align: center;
+    padding: 40px 0;
+}
+
+.albumGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 24px;
+}
+
+.albumCard {
+    background-color: #181818;
+    padding: 16px;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+.albumCard:hover {
+    background-color: #282828;
+}
+
+.albumCardImage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1/1;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.albumCardImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.albumPlayButton {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(231, 84, 84, 0.8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.albumCard:hover .albumPlayButton {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.albumPlayButton:hover {
+    transform: scale(1.05);
+    background-color: #e75454;
+}
+
+.albumCardTitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.albumCardYear {
+    font-size: 14px;
+    color: #a7a7a7;
+    margin: 0;
+}
+
+.clickableArtist {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.clickableArtist:hover {
+    color: #e75454;
+    text-decoration: underline;
+}
+
 /* Make sure grid is responsive */
 @media (max-width: 1200px) {
     .rightMiddle {
@@ -259,6 +600,36 @@
     .centerMiddle {
         padding: 16px;
     }
+    
+    .albumInfo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .albumCover {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .artistHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    
+    .artistImageContainer {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .artistInfo h1 {
+        font-size: 32px;
+    }
+    
+    .albumGrid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
 }
 
 @media (max-width: 480px) {
@@ -269,6 +640,10 @@
     
     .songsContainer h1 {
         font-size: 24px;
+    }
+    
+    .songsTable .indexColumn {
+        display: none;
     }
 }
 

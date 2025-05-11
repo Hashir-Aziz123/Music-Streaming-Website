@@ -4,14 +4,9 @@ import TopBar from "./TopBar.jsx";
 import CurrentlyPlayingSection from "./CurrentlyPlayingSection.jsx";
 import SideBar from "./SideBar.jsx";
 import MediaControlBar from "./MediaControlBar.jsx";
-
-// Loading indicator component for reuse
-const LoadingIndicator = ({ message = "Loading songs..." }) => (
-    <div className={styles.loadingMoreContainer}>
-        <p className={styles.loadingMoreText}>{message}</p>
-        <div className={styles.loadingSpinner}></div>
-    </div>
-);
+import AllSongsView, { LoadingIndicator } from "./AllSongsView.jsx";
+import AlbumView from "./AlbumView.jsx";
+import ArtistView from "./ArtistView.jsx";
 
 function Home() {
     const [songs, setSongs] = useState([]);
@@ -21,6 +16,17 @@ function Home() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [artistsMap, setArtistsMap] = useState({});
     const [albumsMap, setAlbumsMap] = useState({});
+    
+    // Album view states
+    const [selectedAlbum, setSelectedAlbum] = useState(null);
+    const [albumSongs, setAlbumSongs] = useState([]);
+    const [loadingAlbum, setLoadingAlbum] = useState(false);
+    
+    // Artist view states
+    const [selectedArtist, setSelectedArtist] = useState(null);
+    const [artistSongs, setArtistSongs] = useState([]);
+    const [artistAlbums, setArtistAlbums] = useState([]);
+    const [loadingArtist, setLoadingArtist] = useState(false);
     
     // Pagination states
     const [page, setPage] = useState(1);
@@ -96,6 +102,120 @@ function Home() {
         lastSongElementRef.current = node;
     }, [loading, loadingMore, hasMore, fetchSongs]);
 
+    // Function to handle album selection and fetching album songs
+    const handleAlbumClick = async (albumId) => {
+        try {
+            // Reset artist view if active
+            setSelectedArtist(null);
+            setArtistSongs([]);
+            setArtistAlbums([]);
+            
+            setLoadingAlbum(true);
+            setSelectedAlbum(albumId);
+            
+            // Get album details if not already in our map
+            if (!albumsMap[albumId]) {
+                const response = await fetch(`http://localhost:3000/api/songs/album/${albumId}`);
+                if (response.ok) {
+                    const albumData = await response.json();
+                    setAlbumsMap(prev => ({...prev, [albumId]: albumData}));
+                }
+            }
+            
+            // Find songs that belong to this album
+            const filteredSongs = songs.filter(song => song.album === albumId);
+            
+            // If we don't have enough songs in our current list, fetch all songs from this album
+            if (filteredSongs.length === 0 || albumsMap[albumId]?.songs?.length > filteredSongs.length) {
+                // This is a simplified approach - ideally we would have an API endpoint to fetch all songs from an album
+                // For now, we'll use the songs we have and display those
+                setAlbumSongs(filteredSongs);
+            } else {
+                setAlbumSongs(filteredSongs);
+            }
+        } catch (error) {
+            console.error("Error fetching album songs:", error);
+        } finally {
+            setLoadingAlbum(false);
+        }
+    };
+
+    // Function to handle artist selection and fetching artist songs and albums
+    const handleArtistClick = async (artistId) => {
+        try {
+            // Reset album view if active
+            setSelectedAlbum(null);
+            setAlbumSongs([]);
+            
+            setLoadingArtist(true);
+            setSelectedArtist(artistId);
+            
+            // Get artist details if not already in our map
+            if (!artistsMap[artistId]) {
+                const response = await fetch(`http://localhost:3000/api/songs/artist/${artistId}`);
+                if (response.ok) {
+                    const artistData = await response.json();
+                    setArtistsMap(prev => ({...prev, [artistId]: artistData}));
+                }
+            }
+            
+            // Find songs that belong to this artist
+            const artistSongsFiltered = songs.filter(song => {
+                if (Array.isArray(song.artist)) {
+                    return song.artist.includes(artistId);
+                }
+                return song.artist === artistId;
+            });
+            
+            setArtistSongs(artistSongsFiltered);
+            
+            // Find albums by this artist
+            // Create a Set to avoid duplicate albums
+            const albumIds = new Set();
+            artistSongsFiltered.forEach(song => {
+                if (song.album) {
+                    albumIds.add(song.album);
+                }
+            });
+            
+            // Fetch any album details we don't already have
+            const artistAlbumsFiltered = [];
+            
+            for (const albumId of albumIds) {
+                if (!albumsMap[albumId]) {
+                    try {
+                        const response = await fetch(`http://localhost:3000/api/songs/album/${albumId}`);
+                        if (response.ok) {
+                            const albumData = await response.json();
+                            setAlbumsMap(prev => ({...prev, [albumId]: albumData}));
+                            artistAlbumsFiltered.push(albumData);
+                        }
+                    } catch (err) {
+                        console.error(`Error fetching album ${albumId}:`, err);
+                    }
+                } else {
+                    artistAlbumsFiltered.push(albumsMap[albumId]);
+                }
+            }
+            
+            setArtistAlbums(artistAlbumsFiltered);
+            
+        } catch (error) {
+            console.error("Error fetching artist data:", error);
+        } finally {
+            setLoadingArtist(false);
+        }
+    };
+
+    // Function to go back to all songs view
+    const handleBackToAllSongs = () => {
+        setSelectedAlbum(null);
+        setAlbumSongs([]);
+        setSelectedArtist(null);
+        setArtistSongs([]);
+        setArtistAlbums([]);
+    };
+
     // Fetch artists and albums details
     const fetchArtistsAndAlbums = async (songsData) => {
         try {
@@ -164,40 +284,55 @@ function Home() {
         }
     };
 
-    // Format artist display with names from artistsMap
-    const formatArtist = (artistIds) => {
-        if (!artistIds) return "Unknown Artist";
-        
-        // Handle array of artists
-        if (Array.isArray(artistIds)) {
-            return artistIds
-                .map(id => artistsMap[id]?.name || `Artist ${id}`)
-                .join(', ');
+    // Function to determine which view to render
+    const renderContentView = () => {
+        if (selectedArtist) {
+            return (
+                <ArtistView 
+                    artist={artistsMap[selectedArtist]}
+                    artistSongs={artistSongs}
+                    artistAlbums={artistAlbums}
+                    loadingArtist={loadingArtist}
+                    currentSong={currentSong}
+                    isPlaying={isPlaying}
+                    artistsMap={artistsMap}
+                    albumsMap={albumsMap}
+                    handleBackToAllSongs={handleBackToAllSongs}
+                    handlePlayClick={handlePlayClick}
+                    handleAlbumClick={handleAlbumClick}
+                />
+            );
+        } else if (selectedAlbum) {
+            return (
+                <AlbumView 
+                    album={albumsMap[selectedAlbum]}
+                    albumSongs={albumSongs}
+                    loadingAlbum={loadingAlbum}
+                    currentSong={currentSong}
+                    isPlaying={isPlaying}
+                    artistsMap={artistsMap}
+                    handleBackToAllSongs={handleBackToAllSongs}
+                    handlePlayClick={handlePlayClick}
+                />
+            );
+        } else {
+            return (
+                <AllSongsView
+                    songs={songs}
+                    artistsMap={artistsMap}
+                    albumsMap={albumsMap}
+                    currentSong={currentSong}
+                    isPlaying={isPlaying}
+                    lastSongRef={lastSongRef}
+                    loadingMore={loadingMore}
+                    hasMore={hasMore}
+                    handlePlayClick={handlePlayClick}
+                    handleAlbumClick={handleAlbumClick}
+                    handleArtistClick={handleArtistClick}
+                />
+            );
         }
-        
-        // Handle single artist
-        return artistsMap[artistIds]?.name || `Artist ${artistIds}`;
     };
-
-    // Format album display with name from albumsMap
-    const formatAlbum = (albumId) => {
-        if (!albumId) return "Unknown Album";
-        return albumsMap[albumId]?.title || `Album ${albumId}`;
-    };
-
-    // Format genre display
-    const formatGenre = (genreData) => {
-        if (!genreData) return null;
-        
-        if (Array.isArray(genreData)) {
-            return genreData.join(', ');
-        }
-        
-        return genreData;
-    };
-
-    // Default placeholder image for when no album art is available
-    const defaultCoverImage = "https://placehold.co/400x400/111/e75454?text=Music";
 
     return (
         <div className={styles.pageContainer}>
@@ -215,64 +350,11 @@ function Home() {
                     
                     {error && <p className={styles.errorMessage}>Error: {error}</p>}
                     
-                    {!loading && !error && songs.length === 0 && (
+                    {!loading && !error && !selectedAlbum && !selectedArtist && songs.length === 0 && (
                         <p className={styles.noSongsMessage}>No songs found</p>
                     )}
                     
-                    {!loading && !error && songs.length > 0 && (
-                        <div className={styles.songsContainer}>
-                            <h1>Available Songs</h1>
-                            
-                            <div className={styles.songsList}>
-                                {songs.map((song, index) => {
-                                    const isThisSongPlaying = isPlaying && currentSong && song._id === currentSong._id;
-                                    
-                                    // Apply ref to the last element for infinite scrolling
-                                    const isLastElement = index === songs.length - 1;
-                                    
-                                    return (
-                                    <div 
-                                        key={song._id} 
-                                        className={styles.songCard}
-                                        ref={isLastElement ? lastSongRef : null}
-                                    >
-                                        <div className={styles.songImageContainer}>
-                                            <img 
-                                                src={song.cover_image_url || defaultCoverImage} 
-                                                alt={`${song.title} cover`}
-                                                className={styles.songImage}
-                                            />
-                                            <div 
-                                                className={`${styles.playButtonOverlay} ${isThisSongPlaying ? styles.playing : ''}`}
-                                                onClick={() => handlePlayClick(song)}
-                                            >
-                                                {isThisSongPlaying ? (
-                                                    <i className={`fas fa-pause ${styles.playIcon}`}></i>
-                                                ) : (
-                                                    <i className={`fas fa-play ${styles.playIcon}`}></i>
-                                                )}
-                                            </div>
-                                        </div>
-                                        
-                                        <div className={styles.songInfo}>
-                                            <h3 className={styles.songTitle}>{song.title}</h3>
-                                            <p className={styles.songArtist}>{formatArtist(song.artist)}</p>
-                                            {song.genre && <p className={styles.songGenre}>{formatGenre(song.genre)}</p>}
-                                            {song.album && <p className={styles.songAlbum}>{formatAlbum(song.album)}</p>}
-                                        </div>
-                                    </div>
-                                )})}
-                            </div>
-                            
-                            {/* Use the same LoadingIndicator component for pagination loading */}
-                            {loadingMore && <LoadingIndicator message="Loading more songs..." />}
-                            
-                            {/* End of results message */}
-                            {!hasMore && songs.length > 0 && (
-                                <p className={styles.endOfResultsMessage}>You've reached the end of the list</p>
-                            )}
-                        </div>
-                    )}
+                    {!loading && !error && renderContentView()}
                 </div>
 
                 {<div className={styles.rightMiddle}>
@@ -280,6 +362,8 @@ function Home() {
                         song={currentSong}
                         artistsMap={artistsMap}
                         albumsMap={albumsMap}
+                        onAlbumClick={handleAlbumClick}
+                        onArtistClick={handleArtistClick}
                     />
                 </div>}
             </div>

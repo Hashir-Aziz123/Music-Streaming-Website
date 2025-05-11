@@ -17,15 +17,6 @@ function SideBar() {
         setActiveTab(tab);
     };
 
-    // Sample items for demonstration
-    // const playlists = [
-        // { id: 1, title: "Chill Vibes", creator: "You", imageUrl: "https://placehold.co/400/111/e75454?text=Chill" },
-        // { id: 2, title: "Workout Mix", creator: "You", imageUrl: "https://placehold.co/400/222/e75454?text=Workout" },
-        // { id: 3, title: "Focus Flow", creator: "You", imageUrl: "https://placehold.co/400/333/e75454?text=Focus" },
-        // { id: 4, title: "Throwbacks", creator: "You", imageUrl: "https://placehold.co/400/444/e75454?text=Throwbacks" },
-        // { id: 5, title: "New Discoveries", creator: "You", imageUrl: "https://placehold.co/400/555/e75454?text=New" }
-    // ];
-
     useEffect(() => {
         const fetchPlaylists = async () => {
             try {

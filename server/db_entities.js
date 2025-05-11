@@ -2,10 +2,11 @@ import mongoose from "mongoose";
 
 const song_schema = new mongoose.Schema(
     {
-        trackId:{
-            type: Number,
-            required:true
-        },
+        trackId:
+            {
+                type: Number,
+                required:true
+            },
         title:
             {
                 type: String,
@@ -111,10 +112,11 @@ const playlist_schema = new mongoose.Schema(
 
 const album_schema = new mongoose.Schema(
     {
-        album_id:{
-            type: Number,
-            required: true
-        },
+        album_id:
+            {
+                type: Number,
+                required: true
+            },
         title:
             {
                 type: String,
@@ -151,20 +153,23 @@ const album_schema = new mongoose.Schema(
 
 const artist_schema = new mongoose.Schema(
     {
-        artistID:{
-            type: Number,
-            index:true,
-            required: true
-        },
-        name:{
-            type: String,
-            required: true,
-            index: true
-        },
-        bio:{
-            type: String,
-        },
-        songs:[ Number]
+        artistID:
+            {
+                type: Number,
+                index:true,
+                required: true
+            },
+        name:
+            {
+                type: String,
+                required: true,
+                index: true
+            },
+        bio:
+            {
+                type: String,
+            },
+        songs: [ Number]
     }
 );
 
@@ -240,7 +245,8 @@ const user_schema = new mongoose.Schema(
                     ref: 'Song'
                 }
             ],
-        mostPlayedSongs: [
+        mostPlayedSongs:
+        [
             [
                 {
                     type: Number,
@@ -282,20 +288,23 @@ const listening_history_schema = new mongoose.Schema(
 );
 
 const user_song_score_schema = new mongoose.Schema({
-    userId: {
-        type: String,
-        index: true,
-        ref: 'User'
-    },
-    trackId: {
-        type: Number,
-        ref: 'Song'
-    },
+    userId:
+        {
+            type: String,
+            index: true,
+            ref: 'User'
+        },
+    trackId:
+        {
+            type: Number,
+            ref: 'Song'
+        },
     score: Number,
-    computedAt: {
-        type: Date,
-        default: Date.now
-    }
+    computedAt:
+        {
+            type: Date,
+            default: Date.now
+        }
 
 });
 
