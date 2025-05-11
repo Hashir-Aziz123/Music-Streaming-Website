@@ -7,12 +7,18 @@ import { useAuth } from './context/AuthContext.jsx';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const ProtectedRoute = ({ children }) => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
 
-    if (!isAuthenticated) return <Navigate to='/login' />
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!isAuthenticated) {
+        return <Navigate to="/login" />;
+    }
 
     return children;
-}
+};
 
 function App() {
     return (

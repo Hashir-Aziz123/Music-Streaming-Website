@@ -6,6 +6,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const checkAuthStatus = useCallback(async () => {
         try {
@@ -15,14 +16,19 @@ export const AuthProvider = ({ children }) => {
             if (response.status === 200 && response.data.user) {
                 setUser(response.data.user);
                 setIsAuthenticated(true);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
             } else {
                 setUser(null);
                 setIsAuthenticated(false);
+                localStorage.removeItem('user');
             }
         } catch (err) {
             console.error('Auth status check failed:');
             setUser(null);
             setIsAuthenticated(false);
+            localStorage.removeItem('user');
+        } finally {
+            setIsLoading(false);
         }
     }, []);
 
@@ -30,12 +36,22 @@ export const AuthProvider = ({ children }) => {
         checkAuthStatus();
     }, [checkAuthStatus]);
 
+    // useEffect(() => {
+    //     const storedUser = localStorage.getItem('user');
+    //     if (storedUser) {
+    //         setUser(JSON.parse(storedUser));
+    //         setIsAuthenticated(true);
+    //         localStorage.setItem('isAuthenticated', true);
+    //     }
+    // }, []);
+
     const login = async (username, password) => {
         try {
             const response = await axios.post('/api/auth/login', { username, password });
             if (response.status === 200 && response.data.user) {
                 setUser(response.data.user);
                 setIsAuthenticated(true);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
                 return { success: true, user: response.data.user };
             }
         } catch (error) {
@@ -73,6 +89,8 @@ export const AuthProvider = ({ children }) => {
         } finally {
             setUser(null);
             setIsAuthenticated(false);
+            localStorage.removeItem('user');
+            localStorage.setItem('isAuthenticated', false);
         }
     };
 
@@ -144,6 +162,10 @@ export const AuthProvider = ({ children }) => {
         updatePassword,
         checkAuthStatus
     };
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <AuthContext.Provider value={value}>
