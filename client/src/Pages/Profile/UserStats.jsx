@@ -3,7 +3,7 @@ import MusicNotes from './MusicNotes.jsx';
 import styles from "./UserStats.module.css";
 import CustomCard from "./CustomCard.jsx";
 
-function ProfileUserStats() {
+function ProfileUserStats({playlistsNum}) {
 
     const genreData = [
         { genre: 'Lo-fi', listens: 40 },
@@ -215,7 +215,7 @@ function ProfileUserStats() {
                                 <div className={styles.achievementIcon}>
                                     <i className="fas fa-list-ul"></i>
                                 </div>
-                                <span className={styles.achievementValue}>20</span>
+                                <span className={styles.achievementValue}>{playlistsNum}</span>
                                 <span className={styles.achievementLabel}>Playlists Created</span>
                             </div>
                             <div className={styles.achievementItem}>

@@ -1,10 +1,15 @@
 import { Search, Plus } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 import styles from "./SideBar.module.css";
 
 function SideBar() {
     const [activeTab, setActiveTab] = useState("Playlists");
     const [searchTerm, setSearchTerm] = useState("");
+    const [playlists, setPlaylists] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const { user } = useAuth();
 
     const filters = ["Playlists", "Artists", "Albums"];
 
@@ -13,13 +18,28 @@ function SideBar() {
     };
 
     // Sample items for demonstration
-    const playlists = [
-        { id: 1, title: "Chill Vibes", creator: "You", imageUrl: "https://placehold.co/400/111/e75454?text=Chill" },
-        { id: 2, title: "Workout Mix", creator: "You", imageUrl: "https://placehold.co/400/222/e75454?text=Workout" },
-        { id: 3, title: "Focus Flow", creator: "You", imageUrl: "https://placehold.co/400/333/e75454?text=Focus" },
-        { id: 4, title: "Throwbacks", creator: "You", imageUrl: "https://placehold.co/400/444/e75454?text=Throwbacks" },
-        { id: 5, title: "New Discoveries", creator: "You", imageUrl: "https://placehold.co/400/555/e75454?text=New" }
-    ];
+    // const playlists = [
+        // { id: 1, title: "Chill Vibes", creator: "You", imageUrl: "https://placehold.co/400/111/e75454?text=Chill" },
+        // { id: 2, title: "Workout Mix", creator: "You", imageUrl: "https://placehold.co/400/222/e75454?text=Workout" },
+        // { id: 3, title: "Focus Flow", creator: "You", imageUrl: "https://placehold.co/400/333/e75454?text=Focus" },
+        // { id: 4, title: "Throwbacks", creator: "You", imageUrl: "https://placehold.co/400/444/e75454?text=Throwbacks" },
+        // { id: 5, title: "New Discoveries", creator: "You", imageUrl: "https://placehold.co/400/555/e75454?text=New" }
+    // ];
+
+    useEffect(() => {
+        const fetchPlaylists = async () => {
+            try {
+                const response = await axios.get(`/api/playlists/${user.id}`, { withCredentials: true });
+                setPlaylists(response.data);
+            } catch (err) {
+                console.error("Failed to fetch playlists:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        if (user) fetchPlaylists();
+    }, [user]);
 
     return (
         <div className={styles.sideBarContainer}>
@@ -69,17 +89,26 @@ function SideBar() {
 
             {/* Scrollable List Section */}
             <div className={styles.scrollSection}>
-                <ul className={styles.itemList}>
-                    {playlists.map((item) => (
-                        <li key={item.id}>
-                            <img src={item.imageUrl} alt={`${item.title} cover`} />
-                            <div className={styles.itemContent}>
-                                <div className={styles.itemTitle}>{item.title}</div>
-                                <div className={styles.itemSubtitle}>Playlist • {item.creator}</div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                {isLoading ? (
+                    <div className={styles.loading}>Loading playlists...</div>
+                ) : (
+                    <ul className={styles.itemList}>
+                        {playlists.map((item) => (
+                            <li key={item._id}>
+                                <img 
+                                    src={item.imageUrl || "https://placehold.co/400/111/e75454?text=Playlist"} 
+                                    alt={`${item.title} cover`} 
+                                />
+                                <div className={styles.itemContent}>
+                                    <div className={styles.itemTitle}>{item.title}</div>
+                                    <div className={styles.itemSubtitle}>
+                                        Playlist • {item.creator}
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
         </div>
     );

@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import logo from "../../assets/logo.png";
 import styles from "./Login.module.css";
 
@@ -10,6 +11,8 @@ function Login() {
         password: ""
     });
     const [showPassword, setShowPassword] = useState(false);
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -21,30 +24,35 @@ function Login() {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
 
-        try {
-            const response = await fetch("http://localhost:3000/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "include",
-                body: JSON.stringify({ username: formData.username, password: formData.password })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                console.log("Login successful:", data);
-            } else {
-                console.error("Login failed:", data.message);
-                alert(data.message || "Login failed.");
-            }
-        } catch (err) {
-            console.error("Error logging in:", err);
-            alert("An error occurred during login.");
+        const result = await login(formData.username, formData.password);
+        if (result.success) {
+            navigate('/');
         }
+
+    //     try {
+    //         const response = await fetch("http://localhost:3000/api/auth/login", {
+    //             method: "POST",
+    //             headers: {
+    //                 "Content-Type": "application/json"
+    //             },
+    //             credentials: "include",
+    //             body: JSON.stringify({ username: formData.username, password: formData.password })
+    //         });
+
+    //         const data = await response.json();
+
+    //         if (response.ok) {
+    //             console.log("Login successful:", data);
+    //         } else {
+    //             console.error("Login failed:", data.message);
+    //             alert(data.message || "Login failed.");
+    //         }
+    //     } catch (err) {
+    //         console.error("Error logging in:", err);
+    //         alert("An error occurred during login.");
+    //     }
     };
 
     return (

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '../../context/AuthContext';
 import logo from "../../assets/logo.png";
 import styles from "./Signup.module.css";
 
@@ -13,8 +14,8 @@ function Signup() {
         dob: "",
         country: ""
     });
-
     const [showPassword, setShowPassword] = useState(false);
+    const { register } = useAuth();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,35 +30,40 @@ function Signup() {
     const handleSubmit = async (e) => {
         e.preventDefault(); 
 
-        try {
-            const response = await fetch("http://localhost:3000/api/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "include",
-                body: JSON.stringify({
-                    username: formData.username,
-                    email: formData.email,
-                    password: formData.password,
-                    dob: formData.dob,
-                    country: formData.country
-                })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                console.log("Registration successful:", data);
-                navigate('/');
-            } else {
-                console.error("Registration failed:", data.message);
-                alert(data.message || "Registration failed.");
-            }
-        } catch (err) {
-            console.error("Error while registering user:", err);
-            alert("An error occurred during registration.");
+        const result = await register(formData);
+        if (result.success) {
+            navigate('/');
         }
+
+        // try {
+        //     const response = await fetch("http://localhost:3000/api/auth/register", {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json"
+        //         },
+        //         credentials: "include",
+        //         body: JSON.stringify({
+        //             username: formData.username,
+        //             email: formData.email,
+        //             password: formData.password,
+        //             dob: formData.dob,
+        //             country: formData.country
+        //         })
+        //     });
+
+        //     const data = await response.json();
+
+        //     if (response.ok) {
+        //         console.log("Registration successful:", data);
+        //         navigate('/');
+        //     } else {
+        //         console.error("Registration failed:", data.message);
+        //         alert(data.message || "Registration failed.");
+        //     }
+        // } catch (err) {
+        //     console.error("Error while registering user:", err);
+        //     alert("An error occurred during registration.");
+        // }
     };
 
     const countries = [
@@ -81,7 +87,7 @@ function Signup() {
                     name="username"
                     className={styles.input}
                     placeholder="Username"
-                    value={formData.name}
+                    value={formData.username}
                     onChange={handleChange}
                     required
                 />

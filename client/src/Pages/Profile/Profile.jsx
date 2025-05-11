@@ -1,17 +1,104 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./Profile.module.css";
 import TopBar from "../Home/TopBar.jsx";
 import UserStats from "./UserStats.jsx";
 import { User } from "lucide-react";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Profile() {
     const [activeSection, setActiveSection] = useState('stats');
+    const { isAuthenticated, user, logout, updateProfile, updatePassword } = useAuth();
+    const [playlists, setPlaylists] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     const countries = [
         "Afghanistan", "Argentina", "Australia", "Brazil", "Canada", "China", "Egypt", "France", "Germany", "India",
         "Indonesia", "Iran", "Italy", "Japan", "Mexico", "Netherlands", "New Zealand", "Nigeria", "Pakistan", "Russia",
         "Saudi Arabia", "South Africa", "South Korea", "Spain", "Sweden", "Turkey", "United Kingdom", "United States"
     ];
+
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        dob: '',
+        country: ''
+    });
+
+    const [passwordForm, setPasswordForm] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handlePasswordChange = (e) => {
+        const { name, value } = e.target;
+        setPasswordForm(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const result = await updateProfile(formData);
+        if (result.success) {
+            navigate('/profile');
+        } else {
+            console.error(result.message);
+        }
+    }
+
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+            console.error("New passwords don't match");
+            return;
+        }
+
+        const result = await updatePassword(
+            passwordForm.currentPassword,
+            passwordForm.newPassword
+        );
+
+        if (result.success) {
+            // Clear form
+            setPasswordForm({
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+            });
+            console.log(result.message);
+        } else {
+            console.error(result.message);
+        }
+    };
+
+    const logoutHandler = async () => {
+        const logoutResult = await logout();
+        navigate('/login');
+    }
+
+    useEffect(() => {
+        const fetchPlaylists = async () => {
+            try {
+                const response = await axios.get(`/api/playlists/${user.id}`, { withCredentials: true });
+                setPlaylists(response.data);
+            } catch (err) {
+                console.error("Failed to fetch playlists:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        if (user) fetchPlaylists();
+    }, [user]);
 
     return (
         <div className={styles.pageContainer}>
@@ -25,11 +112,11 @@ function Profile() {
                         <User size={80} />
                     </div>
                     <div className={styles.profileInfo}>
-                        <h1 className={styles.profileName}>John Doe</h1>
-                        <p className={styles.profileEmail}>john.doe@example.com</p>
+                        <h1 className={styles.profileName}>{user?.username}</h1>
+                        <p className={styles.profileEmail}>{user?.email}</p>
                         <div className={styles.profileStats}>
                             <div className={styles.statItem}>
-                                <span className={styles.statValue}>24</span>
+                                <span className={styles.statValue}>{playlists.length}</span>
                                 <span className={styles.statLabel}>Playlists</span>
                             </div>
                             <div className={styles.statItem}>
@@ -63,41 +150,35 @@ function Profile() {
                     >
                         Change Password
                     </button>
-                    <button 
-                        className={`${styles.tabButton} ${activeSection === 'preferences' ? styles.active : ''}`}
-                        onClick={() => setActiveSection('preferences')}
-                    >
-                        Preferences
-                    </button>
                 </div>
 
                 <div className={styles.tabContent}>
                     {activeSection === 'stats' && (
                         <div className={styles.section}>
                             <h2 className={styles.sectionTitle}>Listening Statistics</h2>
-                            <UserStats />
+                            <UserStats playlistsNum={playlists.length} />
                         </div>
                     )}
 
                     {activeSection === 'editProfile' && (
                         <div className={styles.section}>
                             <h2 className={styles.sectionTitle}>Edit Profile</h2>
-                            <form className={styles.profileForm}>
+                            <form className={styles.profileForm} onSubmit={handleSubmit}>
                                 <div className={styles.formGroup}>
-                                    <label htmlFor="name">Username</label>
-                                    <input type="text" id="name" placeholder="Username" className={styles.inputField} />
+                                    <label htmlFor="username">Username</label>
+                                    <input type="text" id="username" placeholder="Username" name="username" className={styles.inputField} value={formData.username} onChange={handleChange} />
                                 </div>
                                 <div className={styles.formGroup}>
                                     <label htmlFor="email">Email</label>
-                                    <input type="email" id="email" placeholder="Email" className={styles.inputField} />
+                                    <input type="email" id="email" placeholder="Email" name="email" className={styles.inputField} value={formData.email} onChange={handleChange} />
                                 </div>
                                 <div className={styles.formGroup}>
                                     <label htmlFor="dob">Date of Birth</label>
-                                    <input type="date" id="dob" className={styles.inputField} />
+                                    <input type="date" id="dob" name="dob" className={styles.inputField} value={formData.dob} onChange={handleChange} />
                                 </div>
                                 <div className={styles.formGroup}>
                                     <label htmlFor="country">Country</label>
-                                    <select id="country" className={styles.inputField}>
+                                    <select id="country" name="country" className={styles.inputField} value={formData.country} onChange={handleChange} >
                                         <option value="">Select Country</option>
                                         {countries.map((country) => (
                                             <option key={country} value={country}>{country}</option>
@@ -112,57 +193,20 @@ function Profile() {
                     {activeSection === 'changePassword' && (
                         <div className={styles.section}>
                             <h2 className={styles.sectionTitle}>Change Password</h2>
-                            <form className={styles.profileForm}>
+                            <form className={styles.profileForm} onSubmit={handlePasswordSubmit}>
                                 <div className={styles.formGroup}>
                                     <label htmlFor="currentPassword">Current Password</label>
-                                    <input type="password" id="currentPassword" placeholder="Current Password" className={styles.inputField} />
+                                    <input type="password" id="currentPassword" name="currentPassword" placeholder="Current Password" className={styles.inputField} value={passwordForm.currentPassword} onChange={handlePasswordChange} />
                                 </div>
                                 <div className={styles.formGroup}>
                                     <label htmlFor="newPassword">New Password</label>
-                                    <input type="password" id="newPassword" placeholder="New Password" className={styles.inputField} />
+                                    <input type="password" id="newPassword" name="newPassword" placeholder="New Password" className={styles.inputField} value={passwordForm.newPassword} onChange={handlePasswordChange} />
                                 </div>
                                 <div className={styles.formGroup}>
                                     <label htmlFor="confirmPassword">Confirm Password</label>
-                                    <input type="password" id="confirmPassword" placeholder="Confirm Password" className={styles.inputField} />
+                                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" className={styles.inputField} value={passwordForm.confirmPassword} onChange={handlePasswordChange} />
                                 </div>
                                 <button type="submit" className={styles.submitButton}>Update Password</button>
-                            </form>
-                        </div>
-                    )}
-
-                    {activeSection === 'preferences' && (
-                        <div className={styles.section}>
-                            <h2 className={styles.sectionTitle}>Preferences</h2>
-                            <form className={styles.profileForm}>
-                                <div className={styles.formGroup}>
-                                    <label htmlFor="language">Language</label>
-                                    <select id="language" className={styles.inputField}>
-                                        <option value="en">English</option>
-                                        <option value="es">Spanish</option>
-                                        <option value="fr">French</option>
-                                        <option value="de">German</option>
-                                    </select>
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label htmlFor="theme">Theme</label>
-                                    <select id="theme" className={styles.inputField}>
-                                        <option value="dark">Dark</option>
-                                        <option value="light">Light</option>
-                                    </select>
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label className={styles.checkboxLabel}>
-                                        <input type="checkbox" className={styles.checkbox} />
-                                        Enable notifications
-                                    </label>
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label className={styles.checkboxLabel}>
-                                        <input type="checkbox" className={styles.checkbox} />
-                                        Show explicit content
-                                    </label>
-                                </div>
-                                <button type="submit" className={styles.submitButton}>Save Preferences</button>
                             </form>
                         </div>
                     )}
@@ -171,7 +215,7 @@ function Profile() {
                 <div className={styles.dangerZone}>
                     <h3 className={styles.dangerTitle}>Danger Zone</h3>
                     <div className={styles.dangerButtons}>
-                        <button className={styles.logoutButton}>
+                        <button className={styles.logoutButton} onClick={logoutHandler}>
                             <i className="fas fa-sign-out-alt"></i> Logout
                         </button>
                         <button className={styles.deleteAccountButton}>

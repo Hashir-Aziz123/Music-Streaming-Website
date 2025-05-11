@@ -1,10 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Search, Download, Bell, User } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import styles from './TopBar.module.css';
 import logo from '../../assets/logo.png';
 
 function TopBar() {
     const location = useLocation();
+    const { isAuthenticated, user, logout, isLoading } = useAuth();
     
     return (
         <div className={styles.topBar}>
