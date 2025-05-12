@@ -7,6 +7,7 @@ import MediaControlBar from "./MediaControlBar.jsx";
 import AllSongsView, { LoadingIndicator } from "./AllSongsView.jsx";
 import AlbumView from "./AlbumView.jsx";
 import ArtistView from "./ArtistView.jsx";
+import RecommendationView from "./RecommendationView.jsx";
 
 function Home() {
     const [songs, setSongs] = useState([]);
@@ -27,7 +28,13 @@ function Home() {
     const [artistSongs, setArtistSongs] = useState([]);
     const [artistAlbums, setArtistAlbums] = useState([]);
     const [loadingArtist, setLoadingArtist] = useState(false);
-    
+
+    // Recommendation view states
+    const [showRecommendations, setShowRecommendations] = useState(false);
+    const [recommendedSongs, setRecommendedSongs] = useState([]);
+    const [loadingRecommendations, setLoadingRecommendations] = useState(false);
+
+
     // Pagination states
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
@@ -284,6 +291,23 @@ function Home() {
         }
     };
 
+    //recommendation view logic
+    const loadRecommendations = async (userId) => {
+        try {
+            setLoadingRecommendations(true);
+            const response = await fetch(`http://localhost:3000/api/recommendations/${userId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setRecommendedSongs(data || []);
+            }
+        } catch (error) {
+            console.error("Error fetching recommendations:", error);
+        } finally {
+            setLoadingRecommendations(false);
+        }
+    };
+
+
     // Function to determine which view to render
     const renderContentView = () => {
         if (selectedArtist) {
@@ -317,27 +341,49 @@ function Home() {
             );
         } else {
             return (
-                <AllSongsView
-                    songs={songs}
-                    artistsMap={artistsMap}
-                    albumsMap={albumsMap}
+                <RecommendationView
+                    recommendedSongs={recommendedSongs}
+                    isLoading={loadingRecommendations}
                     currentSong={currentSong}
                     isPlaying={isPlaying}
-                    lastSongRef={lastSongRef}
-                    loadingMore={loadingMore}
-                    hasMore={hasMore}
                     handlePlayClick={handlePlayClick}
-                    handleAlbumClick={handleAlbumClick}
-                    handleArtistClick={handleArtistClick}
+                    artistsMap={artistsMap}
+                    albumsMap={albumsMap}
                 />
             );
         }
+        // else {
+        //     return (
+        //         <AllSongsView
+        //             songs={songs}
+        //             artistsMap={artistsMap}
+        //             albumsMap={albumsMap}
+        //             currentSong={currentSong}
+        //             isPlaying={isPlaying}
+        //             lastSongRef={lastSongRef}
+        //             loadingMore={loadingMore}
+        //             hasMore={hasMore}
+        //             handlePlayClick={handlePlayClick}
+        //             handleAlbumClick={handleAlbumClick}
+        //             handleArtistClick={handleArtistClick}
+        //         />
+        //     );
+        // }
     };
 
     return (
         <div className={styles.pageContainer}>
             <div className={styles.topSection}>
                 <TopBar />
+                {/*<button onClick={() => {*/}
+                {/*    setShowRecommendations( !showRecommendations);*/}
+                {/*    setSelectedAlbum(null);*/}
+                {/*    setSelectedArtist(null);*/}
+                {/*    loadRecommendations("681b690549be81240cd1c847"); // replace with actual userId*/}
+                {/*}}>*/}
+                {/*    Show Recommendations*/}
+                {/*</button>*/}
+
             </div>
 
             <div className={styles.midSection}>
@@ -378,5 +424,15 @@ function Home() {
         </div>
     );
 }
+
+// useful code for later
+// <button onClick={() => {
+//     setShowRecommendations( !showRecommendations);
+//     setSelectedAlbum(null);
+//     setSelectedArtist(null);
+//     loadRecommendations("681b690549be81240cd1c847"); // replace with actual userId
+// }}>
+//     Show Recommendations
+// </button>
 
 export default Home;

@@ -1,0 +1,68 @@
+/* Scroll Sections */
+
+.scrollSection {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 420px;
+}
+
+.scrollSection h2 {
+    color: white;
+}
+
+.scrollWrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.scrollButton {
+    background-color: transparent;
+    color: #e8dddd;
+    width: fit-content;
+    height: fit-content;
+    border: none;
+    font-size: 36px;
+    cursor: pointer;
+    padding: 0 10px;
+    margin: 10px;
+    border-radius: 50%;
+    user-select: none;
+}
+
+.scrollButton:hover {
+    background-color: #171616;
+}
+
+.scrollContainer {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scroll-behavior: smooth;
+}
+
+.scrollContainer::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+
+.playlistCard {
+    min-width: 200px;
+    height: 350px;
+    background-color: #333;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.playlistCard:hover {
+    background-color: #171616;
+    transition: ease-in 0.2s;
+    cursor: pointer;
+}
+
