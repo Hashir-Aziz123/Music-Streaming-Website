@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Search, Download, Bell, User, Music } from 'lucide-react';
 import styles from './TopBar.module.css';
-import logo from '../../../assets/logo.png';
+import logo from '../../../public/favicon.png';
 import PropTypes from 'prop-types';
 
 function TopBar({ onAllSongsClick }) {

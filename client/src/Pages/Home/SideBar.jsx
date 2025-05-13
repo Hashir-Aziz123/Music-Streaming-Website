@@ -18,7 +18,8 @@ function SideBar({ onPlaylistClick, onCreatePlaylistClick, selectedPlaylist, ref
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
-      // Function to fetch playlists that can be called from outside
+    
+    // Function to fetch playlists that can be called from outside
     const fetchPlaylists = async () => {
         try {
             setIsLoading(true);
@@ -75,7 +76,9 @@ function SideBar({ onPlaylistClick, onCreatePlaylistClick, selectedPlaylist, ref
             playlist.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredPlaylists(filtered);
-    }, [searchTerm, playlists]);    return (
+    }, [searchTerm, playlists]);
+    
+    return (
         <div className={styles.sideBarContainer}>
             <div className={styles.libraryHeader}>
                 <h2 className={styles.libraryTitle}>Your Library</h2>
@@ -123,7 +126,9 @@ function SideBar({ onPlaylistClick, onCreatePlaylistClick, selectedPlaylist, ref
                         <option value="creator">Creator</option>
                     </select>
                 </div>
-            </div>            {/* Scrollable List Section */}
+            </div>
+            
+            {/* Scrollable List Section */}
             <div className={styles.scrollSection}>
                 {isLoading ? (
                     <div className={styles.loading}>Loading playlists...</div>
