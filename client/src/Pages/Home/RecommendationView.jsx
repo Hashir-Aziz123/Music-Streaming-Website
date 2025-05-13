@@ -1,69 +1,69 @@
-import React from "react";
+import React, { useState } from "react";
 import PlaylistCard from "./PlaylistCard.jsx";
 import styles from "./RecommendationView.module.css";
 import ScrollableSection from "./ScrollableSection.jsx";
 
-
+const COVER_IMG = "https://placehold.co/400/111/e75454?text=Playlist"; // "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQPZcjVw-tHtbV1BTXhSy86q-bARMButrtbA&s";
 
 function RecommendationView({ recommendedSongs, isLoading, handlePlayClick, currentSong, isPlaying, artistsMap, albumsMap }) {
-    if (isLoading) return <p>Loading recommendations...</p>;
-
+    const [activeFilter, setActiveFilter] = useState("Weekly Recommend");
+    
+    const filters = ["Popular", "Most Liked", "All Time Hits", "Weekly Recommend"];
+    
+    const handleFilterClick = (filter) => {
+        setActiveFilter(filter);
+        // Here you would typically fetch or filter content based on the selected filter
+    };
+    
+    if (isLoading) return <div className={styles.loadingIndicator}>Loading recommendations...</div>;
 
     return (
         <div className={styles.recommendationContainer}>
-
-
             {/* Weekly Recommendation */}
             <div className={styles.weeklyRecommendation}>
-                <div>
-                    <h1>Weekly Recommend</h1>
-                </div>
-                {/*<div className={styles.bigCard}>*/}
-                {/*    <PlaylistCard title="Rock Vibes" imgSrc="/images/rock.jpg" subtitle="32 songs" />*/}
-                {/*</div>*/}
+                <h2>Weekly Recommend</h2>
                 <div className={styles.weeklyRecommendationBarSpace}>
-                    <div className={styles.weeklyRecommendationBar}>Popular</div>
-                    <div className={styles.weeklyRecommendationBar}>Most liked</div>
-                    <div className={styles.weeklyRecommendationBar}>All time hits</div>
-                    <div className={styles.weeklyRecommendationBar}>Weekly Recommend</div>
+                    {filters.map((filter) => (
+                        <button
+                            key={filter}
+                            className={`${styles.weeklyRecommendationBar} ${activeFilter === filter ? styles.active : ""}`}
+                            onClick={() => handleFilterClick(filter)}
+                        >
+                            {filter}
+                        </button>
+                    ))}
                 </div>
-
             </div>
 
             {/* Scroll Sections */}
             <ScrollableSection title="Favorite Genres"
-                               items={[
-                                   <PlaylistCard title="Rock Vibes" imgSrc="/images/rock.jpg" subtitle="32 songs" />,
-                                   <PlaylistCard title="Lo-Fi Beats" imgSrc="/images/lofi.jpg" subtitle="Chill tracks" />,
-                                   <PlaylistCard title="Top EDM" imgSrc="/images/edm.jpg" subtitle="45 songs" />,
-                                   <PlaylistCard title="Acoustic Mornings" imgSrc="/images/acoustic.jpg" subtitle="Soft & calm" />,
-                                   <PlaylistCard title="Rock Vibes" imgSrc="/images/rock.jpg" subtitle="32 songs" />,
-                                   <PlaylistCard title="Lo-Fi Beats" imgSrc="/images/lofi.jpg" subtitle="Chill tracks" />,
-                                   <PlaylistCard title="Top EDM" imgSrc="/images/edm.jpg" subtitle="45 songs" />,
-                                   <PlaylistCard title="Acoustic Mornings" imgSrc="/images/acoustic.jpg" subtitle="Soft & calm" />,
-                                   <PlaylistCard title="Rock Vibes" imgSrc="/images/rock.jpg" subtitle="32 songs" />,
-                                   <PlaylistCard title="Lo-Fi Beats" imgSrc="/images/lofi.jpg" subtitle="Chill tracks" />,
-                                   <PlaylistCard title="Top EDM" imgSrc="/images/edm.jpg" subtitle="45 songs" />,
-                                   <PlaylistCard title="Acoustic Mornings" imgSrc="/images/acoustic.jpg" subtitle="Soft & calm" />,
-                                   <PlaylistCard title="Rock Vibes" imgSrc="/images/rock.jpg" subtitle="32 songs" />,
-                                   <PlaylistCard title="Lo-Fi Beats" imgSrc="/images/lofi.jpg" subtitle="Chill tracks" />,
-                                   <PlaylistCard title="Top EDM" imgSrc="/images/edm.jpg" subtitle="45 songs" />,
-                                   <PlaylistCard title="Acoustic Mornings" imgSrc="/images/acoustic.jpg" subtitle="Soft & calm" />
-                               ]} />
+                items={[
+                    <PlaylistCard key="rock1" title="Rock Vibes" imgSrc={COVER_IMG} subtitle="32 songs" />, 
+                    <PlaylistCard key="lofi1" title="Lo-Fi Beats" imgSrc={COVER_IMG} subtitle="Chill tracks" />, 
+                    <PlaylistCard key="edm1" title="Top EDM" imgSrc={COVER_IMG} subtitle="45 songs" />, 
+                    <PlaylistCard key="acoustic1" title="Acoustic Mornings" imgSrc={COVER_IMG} subtitle="Soft & calm" />, 
+                    <PlaylistCard key="rock2" title="Rock Vibes" imgSrc={COVER_IMG} subtitle="32 songs" />, 
+                    <PlaylistCard key="lofi2" title="Lo-Fi Beats" imgSrc={COVER_IMG} subtitle="Chill tracks" />
+                ]} 
+            />
+
             <ScrollableSection title="Favorite Artists"
-                               items={[
-                                   <PlaylistCard title="Rock Vibes" imgSrc="/images/rock.jpg" subtitle="32 songs" />,
-                                   <PlaylistCard title="Lo-Fi Beats" imgSrc="/images/lofi.jpg" subtitle="Chill tracks" />,
-                                   <PlaylistCard title="Top EDM" imgSrc="/images/edm.jpg" subtitle="45 songs" />,
-                                   <PlaylistCard title="Acoustic Mornings" imgSrc="/images/acoustic.jpg" subtitle="Soft & calm" />
-                               ]} />
+                items={[
+                    <PlaylistCard key="artist1" title="Rock Vibes" imgSrc={COVER_IMG} subtitle="32 songs" />, 
+                    <PlaylistCard key="artist2" title="Lo-Fi Beats" imgSrc={COVER_IMG} subtitle="Chill tracks" />, 
+                    <PlaylistCard key="artist3" title="Top EDM" imgSrc={COVER_IMG} subtitle="45 songs" />, 
+                    <PlaylistCard key="artist4" title="Acoustic Mornings" imgSrc={COVER_IMG} subtitle="Soft & calm" />
+                ]} 
+            />
+
             <ScrollableSection title="Popular Right Now"
-                               items={[
-                                   <PlaylistCard title="Rock Vibes" imgSrc="/images/rock.jpg" subtitle="32 songs" />,
-                                   <PlaylistCard title="Lo-Fi Beats" imgSrc="/images/lofi.jpg" subtitle="Chill tracks" />,
-                                   <PlaylistCard title="Top EDM" imgSrc="/images/edm.jpg" subtitle="45 songs" />,
-                                   <PlaylistCard title="Acoustic Mornings" imgSrc="/images/acoustic.jpg" subtitle="Soft & calm" />
-                               ]} />
+                items={[
+                    <PlaylistCard key="pop1" title="Rock Vibes" imgSrc={COVER_IMG} subtitle="32 songs" />, 
+                    <PlaylistCard key="pop2" title="Lo-Fi Beats" imgSrc={COVER_IMG} subtitle="Chill tracks" />, 
+                    <PlaylistCard key="pop3" title="Top EDM" imgSrc={COVER_IMG} subtitle="45 songs" />, 
+                    <PlaylistCard key="pop4" title="Acoustic Mornings" imgSrc={COVER_IMG} subtitle="Soft & calm" />
+                ]} 
+            />
         </div>
     );
 }

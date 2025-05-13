@@ -1,27 +1,60 @@
 import styles from './PlaylistCard.module.css';
 import PropTypes from 'prop-types';
 
-function PlaylistCard({ playlist, onClick, isActive }) {
+function PlaylistCard({ playlist, onClick, isActive, title, imgSrc, subtitle, inScrollSection = false }) {
     // Default image if none provided
     const defaultImage = "https://placehold.co/400/111/e75454?text=Playlist";
+    
+    // Support both formats - either playlist object or individual props
+    const isPlaylistObject = !!playlist;
+    
+    // Handle click event safely
+    const handleClick = () => {
+        if (onClick && playlist) {
+            onClick(playlist);
+        }
+    };
 
+    // In RecommendationView's ScrollSection, we need a vertical card layout
+    if (!isPlaylistObject && (inScrollSection || imgSrc)) {
+        return (
+            <div className={styles.recommendationCard} onClick={handleClick}>
+                <div className={styles.recommendationImageContainer}>
+                    <img 
+                        src={imgSrc || defaultImage}
+                        alt={title}
+                        className={styles.recommendationImage}
+                    />
+                </div>
+                <div className={styles.recommendationContent}>
+                    <h4 className={styles.recommendationTitle}>{title}</h4>
+                    <p className={styles.recommendationSubtitle}>{subtitle}</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Default horizontal card layout for playlists
     return (
         <div 
             className={`${styles.card} ${isActive ? styles.active : ''}`} 
-            onClick={() => onClick(playlist)}
+            onClick={handleClick}
         >
             <div className={styles.imageContainer}>
                 <img
-                    src={playlist.cover_image_url || defaultImage}
-                    alt={playlist.name}
+                    src={isPlaylistObject ? (playlist.cover_image_url || defaultImage) : (imgSrc || defaultImage)}
+                    alt={isPlaylistObject ? playlist.name : title}
                     className={styles.image}
                 />
             </div>
 
             <div className={styles.cardContent}>
-                <h4 className={styles.title}>{playlist.name}</h4>
+                <h4 className={styles.title}>{isPlaylistObject ? playlist.name : title}</h4>
                 <p className={styles.subtitle}>
-                    Playlist • {playlist.songsCount || "0"} songs
+                    {isPlaylistObject 
+                        ? `Playlist • ${playlist.songsCount || "0"} songs`
+                        : subtitle
+                    }
                 </p>
             </div>
         </div>
@@ -29,14 +62,22 @@ function PlaylistCard({ playlist, onClick, isActive }) {
 }
 
 PlaylistCard.propTypes = {
+    // Original playlist object props
     playlist: PropTypes.shape({
-        _id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
+        _id: PropTypes.string,
+        name: PropTypes.string,
         cover_image_url: PropTypes.string,
-        is_public: PropTypes.bool
-    }).isRequired,
-    onClick: PropTypes.func.isRequired,
-    isActive: PropTypes.bool
+        is_public: PropTypes.bool,
+        songsCount: PropTypes.number
+    }),
+    onClick: PropTypes.func,
+    isActive: PropTypes.bool,
+      // Alternative direct props
+    title: PropTypes.string,
+    imgSrc: PropTypes.string,
+    subtitle: PropTypes.string,
+    // Additional props
+    inScrollSection: PropTypes.bool
 };
 
 export default PlaylistCard;

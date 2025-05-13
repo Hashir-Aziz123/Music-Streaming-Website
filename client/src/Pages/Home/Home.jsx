@@ -10,6 +10,7 @@ import ArtistView from "./ArtistView.jsx";
 import RecommendationView from "./RecommendationView.jsx";
 import PlaylistView from "./PlaylistView.jsx";
 import CreatePlaylistModal from "./CreatePlaylistModal.jsx";
+import { ArrowLeft } from "lucide-react";
 
 function Home() {
     const [songs, setSongs] = useState([]);
@@ -39,12 +40,13 @@ function Home() {
     const [selectedArtist, setSelectedArtist] = useState(null);
     const [artistSongs, setArtistSongs] = useState([]);
     const [artistAlbums, setArtistAlbums] = useState([]);
-    const [loadingArtist, setLoadingArtist] = useState(false);
-
-    // Recommendation view states
-    const [showRecommendations, setShowRecommendations] = useState(false);
+    const [loadingArtist, setLoadingArtist] = useState(false);    // Recommendation view states
+    const [showRecommendations, setShowRecommendations] = useState(true);
     const [recommendedSongs, setRecommendedSongs] = useState([]);
     const [loadingRecommendations, setLoadingRecommendations] = useState(false);
+    
+    // All songs view state
+    const [showAllSongs, setShowAllSongs] = useState(false);
 
     // Playlist view states
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
@@ -98,10 +100,13 @@ function Home() {
             setLoadingMore(false);
         }
     }, [loading]);
-
+    
     // Initial load of songs
     useEffect(() => {
         fetchSongs(1, false);
+        
+        // Load recommendations on component mount
+        loadRecommendations("681b690549be81240cd1c847"); // Using a default userID
     }, [fetchSongs]);
 
     // Setup intersection observer for infinite scroll
@@ -122,7 +127,9 @@ function Home() {
         
         if (node) observer.current.observe(node);
         lastSongElementRef.current = node;
-    }, [loading, loadingMore, hasMore, fetchSongs]);    // Function to handle album selection and fetching album songs
+    }, [loading, loadingMore, hasMore, fetchSongs]);
+    
+    // Function to handle album selection and fetching album songs
     const handleAlbumClick = async (albumId) => {
         try {
             // Reset artist view if active
@@ -160,7 +167,9 @@ function Home() {
         } finally {
             setLoadingAlbum(false);
         }
-    };    // Function to handle artist selection and fetching artist songs and albums
+    };
+    
+    // Function to handle artist selection and fetching artist songs and albums
     const handleArtistClick = async (artistId) => {
         try {
             // Reset album view if active
@@ -228,7 +237,7 @@ function Home() {
             setLoadingArtist(false);
         }
     };
-
+    
     // Function to handle back button for all detailed views
     const handleBackToAllSongs = () => {
         setSelectedAlbum(null);
@@ -237,6 +246,20 @@ function Home() {
         setArtistSongs([]);
         setArtistAlbums([]);
         setSelectedPlaylist(null);
+        setShowAllSongs(false);
+        setShowRecommendations(true);
+    };
+    
+    // Function to handle going to all songs view
+    const handleAllSongsClick = () => {
+        setSelectedAlbum(null);
+        setAlbumSongs([]);
+        setSelectedArtist(null);
+        setArtistSongs([]);
+        setArtistAlbums([]);
+        setSelectedPlaylist(null);
+        setShowRecommendations(false);
+        setShowAllSongs(true);
     };
     
     // Function to handle playlist selection
@@ -250,7 +273,9 @@ function Home() {
         
         // Set selected playlist
         setSelectedPlaylist(playlist);
-    };    // Function to handle playlist creation success
+    };
+    
+    // Function to handle playlist creation success
     const handlePlaylistCreated = (newPlaylist) => {
         // Close the modal
         setShowCreatePlaylistModal(false);
@@ -260,7 +285,9 @@ function Home() {
         
         // Optionally, automatically select the newly created playlist
         setSelectedPlaylist(newPlaylist);
-    };    // Function to handle when songs are added to a playlist
+    };
+    
+    // Function to handle when songs are added to a playlist
     const handlePlaylistSongsUpdate = (playlistId) => {
         // Increment the playlist refresh trigger to force a sidebar reload
         setPlaylistRefreshTrigger(prev => prev + 1);
@@ -337,7 +364,9 @@ function Home() {
         } catch (err) {
             console.error("Error fetching artist and album details:", err);
         }
-    };    const handlePlayClick = (song, fromPlaylist = false) => {
+    };
+    
+    const handlePlayClick = (song, fromPlaylist = false) => {
         if (currentSong && song._id === currentSong._id) {
             // If clicking the same song that's already selected, toggle play/pause
             setIsPlaying(!isPlaying);
@@ -368,10 +397,11 @@ function Home() {
         } finally {
             setLoadingRecommendations(false);
         }
-    };
-    // Function to determine which view to render
-    const renderContentView = () => {        if (selectedPlaylist) {
-            return (                <PlaylistView
+    };    // Function to determine which view to render
+    const renderContentView = () => {
+        if (selectedPlaylist) {
+            return (
+                <PlaylistView
                     playlist={selectedPlaylist}
                     currentSong={currentSong}
                     isPlaying={isPlaying}
@@ -420,21 +450,7 @@ function Home() {
                     handleBackToAllSongs={handleBackToAllSongs}
                     handlePlayClick={handlePlayClick}
                 />
-            );
-        // } else {
-        //     return (
-        //         <RecommendationView
-        //             recommendedSongs={recommendedSongs}
-        //             isLoading={loadingRecommendations}
-        //             currentSong={currentSong}
-        //             isPlaying={isPlaying}
-        //             handlePlayClick={handlePlayClick}
-        //             artistsMap={artistsMap}
-        //             albumsMap={albumsMap}
-        //         />
-        //     );
-        // }
-        } else {
+            );        } else if (showAllSongs) {
             return (
                 <AllSongsView
                     songs={songs}
@@ -448,6 +464,20 @@ function Home() {
                     handlePlayClick={handlePlayClick}
                     handleAlbumClick={handleAlbumClick}
                     handleArtistClick={handleArtistClick}
+                    handleBackToAllSongs={handleBackToAllSongs}
+                />
+            );
+        } else {
+            // Default to recommendation view
+            return (
+                <RecommendationView
+                    recommendedSongs={recommendedSongs}
+                    isLoading={loadingRecommendations}
+                    currentSong={currentSong}
+                    isPlaying={isPlaying}
+                    handlePlayClick={handlePlayClick}
+                    artistsMap={artistsMap}
+                    albumsMap={albumsMap}
                 />
             );
         }
@@ -581,17 +611,10 @@ function Home() {
     return (
         <div className={styles.pageContainer}>
             <div className={styles.topSection}>
-                <TopBar />
-                {/*<button onClick={() => {*/}
-                {/*    setShowRecommendations( !showRecommendations);*/}
-                {/*    setSelectedAlbum(null);*/}
-                {/*    setSelectedArtist(null);*/}
-                {/*    loadRecommendations("681b690549be81240cd1c847"); // replace with actual userId*/}
-                {/*}}>*/}
-                {/*    Show Recommendations*/}
-                {/*</button>*/}
-
-            </div>            <div className={styles.midSection}>                <div className={styles.leftMiddle}>
+                <TopBar onAllSongsClick={handleAllSongsClick} />
+            </div>
+            <div className={styles.midSection}>
+                <div className={styles.leftMiddle}>
                     <SideBar 
                         onPlaylistClick={handlePlaylistClick} 
                         onCreatePlaylistClick={() => setShowCreatePlaylistModal(true)}
@@ -612,7 +635,8 @@ function Home() {
                     {!loading && !error && renderContentView()}
                 </div>
 
-                {<div className={styles.rightMiddle}>                    <CurrentlyPlayingSection
+                {<div className={styles.rightMiddle}>
+                    <CurrentlyPlayingSection
                         song={currentSong}
                         artistsMap={artistsMap}
                         albumsMap={albumsMap}
@@ -622,7 +646,8 @@ function Home() {
                     />
                 </div>}
             </div>
-            {currentSong && <div className={styles.bottomSection}>                <MediaControlBar
+            {currentSong && <div className={styles.bottomSection}>
+                <MediaControlBar
                     currentSong={currentSong}
                     isPlaying={isPlaying}
                     setIsPlaying={setIsPlaying}

@@ -546,6 +546,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: #e75454;
 }
 
 .albumCardYear {
@@ -643,6 +644,18 @@
     .songsTable .indexColumn {
         display: none;
     }
+}
+
+.viewHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.viewHeader h2 {
+    margin: 0 0 0 16px;
+    font-size: 24px;
+    font-weight: 700;
 }
 
 

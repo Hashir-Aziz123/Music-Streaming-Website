@@ -1,3 +1,4 @@
+/* Standard playlist card styles (horizontal) */
 .card {
     width: 100%;
     display: flex;
@@ -53,6 +54,53 @@
     color: #b3b3b3;
     margin: 0;
     font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Recommendation card styles (vertical) */
+.recommendationCard {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease;
+}
+
+.recommendationImageContainer {
+    width: 100%;
+    height: 180px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #333;
+}
+
+.recommendationImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.recommendationContent {
+    padding: 8px 5px;
+    text-align: left;
+}
+
+.recommendationTitle {
+    color: #ffffff;
+    margin: 0 0 4px 0;
+    font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recommendationSubtitle {
+    color: #b3b3b3;
+    margin: 0;
+    font-size: 13px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

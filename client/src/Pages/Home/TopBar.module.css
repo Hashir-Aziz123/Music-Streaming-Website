@@ -110,6 +110,40 @@
     cursor: pointer;
 }
 
+.userIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.allSongsButton {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    margin-right: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.allSongsButton:hover {
+    background-color: rgba(231, 84, 84, 0.7);
+}
+
+.allSongsButton span {
+    margin-left: 6px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
 /* Media queries */
 @media (max-width: 768px) {
     .searchContainer {

@@ -10,6 +10,8 @@ const LoadingIndicator = ({ message = "Loading songs..." }) => (
     </div>
 );
 
+import { ArrowLeft } from "lucide-react";
+
 function AllSongsView({ 
     songs, 
     artistsMap, 
@@ -21,7 +23,8 @@ function AllSongsView({
     hasMore,
     handlePlayClick, 
     handleAlbumClick,
-    handleArtistClick
+    handleArtistClick,
+    handleBackToAllSongs
 }) {
     // Default placeholder image for when no album art is available
     const defaultCoverImage = "https://placehold.co/400x400/111/e75454?text=Music";
@@ -77,11 +80,17 @@ function AllSongsView({
         }
         
         return genreData;
-    };
-
-    return (
+    };    return (
         <div className={styles.songsContainer}>
-            <h1>Available Songs</h1>
+            <div className={styles.viewHeader}>
+                <button 
+                    className={styles.backButton} 
+                    onClick={handleBackToAllSongs}
+                >
+                    <ArrowLeft size={24} />
+                </button>
+                <h2>All Songs</h2>
+            </div>
             
             <div className={styles.songsList}>
                 {songs.map((song, index) => {
@@ -153,10 +162,10 @@ AllSongsView.propTypes = {
     isPlaying: PropTypes.bool.isRequired,
     lastSongRef: PropTypes.func.isRequired,
     loadingMore: PropTypes.bool.isRequired,
-    hasMore: PropTypes.bool.isRequired,
-    handlePlayClick: PropTypes.func.isRequired,
+    hasMore: PropTypes.bool.isRequired,    handlePlayClick: PropTypes.func.isRequired,
     handleAlbumClick: PropTypes.func.isRequired,
-    handleArtistClick: PropTypes.func.isRequired
+    handleArtistClick: PropTypes.func.isRequired,
+    handleBackToAllSongs: PropTypes.func.isRequired
 };
 
 export { LoadingIndicator };
