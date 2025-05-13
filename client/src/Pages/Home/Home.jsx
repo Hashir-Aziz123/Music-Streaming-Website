@@ -22,6 +22,14 @@ function Home() {
     const [playlistRefreshTrigger, setPlaylistRefreshTrigger] = useState(0);
     const [selectedPlaylistRefreshTrigger, setSelectedPlaylistRefreshTrigger] = useState(0);
     
+    // Playlist playback states
+    const [playlistMode, setPlaylistMode] = useState(false);
+    const [currentPlaylist, setCurrentPlaylist] = useState(null);
+    const [playlistSongs, setPlaylistSongs] = useState([]);
+    const [playbackQueue, setPlaybackQueue] = useState([]);
+    const [shuffleMode, setShuffleMode] = useState(false);
+    const [repeatMode, setRepeatMode] = useState(false);
+    
     // Album view states
     const [selectedAlbum, setSelectedAlbum] = useState(null);
     const [albumSongs, setAlbumSongs] = useState([]);
@@ -329,9 +337,7 @@ function Home() {
         } catch (err) {
             console.error("Error fetching artist and album details:", err);
         }
-    };
-
-    const handlePlayClick = (song) => {
+    };    const handlePlayClick = (song, fromPlaylist = false) => {
         if (currentSong && song._id === currentSong._id) {
             // If clicking the same song that's already selected, toggle play/pause
             setIsPlaying(!isPlaying);
@@ -339,6 +345,12 @@ function Home() {
             // If clicking a new song, set it as current and start playing
             setCurrentSong(song);
             setIsPlaying(true);
+            
+            // Clear playlist mode if playing a song not from playlist
+            if (!fromPlaylist && playlistMode) {
+                setPlaylistMode(false);
+                setPlaybackQueue([]);
+            }
         }
     };
 
@@ -371,6 +383,13 @@ function Home() {
                     onPlaylistUpdate={handlePlaylistSongsUpdate}
                     onPlaylistDelete={handlePlaylistDelete}
                     refreshTrigger={selectedPlaylistRefreshTrigger}
+                    // Playlist functionality props
+                    playlistMode={playlistMode && currentPlaylist?._id === selectedPlaylist?._id}
+                    handlePlayPlaylist={handlePlayPlaylist}
+                    shuffleMode={shuffleMode}
+                    repeatMode={repeatMode}
+                    toggleShuffle={toggleShuffle}
+                    toggleRepeat={toggleRepeat}
                 />
             );
         } else if (selectedArtist) {
@@ -434,6 +453,131 @@ function Home() {
         }
     };
 
+    // Function to handle playlist playback
+    const handlePlayPlaylist = (playlist, songs, startIndex = 0) => {
+        if (!songs || songs.length === 0) return;
+        
+        // Set the current playlist
+        setCurrentPlaylist(playlist);
+        setPlaylistSongs(songs);
+        
+        // Generate the playback queue
+        generatePlaybackQueue(songs, startIndex);
+        
+        // Set the first song in queue as current
+        setCurrentSong(songs[startIndex]);
+        setIsPlaying(true);
+        
+        // Set playlist mode
+        setPlaylistMode(true);
+    };
+    
+    // Generate playback queue based on shuffle mode
+    const generatePlaybackQueue = (songs, startIndex = 0) => {
+        if (shuffleMode) {
+            // Create shuffled queue with Fisher-Yates shuffle algorithm
+            const shuffled = [...songs];
+            
+            // Move the starting song to the beginning if specified
+            if (startIndex > 0 && startIndex < songs.length) {
+                // Remove the song from its current position
+                const startSong = shuffled.splice(startIndex, 1)[0];
+                // Put it at the beginning
+                shuffled.unshift(startSong);
+            }
+            
+            // Shuffle the rest of the array (excluding the first song)
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                // Don't include the first song in shuffling if we have a startIndex
+                const j = startIndex > 0 ? 
+                    Math.floor(Math.random() * i) + 1 : // Start at 1 to preserve first song
+                    Math.floor(Math.random() * (i + 1)); // Regular shuffle
+                    
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            setPlaybackQueue(shuffled);
+        } else {
+            // In order playback
+            setPlaybackQueue([...songs]);
+        }
+    };
+    
+    // Handle next song function
+    const handleNextSong = () => {
+        if (!playlistMode || playbackQueue.length === 0) return;
+        
+        const currentIndex = playbackQueue.findIndex(song => song._id === currentSong._id);
+        if (currentIndex === -1) return;
+        
+        // Check if we're at the end of the queue
+        if (currentIndex === playbackQueue.length - 1) {
+            if (repeatMode) {
+                // If repeat mode is on, start again from the beginning
+                // Re-generate the queue if shuffle is enabled to get a new order
+                if (shuffleMode) {
+                    generatePlaybackQueue(playlistSongs);
+                    setCurrentSong(playbackQueue[0]);
+                } else {
+                    // Just go back to the first song
+                    setCurrentSong(playbackQueue[0]);
+                }
+            } else {
+                // If repeat mode is off, stop playing
+                setIsPlaying(false);
+            }
+        } else {
+            // Play the next song in the queue
+            setCurrentSong(playbackQueue[currentIndex + 1]);
+        }
+    };
+    
+    // Handle previous song function
+    const handlePreviousSong = () => {
+        if (!playlistMode || playbackQueue.length === 0) return;
+        
+        const currentIndex = playbackQueue.findIndex(song => song._id === currentSong._id);
+        if (currentIndex === -1) return;
+        
+        if (currentIndex === 0) {
+            if (repeatMode) {
+                // If repeat mode is on, go to the last song in the queue
+                setCurrentSong(playbackQueue[playbackQueue.length - 1]);
+            }
+            // Otherwise stay on the first song
+        } else {
+            // Go to the previous song
+            setCurrentSong(playbackQueue[currentIndex - 1]);
+        }
+    };
+    
+    // Toggle shuffle mode
+    const toggleShuffle = () => {
+        // Toggle state
+        setShuffleMode(prev => !prev);
+        
+        // Regenerate queue if in playlist mode
+        if (playlistMode && playlistSongs.length > 0) {
+            // Keep the current song at its position when regenerating the queue
+            const currentIndex = playlistSongs.findIndex(song => song._id === currentSong._id);
+            generatePlaybackQueue(playlistSongs, currentIndex >= 0 ? currentIndex : 0);
+        }
+    };
+    
+    // Toggle repeat mode
+    const toggleRepeat = () => {
+        setRepeatMode(prev => !prev);
+    };
+    
+    // Handle song ended event
+    const handleSongEnded = () => {
+        if (playlistMode) {
+            handleNextSong();
+        } else {
+            // For single song playback, just stop playing
+            setIsPlaying(false);
+        }
+    };
+
     return (
         <div className={styles.pageContainer}>
             <div className={styles.topSection}>
@@ -478,13 +622,21 @@ function Home() {
                     />
                 </div>}
             </div>
-            {currentSong && <div className={styles.bottomSection}>
-                <MediaControlBar
+            {currentSong && <div className={styles.bottomSection}>                <MediaControlBar
                     currentSong={currentSong}
                     isPlaying={isPlaying}
                     setIsPlaying={setIsPlaying}
                     artistsMap={artistsMap}
-                />            </div>}
+                    // Playlist functionality props
+                    playlistMode={playlistMode}
+                    shuffleMode={shuffleMode}
+                    repeatMode={repeatMode}
+                    handleNextSong={handleNextSong}
+                    handlePreviousSong={handlePreviousSong}
+                    toggleShuffle={toggleShuffle}
+                    toggleRepeat={toggleRepeat}
+                    handleSongEnded={handleSongEnded}
+                /></div>}
             
             {showCreatePlaylistModal && (
                 <CreatePlaylistModal 

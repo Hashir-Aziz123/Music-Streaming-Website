@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import AddToPlaylistMenu from './AddToPlaylistMenu';
 import { Plus, Heart, Share } from 'lucide-react';
 
-function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate }) {
+function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate, onArtistClick, onAlbumClick }) {
     const [showAddToPlaylistMenu, setShowAddToPlaylistMenu] = useState(false);
     // Default placeholder image
     const defaultAlbumArt = "https://placehold.co/400x400/111/e75454?text=Music";
@@ -30,6 +30,20 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate
         return albumsMap[albumId]?.title || `Album ${albumId}`;
     };
 
+    // Handle artist click
+    const handleArtistClick = (artistId) => {
+        if (onArtistClick && artistId) {
+            onArtistClick(artistId);
+        }
+    };
+
+    // Handle album click
+    const handleAlbumClick = (albumId) => {
+        if (onAlbumClick && albumId) {
+            onAlbumClick(albumId);
+        }
+    };
+
     return (
         <div className={styles.sidebar}>
             <h2 className={styles.header}>Now Playing</h2>
@@ -52,7 +66,14 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate
                     
                     <div className={styles.songInfo}>
                         <h3 className={styles.songTitle}>{song.title}</h3>
-                        <p className={styles.songArtist}>{formatArtist(song.artist)}</p>
+                        {song.artist && (
+                            <p 
+                                className={styles.songArtist} 
+                                onClick={() => handleArtistClick(song.artist)}
+                            >
+                                {formatArtist(song.artist)}
+                            </p>
+                        )}
                         {song.genre && <p className={styles.songGenre}>{Array.isArray(song.genre) ? song.genre.join(', ') : song.genre}</p>}
                     </div>
                     
@@ -86,9 +107,15 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate
                     {song.album && (
                         <div className={styles.infoSection}>
                             <h4 className={styles.sectionHeader}>Album</h4>
-                            <p className={styles.albumName}>{formatAlbum(song.album)}</p>
+                            <p 
+                                className={styles.albumName}
+                                onClick={() => handleAlbumClick(song.album)}
+                            >
+                                {formatAlbum(song.album)}
+                            </p>
                         </div>
-                    )}                    <div className={styles.actionButtons}>
+                    )}
+                    <div className={styles.actionButtons}>
                         <button className={styles.actionButton}>
                             <Heart size={18} />
                         </button>
@@ -127,7 +154,9 @@ CurrentlyPlayingSection.propTypes = {
     song: PropTypes.object,
     artistsMap: PropTypes.object,
     albumsMap: PropTypes.object,
-    onPlaylistUpdate: PropTypes.func
+    onPlaylistUpdate: PropTypes.func,
+    onArtistClick: PropTypes.func,
+    onAlbumClick: PropTypes.func
 };
 
 export default CurrentlyPlayingSection;

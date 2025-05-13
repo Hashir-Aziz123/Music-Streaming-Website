@@ -88,26 +88,33 @@
 }
 
 .playButton {
-    background-color: rgba(231, 84, 84, 0.9); /* Pastel red */
+    background-color: #e75454; /* Red */
     border: none;
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    padding: 0;
+    color: white;
 }
 
 .playButton:hover {
     transform: scale(1.05);
-    background-color: rgb(231, 84, 84); /* Slightly brighter on hover */
+    background-color: #ff6b6b; /* Slightly brighter on hover */
 }
 
-.playButton i {
-    font-size: 14px;
+.playButton svg {
     color: white;
+}
+
+.playButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: rgba(231, 84, 84, 0.6);
 }
 
 .progressContainer {
@@ -185,6 +192,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    color: #b3b3b3;
 }
 
 /* Custom volume slider styling */
@@ -252,6 +260,48 @@
 .repeatIcon:hover,
 .fullscreenControl i:hover {
     color: white;
+}
+
+.iconButton {
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 10px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconButton:hover {
+    color: #fff;
+}
+
+.iconButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+
+.iconButton:disabled:hover {
+    opacity: 0.3;
+}
+
+.shuffleButton, .repeatButton {
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shuffleButton:hover, .repeatButton:hover,
+.shuffleButton.active, .repeatButton.active {
+    color: #e75454;
 }
 
 /* Media queries for responsiveness */

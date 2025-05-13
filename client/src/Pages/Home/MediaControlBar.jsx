@@ -1,12 +1,22 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './MediaControlBar.module.css';
 import PropTypes from 'prop-types';
+import { Play, Pause, Shuffle, Repeat, SkipForward, SkipBack, Volume2, Volume1, VolumeX } from 'lucide-react';
 
 function MediaControlBar({ 
     currentSong,
     isPlaying, 
     setIsPlaying,
-    artistsMap
+    artistsMap,
+    // New props for playlist functionality
+    playlistMode = false,
+    shuffleMode = false,
+    repeatMode = false,
+    handleNextSong = null,
+    handlePreviousSong = null,
+    toggleShuffle = null,
+    toggleRepeat = null,
+    handleSongEnded = null
 }) {
     const [volume, setVolume] = useState(0.7); // Default volume is 70%
     const audioRef = useRef(null);
@@ -107,10 +117,14 @@ function MediaControlBar({
                     audioElement.volume = volume;
                 }
             }
-        };
-
-        const handleEnded = () => {
-            setIsPlaying(false);
+        };        const handleEnded = () => {
+            if (handleSongEnded) {
+                // Use the playlist's song ended handler if in playlist mode
+                handleSongEnded();
+            } else {
+                // Default behavior for single song
+                setIsPlaying(false);
+            }
         };
 
         if (audioElement) {
@@ -261,22 +275,49 @@ function MediaControlBar({
             </div>
 
             {/* CENTER: Playback Controls */}
-            <div className={styles.playbackControls}>
-                <div className={styles.controlsRow}>
-                    <i className="fas fa-random" />
-                    <i className="fas fa-step-backward" />
+            <div className={styles.playbackControls}>                <div className={styles.controlsRow}>
+                    <button 
+                        className={`${styles.shuffleButton} ${shuffleMode ? styles.active : ''}`}
+                        onClick={toggleShuffle}
+                        disabled={!playlistMode}
+                        style={{ opacity: playlistMode ? 1 : 0.5 }}
+                    >
+                        <Shuffle size={18} />
+                    </button>
 
                     <button 
+                        className={`${styles.iconButton}`}
+                        onClick={handlePreviousSong}
+                        disabled={!playlistMode}
+                        style={{ opacity: playlistMode ? 1 : 0.5 }}
+                    >
+                        <SkipBack size={20} />
+                    </button>                    <button 
                         className={styles.playButton} 
                         onClick={togglePlayPause}
                         disabled={!audioUrl}
                         style={{ opacity: audioUrl ? 1 : 0.5 }}
                     >
-                        <i className={`fas ${isPlaying ? 'fa-pause' : 'fa-play'}`} />
+                        {isPlaying ? <Pause size={20} /> : <Play size={20} />}
                     </button>
 
-                    <i className="fas fa-step-forward" />
-                    <i className="fas fa-redo-alt" />
+                    <button 
+                        className={`${styles.iconButton}`}
+                        onClick={handleNextSong}
+                        disabled={!playlistMode}
+                        style={{ opacity: playlistMode ? 1 : 0.5 }}
+                    >
+                        <SkipForward size={20} />
+                    </button>
+                    
+                    <button 
+                        className={`${styles.repeatButton} ${repeatMode ? styles.active : ''}`}
+                        onClick={toggleRepeat}
+                        disabled={!playlistMode}
+                        style={{ opacity: playlistMode ? 1 : 0.5 }}
+                    >
+                        <Repeat size={18} />
+                    </button>
                 </div>
 
                 <div className={styles.progressContainer}>
@@ -311,9 +352,10 @@ function MediaControlBar({
             </div>
 
             {/* RIGHT: Extra Controls */}
-            <div className={styles.extraControls}>
-                <div className={styles.volumeControl}>
-                    <i className={`fas ${volume === 0 ? 'fa-volume-mute' : volume < 0.5 ? 'fa-volume-down' : 'fa-volume-up'}`} />
+            <div className={styles.extraControls}>                <div className={styles.volumeControl}>
+                    {volume === 0 ? <VolumeX size={18} /> : 
+                     volume < 0.5 ? <Volume1 size={18} /> : 
+                     <Volume2 size={18} />}
                     
                     {/* Custom volume slider implementation */}
                     <div 
@@ -337,13 +379,7 @@ function MediaControlBar({
                         ></div>
                     </div>
                 </div>
-                
-                <div className={styles.shuffleControl}>
-                    <i className={`fas fa-random ${styles.shuffleIcon}`} />
-                </div>
-                <div className={styles.repeatControl}>
-                    <i className={`fas fa-redo-alt ${styles.repeatIcon}`} />
-                </div>
+  
             </div>
 
             {/* Audio Element */}
@@ -365,7 +401,16 @@ MediaControlBar.propTypes = {
     currentSong: PropTypes.object,
     isPlaying: PropTypes.bool,
     setIsPlaying: PropTypes.func,
-    artistsMap: PropTypes.object
+    artistsMap: PropTypes.object,
+    // Playlist functionality props
+    playlistMode: PropTypes.bool,
+    shuffleMode: PropTypes.bool,
+    repeatMode: PropTypes.bool,
+    handleNextSong: PropTypes.func,
+    handlePreviousSong: PropTypes.func,
+    toggleShuffle: PropTypes.func,
+    toggleRepeat: PropTypes.func,
+    handleSongEnded: PropTypes.func
 };
 
 export default MediaControlBar;

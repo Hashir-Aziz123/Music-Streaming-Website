@@ -3,6 +3,7 @@ import axios from "axios";
 import { ArrowLeft, Play, Pause, Shuffle, Repeat } from "lucide-react";
 import { LoadingIndicator } from "./AllSongsView";
 import styles from "./PlaylistView.module.css";
+import PropTypes from 'prop-types';
 
 function PlaylistView({
     playlist,
@@ -16,12 +17,17 @@ function PlaylistView({
     isOwner = false,
     onPlaylistUpdate = null,
     onPlaylistDelete = null,
-    refreshTrigger = 0
+    refreshTrigger = 0,
+    // New props for playlist functionality
+    playlistMode = false,
+    handlePlayPlaylist,
+    shuffleMode = false,
+    repeatMode = false,
+    toggleShuffle,
+    toggleRepeat
 }) {
     const [playlistSongs, setPlaylistSongs] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [shuffleMode, setShuffleMode] = useState(false);
-    const [repeatMode, setRepeatMode] = useState(false);
     const [currentSongIndex, setCurrentSongIndex] = useState(-1);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -58,21 +64,19 @@ function PlaylistView({
         }
     }, [currentSong, playlistSongs]);
 
-    const handlePlayPlaylist = () => {
+    const startPlaylist = () => {
         if (playlistSongs.length > 0) {
-            handlePlayClick(playlistSongs[0]);
+            // Use the new handlePlayPlaylist function instead of handlePlayClick
+            handlePlayPlaylist(playlist, playlistSongs);
         }
     };
-
-    // Toggle shuffle mode
-    const toggleShuffle = () => {
-        setShuffleMode(!shuffleMode);
+    
+    const playSongInPlaylist = (song, index) => {
+        // Start playlist from the selected song
+        handlePlayPlaylist(playlist, playlistSongs, index);
     };
 
-    // Toggle repeat mode
-    const toggleRepeat = () => {
-        setRepeatMode(!repeatMode);
-    };
+
 
     const handleRemoveSong = async (songId) => {
         try {
@@ -205,10 +209,10 @@ function PlaylistView({
             <div className={styles.controlsSection}>
                 <button 
                     className={`${styles.playButton} ${playlistSongs.length === 0 ? styles.disabled : ''}`}
-                    onClick={handlePlayPlaylist}
+                    onClick={startPlaylist}
                     disabled={playlistSongs.length === 0}
                 >
-                    {(isPlaying && currentSongIndex >= 0) ? <Pause size={24} /> : <Play size={24} />}
+                    {(isPlaying && playlistMode && currentSongIndex >= 0) ? <Pause size={24} /> : <Play size={24} />}
                 </button>
 
                 <button 
@@ -246,7 +250,7 @@ function PlaylistView({
                             <div 
                                 key={song._id} 
                                 className={`${styles.songRow} ${currentSong && currentSong._id === song._id ? styles.currentlyPlaying : ''}`}
-                                onClick={() => handlePlayClick(song)}
+                                onClick={() => playSongInPlaylist(song, index)}
                             >
                                 <div className={styles.indexColumn}>
                                     {currentSong && currentSong._id === song._id && isPlaying ? (
@@ -305,5 +309,27 @@ function PlaylistView({
         </div>
     );
 }
+
+PlaylistView.propTypes = {
+    playlist: PropTypes.object,
+    currentSong: PropTypes.object,
+    isPlaying: PropTypes.bool,
+    handlePlayClick: PropTypes.func.isRequired,
+    handleBackToAllSongs: PropTypes.func.isRequired,
+    artistsMap: PropTypes.object,
+    albumsMap: PropTypes.object,
+    onRemoveSong: PropTypes.func,
+    isOwner: PropTypes.bool,
+    onPlaylistUpdate: PropTypes.func,
+    onPlaylistDelete: PropTypes.func,
+    refreshTrigger: PropTypes.number,
+    // Playlist functionality props
+    playlistMode: PropTypes.bool,
+    handlePlayPlaylist: PropTypes.func,
+    shuffleMode: PropTypes.bool,
+    repeatMode: PropTypes.bool,
+    toggleShuffle: PropTypes.func,
+    toggleRepeat: PropTypes.func
+};
 
 export default PlaylistView;

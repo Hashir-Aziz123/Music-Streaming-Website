@@ -110,6 +110,12 @@
     font-size: 16px;
     color: #b3b3b3;
     margin: 0 0 6px 0;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.songArtist:hover {
+    color: #e75454;
 }
 
 .songGenre {
@@ -144,6 +150,12 @@
     font-size: 14px;
     color: #b3b3b3;
     margin: 0;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.albumName:hover {
+    color: #e75454;
 }
 
 .statSection {

@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './Home.module.css';
 import PropTypes from 'prop-types';
 import { LoadingIndicator } from './AllSongsView';
+import { ArrowLeft } from 'lucide-react';
 
 function AlbumView({
     album,
@@ -35,12 +36,11 @@ function AlbumView({
 
     return (
         <div className={styles.albumViewContainer}>
-            <div className={styles.albumHeader}>
-                <button 
+            <div className={styles.albumHeader}>                <button 
                     className={styles.backButton}
                     onClick={handleBackToAllSongs}
                 >
-                    <i className="fas fa-arrow-left"></i> Back to all songs
+                    <ArrowLeft size={24} />
                 </button>
                 
                 <div className={styles.albumInfo}>

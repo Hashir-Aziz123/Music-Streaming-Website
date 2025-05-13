@@ -250,22 +250,22 @@
 }
 
 .backButton {
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
+    background: rgba(0, 0, 0, 0.3);
     color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-bottom: 20px;
-    display: inline-flex;
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
     align-items: center;
-    gap: 8px;
-    transition: background-color 0.2s;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: background 0.2s;
 }
 
 .backButton:hover {
-    background: rgba(231, 84, 84, 0.7);
+    background: rgba(0, 0, 0, 0.5);
 }
 
 .albumInfo {
@@ -561,7 +561,6 @@
 
 .clickableArtist:hover {
     color: #e75454;
-    text-decoration: underline;
 }
 
 /* Make sure grid is responsive */
