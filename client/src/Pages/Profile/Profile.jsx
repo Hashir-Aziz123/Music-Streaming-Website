@@ -88,7 +88,7 @@ function Profile() {
     useEffect(() => {
         const fetchPlaylists = async () => {
             try {
-                const response = await axios.get(`/api/playlists/${user.id}`, { withCredentials: true });
+                const response = await axios.get(`/api/playlists/user/${user.id}`, { withCredentials: true });
                 setPlaylists(response.data);
             } catch (err) {
                 console.error("Failed to fetch playlists:", err);
