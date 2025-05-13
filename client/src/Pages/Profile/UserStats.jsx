@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LabelList } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, CartesianGrid, LabelList } from 'recharts';
 import MusicNotes from './MusicNotes.jsx';
 import styles from "./UserStats.module.css";
 import CustomCard from "./CustomCard.jsx";
@@ -74,17 +74,6 @@ function ProfileUserStats({playlistsNum}) {
                                     ticks={[0, 10, 20, 30, 40, 50]}
                                     domain={[0, 'dataMax + 5']}
                                 />
-                                <Tooltip
-                                    cursor={{ fill: 'rgba(231, 84, 84, 0.1)' }}
-                                    contentStyle={{
-                                        backgroundColor: '#181818',
-                                        borderRadius: '8px',
-                                        border: 'none',
-                                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
-                                    }}
-                                    labelStyle={{ color: '#e75454', fontWeight: 'bold', marginBottom: '5px' }}
-                                    itemStyle={{ color: '#fff' }}
-                                />
                                 <Bar
                                     dataKey="listens"
                                     fill="#e75454"
@@ -137,17 +126,6 @@ function ProfileUserStats({playlistsNum}) {
                                     tickLine={false}
                                     ticks={[0, 10, 20, 30, 40, 50]}
                                     domain={[0, 'dataMax + 5']}
-                                />
-                                <Tooltip
-                                    cursor={{ fill: 'rgba(231, 84, 84, 0.1)' }}
-                                    contentStyle={{
-                                        backgroundColor: '#181818',
-                                        borderRadius: '8px',
-                                        border: 'none',
-                                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
-                                    }}
-                                    labelStyle={{ color: '#e75454', fontWeight: 'bold', marginBottom: '5px' }}
-                                    itemStyle={{ color: '#fff' }}
                                 />
                                 <Bar
                                     dataKey="listens"

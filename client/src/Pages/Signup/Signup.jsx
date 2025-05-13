@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../context/AuthContext';
-import logo from "../../assets/logo.png";
+import logo from "../../../assets/logo.png";
 import styles from "./Signup.module.css";
 
 function Signup() {

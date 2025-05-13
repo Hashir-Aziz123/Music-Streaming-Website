@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import logo from "../../assets/logo.png";
+import logo from "../../../assets/logo.png";
 import styles from "./Login.module.css";
 
 function Login() {
