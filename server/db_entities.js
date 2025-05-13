@@ -95,7 +95,7 @@ const playlist_schema = new mongoose.Schema(
         songs:
             [
                 {
-                    type: [Number],
+                    type: Number,
                     ref: 'Song'
                 }
             ],
