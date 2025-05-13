@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import styles from "./SideBar.module.css";
+import PlaylistCard from "./PlaylistCard";
 
-function SideBar() {
+function SideBar({ onPlaylistClick, onCreatePlaylistClick, selectedPlaylist, refreshTrigger }) {
     const [activeTab, setActiveTab] = useState("Playlists");
     const [searchTerm, setSearchTerm] = useState("");
     const [playlists, setPlaylists] = useState([]);
+    const [filteredPlaylists, setFilteredPlaylists] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { user } = useAuth();
 
@@ -16,27 +18,72 @@ function SideBar() {
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
-
-    useEffect(() => {
-        const fetchPlaylists = async () => {
-            try {
+      // Function to fetch playlists that can be called from outside
+    const fetchPlaylists = async () => {
+        try {
+            setIsLoading(true);
+            if (user && user.id) {
                 const response = await axios.get(`/api/playlists/user/${user.id}`, { withCredentials: true });
-                setPlaylists(response.data);
-            } catch (err) {
-                console.error("Failed to fetch playlists:", err);
-            } finally {
-                setIsLoading(false);
+                
+                // For each playlist, get the count of songs
+                const playlistsWithCounts = await Promise.all(
+                    response.data.map(async (playlist) => {
+                        try {
+                            const playlistDetails = await axios.get(`/api/playlists/${playlist._id}`, { withCredentials: true });
+                            return {
+                                ...playlist,
+                                songsCount: playlistDetails.data.songs ? playlistDetails.data.songs.length : 0
+                            };
+                        } catch (err) {
+                            console.error(`Failed to fetch songs for playlist ${playlist._id}:`, err);
+                            return {
+                                ...playlist,
+                                songsCount: 0
+                            };
+                        }
+                    })
+                );
+                
+                setPlaylists(playlistsWithCounts);
+                setFilteredPlaylists(playlistsWithCounts);
             }
+        } catch (err) {
+            console.error("Failed to fetch playlists:", err);
+        } finally {
+            setIsLoading(false);
         }
-
+    };
+    
+    // Initial fetch when component mounts or user changes
+    useEffect(() => {
         if (user) fetchPlaylists();
     }, [user]);
-
-    return (
+    
+    // Refetch when refreshTrigger changes
+    useEffect(() => {
+        if (refreshTrigger && user) fetchPlaylists();
+    }, [refreshTrigger, user]);
+    
+    // Filter playlists based on search term
+    useEffect(() => {
+        if (!searchTerm.trim()) {
+            setFilteredPlaylists(playlists);
+            return;
+        }
+        
+        const filtered = playlists.filter(playlist => 
+            playlist.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredPlaylists(filtered);
+    }, [searchTerm, playlists]);    return (
         <div className={styles.sideBarContainer}>
             <div className={styles.libraryHeader}>
                 <h2 className={styles.libraryTitle}>Your Library</h2>
-                <button className={styles.createButton} aria-label="Create playlist or folder">
+                <button 
+                    className={styles.createButton} 
+                    aria-label="Create playlist"
+                    onClick={onCreatePlaylistClick}
+                >
                     <Plus size={20} />
                 </button>
             </div>
@@ -76,29 +123,32 @@ function SideBar() {
                         <option value="creator">Creator</option>
                     </select>
                 </div>
-            </div>
-
-            {/* Scrollable List Section */}
+            </div>            {/* Scrollable List Section */}
             <div className={styles.scrollSection}>
                 {isLoading ? (
                     <div className={styles.loading}>Loading playlists...</div>
+                ) : activeTab === "Playlists" ? (
+                    filteredPlaylists.length === 0 ? (
+                        <div className={styles.emptyList}>
+                            {searchTerm ? "No matching playlists found" : "No playlists yet. Create one!"}
+                        </div>
+                    ) : (
+                        <ul className={styles.itemList}>
+                            {filteredPlaylists.map((playlist) => (
+                                <li key={playlist._id} className={styles.itemWrapper}>
+                                    <PlaylistCard 
+                                        playlist={playlist} 
+                                        onClick={onPlaylistClick}
+                                        isActive={selectedPlaylist && selectedPlaylist._id === playlist._id}
+                                    />
+                                </li>
+                            ))}
+                        </ul>
+                    )
                 ) : (
-                    <ul className={styles.itemList}>
-                        {playlists.map((item) => (
-                            <li key={item._id}>
-                                <img 
-                                    src={item.imageUrl || "https://placehold.co/400/111/e75454?text=Playlist"} 
-                                    alt={`${item.title} cover`} 
-                                />
-                                <div className={styles.itemContent}>
-                                    <div className={styles.itemTitle}>{item.title}</div>
-                                    <div className={styles.itemSubtitle}>
-                                        Playlist • {item.creator}
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    <div className={styles.emptyList}>
+                        {activeTab === "Artists" ? "Artists section coming soon" : "Albums section coming soon"}
+                    </div>
                 )}
             </div>
         </div>

@@ -1,33 +1,42 @@
 import styles from './PlaylistCard.module.css';
 import PropTypes from 'prop-types';
 
-function PlaylistCard({ title, imgSrc, subtitle}) {
+function PlaylistCard({ playlist, onClick, isActive }) {
     // Default image if none provided
-    const defaultImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQPZcjVw-tHtbV1BTXhSy86q-bARMButrtbA&s";
-
+    const defaultImage = "https://placehold.co/400/111/e75454?text=Playlist";
 
     return (
-        <div className={styles.card} onClick={() => console.log( title , "|| ",  imgSrc ,"|| ",  subtitle ) }>
+        <div 
+            className={`${styles.card} ${isActive ? styles.active : ''}`} 
+            onClick={() => onClick(playlist)}
+        >
             <div className={styles.imageContainer}>
                 <img
-                    src={defaultImage}
-                    alt={title}
+                    src={playlist.cover_image_url || defaultImage}
+                    alt={playlist.name}
                     className={styles.image}
                 />
             </div>
 
             <div className={styles.cardContent}>
-                <h4 className={styles.title}>{title}</h4>
-                <p className={styles.subtitle}>{subtitle}</p>
+                <h4 className={styles.title}>{playlist.name}</h4>
+                <p className={styles.subtitle}>
+                    Playlist • {playlist.songsCount || "0"} songs
+                </p>
             </div>
         </div>
     );
 }
 
 PlaylistCard.propTypes = {
-    title: PropTypes.string.isRequired,
-    imgSrc: PropTypes.string,
-    subtitle: PropTypes.string,
+    playlist: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        cover_image_url: PropTypes.string,
+        is_public: PropTypes.bool
+    }).isRequired,
+    onClick: PropTypes.func.isRequired,
+    isActive: PropTypes.bool
 };
 
 export default PlaylistCard;

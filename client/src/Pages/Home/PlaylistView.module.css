@@ -1,0 +1,417 @@
+.playlistViewContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    color: white;
+    overflow-y: auto;
+}
+
+.playlistHeader {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    background: linear-gradient(to bottom, rgba(231, 84, 84, 0.5), #121212);
+}
+
+.backButton {
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: background 0.2s;
+}
+
+.backButton:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.playlistInfo {
+    display: flex;
+    gap: 24px;
+}
+
+.coverImage {
+    width: 192px;
+    height: 192px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.coverImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.playlistDetails {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.playlistTitle {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.playlistDescription {
+    color: #b3b3b3;
+    margin: 8px 0 4px;
+    font-size: 14px;
+}
+
+.playlistMeta {
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+    color: #b3b3b3;
+}
+
+.playlistMeta span:not(:last-child)::after {
+    content: "•";
+    margin-left: 8px;
+}
+
+.controlsSection {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+    background-color: rgba(18, 18, 18, 0.8);
+    margin-bottom: 36px;
+}
+
+.playButton {
+    width: 56px;
+    height: 56px;
+    background-color: #e75454;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.playButton:hover {
+    transform: scale(1.05);
+    background-color: #ff6b6b;
+}
+
+.playButton.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.shuffleButton, .repeatButton {
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.shuffleButton:hover, .repeatButton:hover,
+.shuffleButton.active, .repeatButton.active {
+    color: #e75454;
+}
+
+.songsListContainer {
+    padding: 0 24px 24px;
+    flex-grow: 1;
+}
+
+.emptyPlaylist {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: #b3b3b3;
+    text-align: center;
+}
+
+.songsList {
+    width: 100%;
+}
+
+.songHeader {
+    display: grid;
+    grid-template-columns: 40px 4fr 2fr 1fr;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0 16px 8px;
+    color: #b3b3b3;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.songRow {
+    display: grid;
+    grid-template-columns: 40px 4fr 2fr 1fr;
+    border-radius: 4px;
+    padding: 8px 16px;
+    margin: 4px 0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    align-items: center;
+}
+
+.songRow:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.songRow.currentlyPlaying {
+    background-color: rgba(231, 84, 84, 0.2);
+}
+
+.indexColumn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #b3b3b3;
+}
+
+.playingAnimation {
+    display: flex;
+    align-items: flex-end;
+    height: 16px;
+    gap: 1px;
+}
+
+.playingAnimation span {
+    width: 2px;
+    background-color: #e75454;
+    animation: soundBars 1.2s infinite ease;
+}
+
+.playingAnimation span:nth-child(1) {
+    height: 8px;
+    animation-delay: 0s;
+}
+
+.playingAnimation span:nth-child(2) {
+    height: 16px;
+    animation-delay: 0.2s;
+}
+
+.playingAnimation span:nth-child(3) {
+    height: 10px;
+    animation-delay: 0.4s;
+}
+
+@keyframes soundBars {
+    0%, 100% { height: 6px; }
+    50% { height: 16px; }
+}
+
+.titleColumn {
+    padding-right: 8px;
+}
+
+.songInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.songThumbnail {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+.songTitle {
+    font-size: 14px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.songArtist {
+    font-size: 12px;
+    color: #b3b3b3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.albumColumn {
+    font-size: 14px;
+    color: #b3b3b3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.durationColumn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #b3b3b3;
+}
+
+.removeButton {
+    display: none;
+    background: none;
+    border: none;
+    color: #e75454;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.removeButton:hover {
+    background-color: rgba(231, 84, 84, 0.2);
+}
+
+.songRow:hover .removeButton {
+    display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .playlistHeader {
+        padding: 16px;
+    }
+    
+    .playlistInfo {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .coverImage {
+        width: 160px;
+        height: 160px;
+    }
+    
+    .playlistTitle {
+        font-size: 32px;
+    }
+    
+    .songHeader, .songRow {
+        grid-template-columns: 40px 4fr 1fr;
+    }
+    
+    .albumColumn {
+        display: none;
+    }
+}
+
+/* Delete playlist button and confirmation dialog */
+.deletePlaylistButton {
+    background-color: transparent;
+    color: #b3b3b3;
+    border: 1px solid #b3b3b3;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.2s;
+}
+
+.deletePlaylistButton:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.confirmationOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.confirmationDialog {
+    background-color: #282828;
+    border-radius: 8px;
+    padding: 24px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.confirmationDialog h3 {
+    color: #e75454;
+    margin-top: 0;
+    font-size: 20px;
+}
+
+.confirmationDialog p {
+    color: #e0e0e0;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.confirmationButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.cancelButton, .deleteButton {
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.cancelButton {
+    background-color: transparent;
+    color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
+.cancelButton:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.deleteButton {
+    background-color: #e75454;
+    color: white;
+}
+
+.deleteButton:hover {
+    background-color: #f87979;
+}
+
+.deleteButton:disabled, .cancelButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Enhanced remove button styles */
+.removing {
+    opacity: 0.7 !important;
+    cursor: not-allowed;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff !important;
+}

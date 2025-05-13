@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import styles from './CurrentlyPlayingSection.module.css';
 import PropTypes from 'prop-types';
+import AddToPlaylistMenu from './AddToPlaylistMenu';
+import { Plus, Heart, Share } from 'lucide-react';
 
-function CurrentlyPlayingSection({ song, artistsMap, albumsMap }) {
+function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate }) {
+    const [showAddToPlaylistMenu, setShowAddToPlaylistMenu] = useState(false);
     // Default placeholder image
     const defaultAlbumArt = "https://placehold.co/400x400/111/e75454?text=Music";
     
@@ -84,18 +88,26 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap }) {
                             <h4 className={styles.sectionHeader}>Album</h4>
                             <p className={styles.albumName}>{formatAlbum(song.album)}</p>
                         </div>
-                    )}
-
-                    <div className={styles.actionButtons}>
+                    )}                    <div className={styles.actionButtons}>
                         <button className={styles.actionButton}>
-                            <i className="fas fa-heart"></i>
+                            <Heart size={18} />
+                        </button>
+                        <button 
+                            className={styles.actionButton}
+                            onClick={() => setShowAddToPlaylistMenu(true)}
+                            title="Add to playlist"
+                        >
+                            <Plus size={18} />
                         </button>
                         <button className={styles.actionButton}>
-                            <i className="fas fa-plus"></i>
-                        </button>
-                        <button className={styles.actionButton}>
-                            <i className="fas fa-share-alt"></i>
-                        </button>
+                            <Share size={18} />
+                        </button>                        {showAddToPlaylistMenu && (
+                            <AddToPlaylistMenu 
+                                song={song} 
+                                onClose={() => setShowAddToPlaylistMenu(false)}
+                                onPlaylistUpdate={onPlaylistUpdate}
+                            />
+                        )}
                     </div>
                 </div>
             ) : (
@@ -114,7 +126,8 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap }) {
 CurrentlyPlayingSection.propTypes = {
     song: PropTypes.object,
     artistsMap: PropTypes.object,
-    albumsMap: PropTypes.object
+    albumsMap: PropTypes.object,
+    onPlaylistUpdate: PropTypes.func
 };
 
 export default CurrentlyPlayingSection;

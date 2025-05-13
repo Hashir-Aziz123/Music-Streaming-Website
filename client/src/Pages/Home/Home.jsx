@@ -8,6 +8,8 @@ import AllSongsView, { LoadingIndicator } from "./AllSongsView.jsx";
 import AlbumView from "./AlbumView.jsx";
 import ArtistView from "./ArtistView.jsx";
 import RecommendationView from "./RecommendationView.jsx";
+import PlaylistView from "./PlaylistView.jsx";
+import CreatePlaylistModal from "./CreatePlaylistModal.jsx";
 
 function Home() {
     const [songs, setSongs] = useState([]);
@@ -17,6 +19,8 @@ function Home() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [artistsMap, setArtistsMap] = useState({});
     const [albumsMap, setAlbumsMap] = useState({});
+    const [playlistRefreshTrigger, setPlaylistRefreshTrigger] = useState(0);
+    const [selectedPlaylistRefreshTrigger, setSelectedPlaylistRefreshTrigger] = useState(0);
     
     // Album view states
     const [selectedAlbum, setSelectedAlbum] = useState(null);
@@ -34,6 +38,9 @@ function Home() {
     const [recommendedSongs, setRecommendedSongs] = useState([]);
     const [loadingRecommendations, setLoadingRecommendations] = useState(false);
 
+    // Playlist view states
+    const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+    const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false);
 
     // Pagination states
     const [page, setPage] = useState(1);
@@ -214,13 +221,57 @@ function Home() {
         }
     };
 
-    // Function to go back to all songs view
+    // Function to handle back button for all detailed views
     const handleBackToAllSongs = () => {
         setSelectedAlbum(null);
         setAlbumSongs([]);
         setSelectedArtist(null);
         setArtistSongs([]);
         setArtistAlbums([]);
+        setSelectedPlaylist(null);
+    };
+    
+    // Function to handle playlist selection
+    const handlePlaylistClick = (playlist) => {
+        // Reset other views if active
+        setSelectedAlbum(null);
+        setAlbumSongs([]);
+        setSelectedArtist(null);
+        setArtistSongs([]);
+        setArtistAlbums([]);
+        
+        // Set selected playlist
+        setSelectedPlaylist(playlist);
+    };    // Function to handle playlist creation success
+    const handlePlaylistCreated = (newPlaylist) => {
+        // Close the modal
+        setShowCreatePlaylistModal(false);
+        
+        // Set the refresh trigger to force SideBar to reload playlists
+        setPlaylistRefreshTrigger(prev => prev + 1);
+        
+        // Optionally, automatically select the newly created playlist
+        setSelectedPlaylist(newPlaylist);
+    };    // Function to handle when songs are added to a playlist
+    const handlePlaylistSongsUpdate = (playlistId) => {
+        // Increment the playlist refresh trigger to force a sidebar reload
+        setPlaylistRefreshTrigger(prev => prev + 1);
+        
+        // If the updated playlist is the one currently being viewed, refresh it
+        if (selectedPlaylist && selectedPlaylist._id === playlistId) {
+            setSelectedPlaylistRefreshTrigger(prev => prev + 1);
+        }
+    };
+    
+    // Function to handle playlist deletion
+    const handlePlaylistDelete = (playlistId) => {
+        // Reset selected playlist if it's the one being deleted
+        if (selectedPlaylist && selectedPlaylist._id === playlistId) {
+            setSelectedPlaylist(null);
+        }
+        
+        // Increment the playlist refresh trigger to force a reload of the sidebar
+        setPlaylistRefreshTrigger(prev => prev + 1);
     };
 
     // Fetch artists and albums details
@@ -306,11 +357,23 @@ function Home() {
             setLoadingRecommendations(false);
         }
     };
-
-
     // Function to determine which view to render
-    const renderContentView = () => {
-        if (selectedArtist) {
+    const renderContentView = () => {        if (selectedPlaylist) {
+            return (                <PlaylistView
+                    playlist={selectedPlaylist}
+                    currentSong={currentSong}
+                    isPlaying={isPlaying}
+                    handlePlayClick={handlePlayClick}
+                    handleBackToAllSongs={handleBackToAllSongs}
+                    artistsMap={artistsMap}
+                    albumsMap={albumsMap}
+                    isOwner={true}
+                    onPlaylistUpdate={handlePlaylistSongsUpdate}
+                    onPlaylistDelete={handlePlaylistDelete}
+                    refreshTrigger={selectedPlaylistRefreshTrigger}
+                />
+            );
+        } else if (selectedArtist) {
             return (
                 <ArtistView 
                     artist={artistsMap[selectedArtist]}
@@ -339,36 +402,36 @@ function Home() {
                     handlePlayClick={handlePlayClick}
                 />
             );
-        } else {
-            return (
-                <RecommendationView
-                    recommendedSongs={recommendedSongs}
-                    isLoading={loadingRecommendations}
-                    currentSong={currentSong}
-                    isPlaying={isPlaying}
-                    handlePlayClick={handlePlayClick}
-                    artistsMap={artistsMap}
-                    albumsMap={albumsMap}
-                />
-            );
-        }
-        // else {
+        // } else {
         //     return (
-        //         <AllSongsView
-        //             songs={songs}
-        //             artistsMap={artistsMap}
-        //             albumsMap={albumsMap}
+        //         <RecommendationView
+        //             recommendedSongs={recommendedSongs}
+        //             isLoading={loadingRecommendations}
         //             currentSong={currentSong}
         //             isPlaying={isPlaying}
-        //             lastSongRef={lastSongRef}
-        //             loadingMore={loadingMore}
-        //             hasMore={hasMore}
         //             handlePlayClick={handlePlayClick}
-        //             handleAlbumClick={handleAlbumClick}
-        //             handleArtistClick={handleArtistClick}
+        //             artistsMap={artistsMap}
+        //             albumsMap={albumsMap}
         //         />
         //     );
         // }
+        } else {
+            return (
+                <AllSongsView
+                    songs={songs}
+                    artistsMap={artistsMap}
+                    albumsMap={albumsMap}
+                    currentSong={currentSong}
+                    isPlaying={isPlaying}
+                    lastSongRef={lastSongRef}
+                    loadingMore={loadingMore}
+                    hasMore={hasMore}
+                    handlePlayClick={handlePlayClick}
+                    handleAlbumClick={handleAlbumClick}
+                    handleArtistClick={handleArtistClick}
+                />
+            );
+        }
     };
 
     return (
@@ -384,11 +447,13 @@ function Home() {
                 {/*    Show Recommendations*/}
                 {/*</button>*/}
 
-            </div>
-
-            <div className={styles.midSection}>
-                <div className={styles.leftMiddle}>
-                    <SideBar />
+            </div>            <div className={styles.midSection}>                <div className={styles.leftMiddle}>
+                    <SideBar 
+                        onPlaylistClick={handlePlaylistClick} 
+                        onCreatePlaylistClick={() => setShowCreatePlaylistModal(true)}
+                        selectedPlaylist={selectedPlaylist}
+                        refreshTrigger={playlistRefreshTrigger}
+                    />
                 </div>
 
                 <div className={styles.centerMiddle}>
@@ -403,13 +468,13 @@ function Home() {
                     {!loading && !error && renderContentView()}
                 </div>
 
-                {<div className={styles.rightMiddle}>
-                    <CurrentlyPlayingSection
+                {<div className={styles.rightMiddle}>                    <CurrentlyPlayingSection
                         song={currentSong}
                         artistsMap={artistsMap}
                         albumsMap={albumsMap}
                         onAlbumClick={handleAlbumClick}
                         onArtistClick={handleArtistClick}
+                        onPlaylistUpdate={handlePlaylistSongsUpdate}
                     />
                 </div>}
             </div>
@@ -419,8 +484,14 @@ function Home() {
                     isPlaying={isPlaying}
                     setIsPlaying={setIsPlaying}
                     artistsMap={artistsMap}
+                />            </div>}
+            
+            {showCreatePlaylistModal && (
+                <CreatePlaylistModal 
+                    onClose={() => setShowCreatePlaylistModal(false)} 
+                    onPlaylistCreated={handlePlaylistCreated} 
                 />
-            </div>}
+            )}
         </div>
     );
 }
