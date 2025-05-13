@@ -8,39 +8,62 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate
     const [showAddToPlaylistMenu, setShowAddToPlaylistMenu] = useState(false);
     // Default placeholder image
     const defaultAlbumArt = "https://placehold.co/400x400/111/e75454?text=Music";
-    
-    // Format artist display - handle array of artist IDs
+      // Format artist display - handle array of artist IDs
     const formatArtist = (artistIds) => {
         if (!artistIds) return "Unknown Artist";
         
-        // Handle array of artists
+        // Handle different formats of artist data
+        
+        // Case 1: Array of artist IDs or objects
         if (Array.isArray(artistIds)) {
             return artistIds
-                .map(id => artistsMap[id]?.name || `Artist ${id}`)
+                .map(id => {
+                    // Check if this is an ID or an object with name
+                    if (typeof id === 'object' && id !== null) {
+                        return id.name || artistsMap[id._id]?.name || `Artist ${id._id || 'Unknown'}`;
+                    }
+                    return artistsMap[id]?.name || `Artist ${id}`;
+                })
                 .join(', ');
         }
         
-        // Handle single artist
+        // Case 2: Object with name (from playlist)
+        if (typeof artistIds === 'object' && artistIds !== null) {
+            return artistIds.name || artistsMap[artistIds._id]?.name || `Artist ${artistIds._id || 'Unknown'}`;
+        }
+        
+        // Case 3: Simple ID string
         return artistsMap[artistIds]?.name || `Artist ${artistIds}`;
     };
 
     // Format album display
     const formatAlbum = (albumId) => {
         if (!albumId) return "Unknown Album";
+        
+        // Handle album as object (from playlist)
+        if (typeof albumId === 'object' && albumId !== null) {
+            return albumId.title || albumsMap[albumId._id]?.title || `Album ${albumId._id || 'Unknown'}`;
+        }
+        
+        // Simple ID string
         return albumsMap[albumId]?.title || `Album ${albumId}`;
-    };
-
-    // Handle artist click
+    };// Handle artist click
     const handleArtistClick = (artistId) => {
         if (onArtistClick && artistId) {
-            onArtistClick(artistId);
+            // Handle both normal artist ID and playlist-specific format
+            // In playlist songs, artist might be an object with _id property
+            const id = artistId._id ? artistId._id : artistId;
+            onArtistClick(id);
         }
     };
 
     // Handle album click
     const handleAlbumClick = (albumId) => {
         if (onAlbumClick && albumId) {
-            onAlbumClick(albumId);
+            // Handle both normal album ID and playlist-specific format
+            // In playlist songs, album might be an object with _id property
+            const id = albumId._id ? albumId._id : albumId;
+            onAlbumClick(id);
         }
     };
 
@@ -65,11 +88,11 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate
                     </div>
                     
                     <div className={styles.songInfo}>
-                        <h3 className={styles.songTitle}>{song.title}</h3>
-                        {song.artist && (
+                        <h3 className={styles.songTitle}>{song.title}</h3>                        {song.artist && (
                             <p 
                                 className={styles.songArtist} 
                                 onClick={() => handleArtistClick(song.artist)}
+                                title="View artist details"
                             >
                                 {formatArtist(song.artist)}
                             </p>
@@ -102,14 +125,13 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate
                                 <span className={styles.statLabel}>Length</span>
                             </div>
                         )}
-                    </div>
-
-                    {song.album && (
+                    </div>                    {song.album && (
                         <div className={styles.infoSection}>
                             <h4 className={styles.sectionHeader}>Album</h4>
                             <p 
                                 className={styles.albumName}
                                 onClick={() => handleAlbumClick(song.album)}
+                                title="View album details"
                             >
                                 {formatAlbum(song.album)}
                             </p>

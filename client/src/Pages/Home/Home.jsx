@@ -122,15 +122,15 @@ function Home() {
         
         if (node) observer.current.observe(node);
         lastSongElementRef.current = node;
-    }, [loading, loadingMore, hasMore, fetchSongs]);
-
-    // Function to handle album selection and fetching album songs
+    }, [loading, loadingMore, hasMore, fetchSongs]);    // Function to handle album selection and fetching album songs
     const handleAlbumClick = async (albumId) => {
         try {
             // Reset artist view if active
             setSelectedArtist(null);
             setArtistSongs([]);
             setArtistAlbums([]);
+            // Reset playlist view if active
+            setSelectedPlaylist(null);
             
             setLoadingAlbum(true);
             setSelectedAlbum(albumId);
@@ -160,14 +160,14 @@ function Home() {
         } finally {
             setLoadingAlbum(false);
         }
-    };
-
-    // Function to handle artist selection and fetching artist songs and albums
+    };    // Function to handle artist selection and fetching artist songs and albums
     const handleArtistClick = async (artistId) => {
         try {
             // Reset album view if active
             setSelectedAlbum(null);
             setAlbumSongs([]);
+            // Reset playlist view if active
+            setSelectedPlaylist(null);
             
             setLoadingArtist(true);
             setSelectedArtist(artistId);

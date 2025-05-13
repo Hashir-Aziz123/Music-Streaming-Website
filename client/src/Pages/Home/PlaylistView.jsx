@@ -65,8 +65,12 @@ function PlaylistView({
     }, [currentSong, playlistSongs]);
 
     const startPlaylist = () => {
-        if (playlistSongs.length > 0) {
-            // Use the new handlePlayPlaylist function instead of handlePlayClick
+        // If playlist is already playing, just toggle play/pause
+        if (playlistMode && isPlaying && currentSongIndex >= 0) {
+            // Toggle play/pause for the current song
+            handlePlayClick(currentSong, true);
+        } else if (playlistSongs.length > 0) {
+            // Start playing the playlist from the beginning
             handlePlayPlaylist(playlist, playlistSongs);
         }
     };
