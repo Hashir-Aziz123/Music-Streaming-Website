@@ -27,11 +27,18 @@ function AllSongsView({
     handleBackToAllSongs
 }) {
     // Default placeholder image for when no album art is available
-    const defaultCoverImage = "https://placehold.co/400x400/111/e75454?text=Music";
-
-    // Format artist display with names from artistsMap
+    const defaultCoverImage = "https://placehold.co/400x400/111/e75454?text=Music";    // Format artist display with names from artistsMap
     const formatArtist = (artistIds) => {
         if (!artistIds) return "Unknown Artist";
+        
+        // Ensure ID is correctly handled (parse to integer if needed)
+        const processArtistId = (id) => {
+            // If id is a string that represents a number, convert to integer
+            if (typeof id === 'string' && !isNaN(id)) {
+                return parseInt(id);
+            }
+            return id;
+        };
         
         // Handle array of artists
         if (Array.isArray(artistIds)) {
@@ -41,7 +48,7 @@ function AllSongsView({
                         className={styles.clickableArtist}
                         onClick={(e) => {
                             e.stopPropagation();
-                            handleArtistClick(id);
+                            handleArtistClick(processArtistId(id));
                         }}
                     >
                         {artistsMap[id]?.name || `Artist ${id}`}
@@ -57,7 +64,7 @@ function AllSongsView({
                 className={styles.clickableArtist}
                 onClick={(e) => {
                     e.stopPropagation();
-                    handleArtistClick(artistIds);
+                    handleArtistClick(processArtistId(artistIds));
                 }}
             >
                 {artistsMap[artistIds]?.name || `Artist ${artistIds}`}

@@ -47,13 +47,37 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate
         
         // Simple ID string
         return albumsMap[albumId]?.title || `Album ${albumId}`;
-    };// Handle artist click
+    };    // Handle artist click
     const handleArtistClick = (artistId) => {
         if (onArtistClick && artistId) {
-            // Handle both normal artist ID and playlist-specific format
-            // In playlist songs, artist might be an object with _id property
-            const id = artistId._id ? artistId._id : artistId;
-            onArtistClick(id);
+            console.log(`CurrentlyPlayingSection: Artist click with ID ${JSON.stringify(artistId)} (type: ${typeof artistId})`);
+            
+            // Handle array of artists (select the first one)
+            if (Array.isArray(artistId)) {
+                if (artistId.length > 0) {
+                    const firstArtist = artistId[0];
+                    // Check if artist is an object with ID or just an ID
+                    const id = typeof firstArtist === 'object' && firstArtist !== null 
+                        ? (firstArtist._id || firstArtist.artistID) 
+                        : firstArtist;
+                    
+                    console.log(`CurrentlyPlayingSection: Selected first artist with ID ${id}`);
+                    // Parse to integer if it's a string representing a number
+                    const parsedId = typeof id === 'string' && !isNaN(id) ? parseInt(id) : id;
+                    onArtistClick(parsedId);
+                    return;
+                }
+            }
+            
+            // Handle single artist object or ID
+            const id = typeof artistId === 'object' && artistId !== null
+                ? (artistId._id || artistId.artistID)
+                : artistId;
+            
+            console.log(`CurrentlyPlayingSection: Redirecting to artist with ID ${id}`);
+            // Parse to integer if it's a string representing a number
+            const parsedId = typeof id === 'string' && !isNaN(id) ? parseInt(id) : id;
+            onArtistClick(parsedId);
         }
     };
 

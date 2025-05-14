@@ -128,10 +128,15 @@ function Home() {
         if (node) observer.current.observe(node);
         lastSongElementRef.current = node;
     }, [loading, loadingMore, hasMore, fetchSongs]);
-    
-    // Function to handle album selection and fetching album songs
+      // Function to handle album selection and fetching album songs
     const handleAlbumClick = async (albumId) => {
         try {
+            console.log(`AlbumView: Handling click for album ID ${albumId} (${typeof albumId})`);
+            
+            // Ensure albumId is properly parsed if it's a string
+            const parsedAlbumId = typeof albumId === 'string' ? parseInt(albumId) : albumId;
+            console.log(`AlbumView: Using parsed album ID ${parsedAlbumId}`);
+            
             // Reset artist view if active
             setSelectedArtist(null);
             setArtistSongs([]);
@@ -140,38 +145,104 @@ function Home() {
             setSelectedPlaylist(null);
             
             setLoadingAlbum(true);
-            setSelectedAlbum(albumId);
+            setSelectedAlbum(parsedAlbumId);
             
             // Get album details if not already in our map
-            if (!albumsMap[albumId]) {
-                const response = await fetch(`http://localhost:3000/api/songs/album/${albumId}`);
-                if (response.ok) {
-                    const albumData = await response.json();
-                    setAlbumsMap(prev => ({...prev, [albumId]: albumData}));
+            if (!albumsMap[parsedAlbumId]) {
+                console.log(`AlbumView: Fetching album details for ID ${parsedAlbumId}`);
+                
+                // Try both URL formats
+                let albumData = null;
+                const urls = [
+                    `http://localhost:3000/songs/album/${parsedAlbumId}`,
+                    `http://localhost:3000/api/songs/album/${parsedAlbumId}`
+                ];
+                
+                for (const url of urls) {
+                    if (albumData) break;
+                    
+                    try {
+                        console.log(`AlbumView: Trying to fetch from ${url}`);
+                        const response = await fetch(url);
+                        if (response.ok) {
+                            albumData = await response.json();
+                            console.log(`AlbumView: Successfully fetched album ${albumData.title} (ID: ${parsedAlbumId})`);
+                        } else {
+                            console.log(`AlbumView: Failed to fetch album ${parsedAlbumId} from ${url}, status ${response.status}`);
+                        }
+                    } catch (err) {
+                        console.error(`Error fetching album ${parsedAlbumId} from ${url}:`, err);
+                    }
                 }
-            }
-            
-            // Find songs that belong to this album
-            const filteredSongs = songs.filter(song => song.album === albumId);
-            
-            // If we don't have enough songs in our current list, fetch all songs from this album
-            if (filteredSongs.length === 0 || albumsMap[albumId]?.songs?.length > filteredSongs.length) {
-                // This is a simplified approach - ideally we would have an API endpoint to fetch all songs from an album
-                // For now, we'll use the songs we have and display those
-                setAlbumSongs(filteredSongs);
+                
+                if (albumData) {
+                    setAlbumsMap(prev => ({...prev, [parsedAlbumId]: albumData}));
+                } else {
+                    console.error(`AlbumView: Could not fetch album ${parsedAlbumId} from any endpoint`);
+                }
             } else {
-                setAlbumSongs(filteredSongs);
+                console.log(`AlbumView: Using cached album details for ID ${parsedAlbumId}: ${albumsMap[parsedAlbumId].title}`);
             }
+            
+            // Try to fetch songs directly for this album from an API endpoint
+            let albumSongsFetched = [];
+            try {
+                // Check for endpoint to fetch album songs directly
+                console.log(`AlbumView: Fetching songs for album ID ${parsedAlbumId}`);
+                const urls = [
+                    `http://localhost:3000/songs?albumId=${parsedAlbumId}`,
+                    `http://localhost:3000/api/songs?albumId=${parsedAlbumId}`
+                ];
+                
+                for (const url of urls) {
+                    if (albumSongsFetched.length > 0) break;
+                    
+                    try {
+                        const response = await fetch(url);
+                        if (response.ok) {
+                            const data = await response.json();
+                            albumSongsFetched = data.songs || [];
+                            console.log(`AlbumView: Fetched ${albumSongsFetched.length} songs for album ${parsedAlbumId} from ${url}`);
+                        }
+                    } catch (err) {
+                        console.error(`Error fetching album songs from ${url}:`, err);
+                    }
+                }
+            } catch (err) {
+                console.error(`Error in album songs fetching process:`, err);
+            }
+            
+            // As a fallback, also filter from current songs list
+            const filteredSongs = songs.filter(song => song.album === parsedAlbumId);
+            console.log(`AlbumView: Found ${filteredSongs.length} songs from local state for album ${parsedAlbumId}`);
+            
+            // Combine and deduplicate songs
+            const combinedSongs = [...albumSongsFetched];
+            
+            // Add any songs from the filtered list that aren't already in the fetched list
+            filteredSongs.forEach(song => {
+                if (!combinedSongs.some(s => s._id === song._id)) {
+                    combinedSongs.push(song);
+                }
+            });
+            
+            console.log(`AlbumView: Setting ${combinedSongs.length} total songs for album ${parsedAlbumId}`);
+            setAlbumSongs(combinedSongs);
         } catch (error) {
             console.error("Error fetching album songs:", error);
         } finally {
             setLoadingAlbum(false);
         }
     };
-    
-    // Function to handle artist selection and fetching artist songs and albums
+      // Function to handle artist selection and fetching artist songs and albums
     const handleArtistClick = async (artistId) => {
         try {
+            console.log(`ArtistView: Handling click for artist ID ${artistId} (${typeof artistId})`);
+            
+            // Ensure artistId is an integer as the server expects
+            const parsedArtistId = typeof artistId === 'string' ? parseInt(artistId) : artistId;
+            console.log(`ArtistView: Using parsed artist ID ${parsedArtistId} (${typeof parsedArtistId})`);
+            
             // Reset album view if active
             setSelectedAlbum(null);
             setAlbumSongs([]);
@@ -179,61 +250,194 @@ function Home() {
             setSelectedPlaylist(null);
             
             setLoadingArtist(true);
-            setSelectedArtist(artistId);
-            
-            // Get artist details if not already in our map
-            if (!artistsMap[artistId]) {
-                const response = await fetch(`http://localhost:3000/api/songs/artist/${artistId}`);
+            setSelectedArtist(parsedArtistId);
+              // Get artist details if not already in our map
+            if (!artistsMap[parsedArtistId]) {
+                const response = await fetch(`http://localhost:3000/songs/artist/${parsedArtistId}`);
                 if (response.ok) {
                     const artistData = await response.json();
-                    setArtistsMap(prev => ({...prev, [artistId]: artistData}));
+                    console.log(`ArtistView: Fetched artist details for ID ${parsedArtistId}: ${artistData.name}`);
+                    setArtistsMap(prev => ({...prev, [parsedArtistId]: artistData}));
+                } else {
+                    console.log(`ArtistView: Failed to fetch artist details for ID ${parsedArtistId}, status ${response.status}`);
+                    
+                    // Try alternative URL format as a fallback
+                    const altResponse = await fetch(`http://localhost:3000/api/songs/artist/${parsedArtistId}`);
+                    if (altResponse.ok) {
+                        const artistData = await altResponse.json();
+                        console.log(`ArtistView: Fetched artist details from alternative URL for ID ${parsedArtistId}: ${artistData.name}`);
+                        setArtistsMap(prev => ({...prev, [parsedArtistId]: artistData}));
+                    } else {
+                        console.log(`ArtistView: Alternative URL also failed for artist ID ${parsedArtistId}, status ${altResponse.status}`);
+                    }
                 }
+            } else {
+                console.log(`ArtistView: Using cached artist details for ID ${parsedArtistId}: ${artistsMap[parsedArtistId].name}`);
+            }// Fetch songs for this artist directly from the server using our dedicated endpoint
+            // This ensures we get all songs for the artist, not just ones in the current view
+            let artistSongsFetched = [];
+            try {            // Try all combinations of URLs to ensure we get data
+                console.log(`Fetching songs for artist ID ${parsedArtistId} via all possible endpoints`);
+                
+                // Try each endpoint until one succeeds
+                const endpoints = [
+                    `http://localhost:3000/songs/artist/${parsedArtistId}/songs`,
+                    `http://localhost:3000/api/songs/artist/${parsedArtistId}/songs`,
+                    `http://localhost:3000/songs?artistId=${parsedArtistId}`,
+                    `http://localhost:3000/api/songs?artistId=${parsedArtistId}`
+                ];
+                
+                let successfulFetch = false;
+                
+                for (const endpoint of endpoints) {
+                    if (successfulFetch) break;
+                    
+                    try {
+                        console.log(`Trying endpoint: ${endpoint}`);
+                        const response = await fetch(endpoint);
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (endpoint.includes('?artistId=')) {
+                                // For query parameter endpoints that return a songs array inside data
+                                artistSongsFetched = data.songs || [];
+                            } else {
+                                // For direct endpoints that return the array directly
+                                artistSongsFetched = data || [];
+                            }
+                            
+                            console.log(`Success! Fetched ${artistSongsFetched.length} songs from ${endpoint}`);
+                            
+                            if (artistSongsFetched.length > 0) {
+                                console.log(`First few songs: ${artistSongsFetched.slice(0, 3).map(s => s.title).join(', ')}${artistSongsFetched.length > 3 ? '...' : ''}`);
+                                successfulFetch = true;
+                            } else {
+                                console.log(`Endpoint ${endpoint} returned empty result, trying next...`);
+                            }
+                        } else {
+                            console.log(`Endpoint ${endpoint} failed with status ${response.status}, trying next...`);
+                        }
+                    } catch (err) {
+                        console.error(`Error fetching from ${endpoint}:`, err);
+                    }
+                }
+                
+                if (!successfulFetch) {
+                    console.error(`All endpoints failed for artist ID ${parsedArtistId}`);
+                }
+            } catch (err) {
+                console.error("Error fetching artist songs from API:", err);
             }
-            
-            // Find songs that belong to this artist
+              // As a fallback, also include songs from the current list
             const artistSongsFiltered = songs.filter(song => {
                 if (Array.isArray(song.artist)) {
-                    return song.artist.includes(artistId);
+                    return song.artist.includes(parsedArtistId);
                 }
-                return song.artist === artistId;
+                return song.artist === parsedArtistId;
             });
             
-            setArtistSongs(artistSongsFiltered);
+            console.log(`ArtistView: Found ${artistSongsFiltered.length} songs from local state`);
+              // Combine and deduplicate songs
+            const combinedSongs = [...artistSongsFetched];
             
-            // Find albums by this artist
-            // Create a Set to avoid duplicate albums
-            const albumIds = new Set();
+            // Add any songs from the filtered list that aren't already in the fetched list
             artistSongsFiltered.forEach(song => {
+                if (!combinedSongs.some(s => s._id === song._id)) {
+                    combinedSongs.push(song);
+                }
+            });
+            
+            console.log(`ArtistView: Found ${artistSongsFetched.length} songs from API and ${artistSongsFiltered.length} from local state`);
+            console.log(`ArtistView: Setting ${combinedSongs.length} total songs for artist ${parsedArtistId}`);
+            
+            // If we still have no songs, log a more detailed error
+            if (combinedSongs.length === 0) {
+                console.error(`ArtistView: No songs found for artist ${parsedArtistId} via any method`);
+                // Check if we have any songs in the global state
+                console.log(`ArtistView: Total songs in global state: ${songs.length}`);
+                
+                // Check if we can find any songs with this artist in our global state
+                const anySongsWithArtist = songs.filter(song => {
+                    if (Array.isArray(song.artist)) {
+                        return song.artist.some(a => {
+                            if (typeof a === 'object') return a._id === parsedArtistId || a.artistID === parsedArtistId;
+                            return a === parsedArtistId;
+                        });
+                    }
+                    
+                    if (typeof song.artist === 'object') {
+                        return song.artist._id === parsedArtistId || song.artist.artistID === parsedArtistId;
+                    }
+                    
+                    return song.artist === parsedArtistId;
+                });
+                console.log(`ArtistView: Found ${anySongsWithArtist.length} songs with any match for artist ${parsedArtistId}`);
+            }
+              setArtistSongs(combinedSongs);
+            
+            // Find albums by this artist from all songs
+            const albumIds = new Set();
+            combinedSongs.forEach(song => {
                 if (song.album) {
                     albumIds.add(song.album);
                 }
             });
             
+            console.log(`ArtistView: Found ${albumIds.size} unique albums for artist ${parsedArtistId}`);
+            
             // Fetch any album details we don't already have
             const artistAlbumsFiltered = [];
-            
-            for (const albumId of albumIds) {
+              for (const albumId of albumIds) {
                 if (!albumsMap[albumId]) {
                     try {
-                        const response = await fetch(`http://localhost:3000/api/songs/album/${albumId}`);
-                        if (response.ok) {
-                            const albumData = await response.json();
+                        // Try both URL formats to ensure we can get the album data
+                        console.log(`ArtistView: Fetching album ${albumId}`);
+                        let albumData = null;
+                        let foundAlbum = false;
+                        
+                        // Try with and without /api prefix
+                        const urls = [
+                            `http://localhost:3000/songs/album/${albumId}`,
+                            `http://localhost:3000/api/songs/album/${albumId}`
+                        ];
+                        
+                        for (const url of urls) {
+                            if (foundAlbum) break;
+                            
+                            try {
+                                const response = await fetch(url);
+                                if (response.ok) {
+                                    albumData = await response.json();
+                                    foundAlbum = true;
+                                    console.log(`ArtistView: Successfully fetched album ${albumData.title} (ID: ${albumId}) from ${url}`);
+                                } else {
+                                    console.log(`ArtistView: Failed to fetch album ${albumId} from ${url}, status ${response.status}`);
+                                }
+                            } catch (urlError) {
+                                console.error(`Error fetching album ${albumId} from ${url}:`, urlError);
+                            }
+                        }
+                        
+                        if (albumData) {
                             setAlbumsMap(prev => ({...prev, [albumId]: albumData}));
                             artistAlbumsFiltered.push(albumData);
+                        } else {
+                            console.error(`ArtistView: Could not fetch album ${albumId} from any endpoint`);
                         }
                     } catch (err) {
-                        console.error(`Error fetching album ${albumId}:`, err);
+                        console.error(`Error in album fetching process for ${albumId}:`, err);
                     }
                 } else {
+                    console.log(`ArtistView: Using cached album ${albumsMap[albumId].title} (ID: ${albumId})`);
                     artistAlbumsFiltered.push(albumsMap[albumId]);
                 }
             }
             
             setArtistAlbums(artistAlbumsFiltered);
-            
-        } catch (error) {
+              } catch (error) {
             console.error("Error fetching artist data:", error);
         } finally {
+            console.log(`ArtistView: Finished loading, found ${artistSongs.length} songs and ${artistAlbums.length} albums`);
             setLoadingArtist(false);
         }
     };
@@ -613,12 +817,15 @@ function Home() {
             <div className={styles.topSection}>
                 <TopBar onAllSongsClick={handleAllSongsClick} />
             </div>
-            <div className={styles.midSection}>
-                <div className={styles.leftMiddle}>
+            <div className={styles.midSection}>                <div className={styles.leftMiddle}>
                     <SideBar 
                         onPlaylistClick={handlePlaylistClick} 
                         onCreatePlaylistClick={() => setShowCreatePlaylistModal(true)}
+                        onArtistClick={handleArtistClick}
+                        onAlbumClick={handleAlbumClick}
                         selectedPlaylist={selectedPlaylist}
+                        selectedArtistId={selectedArtist}
+                        selectedAlbumId={selectedAlbum}
                         refreshTrigger={playlistRefreshTrigger}
                     />
                 </div>
