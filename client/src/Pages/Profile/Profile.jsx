@@ -107,6 +107,30 @@ function Profile() {
         navigate('/login');
     }
 
+    const handleDeleteAccount = async () => {
+        // Show confirmation dialog
+        const isConfirmed = window.confirm(
+            "Are you sure you want to delete your account? This action cannot be undone."
+        );
+
+        if (isConfirmed) {
+            try {
+                await axios.post(
+                    `/api/auth/delete/${user.id}`,
+                    {},
+                    { withCredentials: true }
+                );
+                
+                // Logout and redirect to login page
+                await logout();
+                navigate('/login');
+            } catch (error) {
+                console.error('Failed to delete account:', error);
+                alert('Failed to delete account. Please try again.');
+            }
+        }
+    };
+
     useEffect(() => {
         const fetchPlaylists = async () => {
             try {
@@ -240,7 +264,7 @@ function Profile() {
                         <button className={styles.logoutButton} onClick={logoutHandler}>
                             <i className="fas fa-sign-out-alt"></i> Logout
                         </button>
-                        <button className={styles.deleteAccountButton}>
+                        <button className={styles.deleteAccountButton} onClick={handleDeleteAccount}>
                             <i className="fas fa-trash-alt"></i> Delete Account
                         </button>
                     </div>
