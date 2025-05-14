@@ -12,6 +12,7 @@ import recommendationRoutes from './routes/recommendationRoutes.js';
 import playlistRoutes from './routes/playlists.js';
 import listeningHistoryRoutes from './routes/listeningHistory.js';
 import libraryRoutes from './routes/libraryRoutes.js'
+import ListeningRoute from './routes/ListeningRoute.js'
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -41,6 +42,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/playlists', playlistRoutes);
 app.use('/api/history', listeningHistoryRoutes);
 app.use('/api', recommendationRoutes);
+app.use('/api/listening', listeningRoute)
 app.use('/api/library', libraryRoutes);
 
 // connect to db and start listening
