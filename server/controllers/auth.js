@@ -4,7 +4,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 // import cookieParser from "cookie-parser";
-import { User } from "../db_entities.js";
+import { User, Playlist, Listening_History } from "../db_entities.js";
 
 const JWTSECRET = 'JWTSECRET';
 
@@ -216,4 +216,51 @@ const checkAuthStatus = async (req, res) => {
     res.status(200).send({ message: 'Authenticated', user: req.user });
 }
 
-export { registerUser, loginUser, logoutUser, updateProfile, updatePassword, checkAuthStatus };
+const deleteUser = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const requestingUser = req.user;
+
+        const isAdmin = requestingUser.role === 'admin';
+        const isOwner = requestingUser.id.toString() === userId;
+
+        if (!isAdmin && !isOwner) {
+            return res.status(403).json({ 
+                message: 'Not authorized to delete this user' 
+            });
+        }
+
+        const userToDelete = await User.findById(userId);
+        if (!userToDelete) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        await Promise.all([
+            Playlist.deleteMany({ _id: { $in: userToDelete.playlists } }),
+            Listening_History.deleteMany({ user: userId }),
+            User.findByIdAndDelete(userId)
+        ]);
+
+        if (isOwner) {
+            res.cookie('token', '', { 
+                httpOnly: true, 
+                expires: new Date(0),
+                sameSite: 'strict',
+                secure: process.env.NODE_ENV === 'production'
+            });
+        }
+
+        res.status(200).json({ 
+            message: 'User and associated data deleted successfully' 
+        });
+
+    } catch (error) {
+        console.error('Delete user error:', error);
+        res.status(500).json({ 
+            message: 'Server error while deleting user',
+            error: error.message 
+        });
+    }
+};
+
+export { registerUser, loginUser, logoutUser, updateProfile, updatePassword, checkAuthStatus, deleteUser };

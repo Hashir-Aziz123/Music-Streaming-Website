@@ -8,7 +8,8 @@ import {
     logoutUser,
     updateProfile,
     updatePassword,
-    checkAuthStatus
+    checkAuthStatus,
+    deleteUser
 } from '../controllers/auth.js';
 
 const router = express.Router();
@@ -19,5 +20,6 @@ router.post('/logout', logoutUser);
 router.get('/status', verifyToken, checkAuthStatus);
 router.post('/update', verifyToken, updateProfile);
 router.post('/update/password', verifyToken, updatePassword);
+router.post('/delete/:userId', verifyToken, deleteUser);
 
 export default router;
