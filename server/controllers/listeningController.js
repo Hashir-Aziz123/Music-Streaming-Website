@@ -1,4 +1,4 @@
-import {ListeningHistory} from "../db_entities.js";
+import {Listening_History} from "../db_entities.js";
 import { recommendSongsForUser} from "../services/recommendationService.js";
 import {User} from "../db_entities.js";
 
@@ -8,20 +8,25 @@ export async function logListening(req, res) {
     const {userId, songId , duration_listened} = req.body;
 
     try{
-        await ListeningHistory.create({
-            userId,
-            songId,
+        await Listening_History.create({
+            user: userId,
+            song: songId,
             listenedAt: new Date(),
             duration_listened,
         });
 
-        const ListenCount = await ListeningHistory.countDocuments({userId});
 
-        if (listenCount % LISTEN_THRESHOLD === 0) {
-            const user = await user.findById(userId);
+        const ListenCount = await Listening_History.countDocuments({userId});
+
+        console.log(userId, songId,duration_listened , new Date());
+        console.log(ListenCount);
+
+        if (ListenCount % LISTEN_THRESHOLD === 0) {
+            const user = await User.findById(userId);
             await recommendSongsForUser(user);
             console.log("Recommendation updates")
         }
+
 
         res.status(200).json({message:"Recommendation updates successfully"});
     } catch (error) {

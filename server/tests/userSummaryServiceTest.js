@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import {Song, User , Listening_History } from '../db_entities.js';
+import {generateListeningSummary} from "../services/summaryService.js";
 
 async function insertSampleListeningHistory() {
     try {
@@ -78,8 +79,10 @@ async function insertSampleListeningHistory() {
             }
         ];
 
-        const result = await Listening_History.insertMany(listeningHistoryData);
-        console.log('Inserted', result.length, 'records');
+        // const result = await Listening_History.insertMany(listeningHistoryData);
+        // console.log('Inserted', result.length, 'records');
+        const result = await generateListeningSummary(users[1]._id);
+        console.log(result);
 
         await mongoose.disconnect();
         console.log('Disconnected from MongoDB');

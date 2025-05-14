@@ -1,4 +1,4 @@
-import {Artist, Listening_History} from "../db_entities.js";
+import {Artist, Listening_History , User} from "../db_entities.js";
 import {populate} from "dotenv";
 
 export async function generateListeningSummary(userID) {
@@ -54,6 +54,19 @@ export async function generateListeningSummary(userID) {
     const topArtistNames = topArtistIDs.map(
         (id) => artistIdToName[id] || `Unknown Artist (${id})`
     );
+
+    console.log(genreCount , topArtistNames , songCount );
+
+    await User.findOneAndUpdate(
+        {_id: userID},
+        {
+            topGenres: sortObject(genreCount).slice(0, 5),
+            topArtists: topArtistNames,
+            mostPlayedSongs: sortObject(songCount).slice(0, 20),
+            avgSongDurationSeconds: Math.round(totalDuration / history.length)
+        },
+        {upsert: true , new: true}
+    )
 
     return {
         topGenres: sortObject(genreCount).slice(0, 5),

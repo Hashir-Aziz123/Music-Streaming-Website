@@ -12,7 +12,7 @@ import recommendationRoutes from './routes/recommendationRoutes.js';
 import playlistRoutes from './routes/playlists.js';
 import listeningHistoryRoutes from './routes/listeningHistory.js';
 import libraryRoutes from './routes/libraryRoutes.js'
-import ListeningRoute from './routes/ListeningRoute.js'
+import listeningRoute from "./routes/listeningRoute.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -40,10 +40,10 @@ app.use('/uploads', express.static(`${__dirname}/uploads`));
 app.use('/api/songs', songRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/playlists', playlistRoutes);
-app.use('/api/history', listeningHistoryRoutes);
 app.use('/api', recommendationRoutes);
 app.use('/api/listening', listeningRoute)
 app.use('/api/library', libraryRoutes);
+app.use('/api/history', listeningHistoryRoutes);
 
 // connect to db and start listening
 mongoose.connect("mongodb://localhost:27017/driftDB")

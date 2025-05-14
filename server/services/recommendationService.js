@@ -2,7 +2,7 @@ import {Song, UserSongScore} from "../db_entities.js";
 import {buildUserHistoryMap, calculateUserSongScore} from "./songScoringEngine.js";
 import {generateListeningSummary} from "./summaryService.js";
 
-const LIMIT = 50;
+const LIMIT = 200;
 
 export async function recommendSongsForUser(user) {
     try {

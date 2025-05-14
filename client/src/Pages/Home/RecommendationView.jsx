@@ -21,7 +21,7 @@ function RecommendationView({ recommendedSongs, isLoading, handlePlayClick, curr
         <div className={styles.recommendationContainer}>
             {/* Weekly Recommendation */}
             <div className={styles.weeklyRecommendation}>
-                <h2>Weekly Recommend</h2>
+                <h2>Drift's Recommendations</h2>
                 <div className={styles.weeklyRecommendationBarSpace}>
                     {filters.map((filter) => (
                         <button
@@ -43,6 +43,9 @@ function RecommendationView({ recommendedSongs, isLoading, handlePlayClick, curr
                     <PlaylistCard key="edm1" title="Top EDM" imgSrc={COVER_IMG} subtitle="45 songs" />, 
                     <PlaylistCard key="acoustic1" title="Acoustic Mornings" imgSrc={COVER_IMG} subtitle="Soft & calm" />, 
                     <PlaylistCard key="rock2" title="Rock Vibes" imgSrc={COVER_IMG} subtitle="32 songs" />, 
+                    <PlaylistCard key="lofi2" title="Lo-Fi Beats" imgSrc={COVER_IMG} subtitle="Chill tracks" />,
+                    <PlaylistCard key="acoustic1" title="Acoustic Mornings" imgSrc={COVER_IMG} subtitle="Soft & calm" />,
+                    <PlaylistCard key="rock2" title="Rock Vibes" imgSrc={COVER_IMG} subtitle="32 songs" />,
                     <PlaylistCard key="lofi2" title="Lo-Fi Beats" imgSrc={COVER_IMG} subtitle="Chill tracks" />
                 ]} 
             />
