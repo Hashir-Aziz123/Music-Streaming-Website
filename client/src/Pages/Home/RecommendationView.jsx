@@ -1,4 +1,4 @@
-import { useState  , useEffect } from "react";
+import React, { useState  , useEffect } from "react";
 import PlaylistCard from "./PlaylistCard.jsx";
 import styles from "./RecommendationView.module.css";
 import ScrollableSection from "./ScrollableSection.jsx";

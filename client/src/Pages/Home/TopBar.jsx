@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Search, User, Music } from 'lucide-react';
+import { Search, Download, Bell, User, Music } from 'lucide-react';
 import styles from './TopBar.module.css';
-import logo from '../../../assets/logo_no_text.png';
+import logo from '../../../public/favicon.png';
 import PropTypes from 'prop-types';
 
 function TopBar({ onAllSongsClick }) {
@@ -22,8 +22,7 @@ function TopBar({ onAllSongsClick }) {
                         className={styles.searchInput}
                     />
                 </div>
-            </div>
-            <div className={styles.right}>
+            </div>            <div className={styles.right}>
                 <button 
                     className={styles.allSongsButton}
                     onClick={onAllSongsClick}
@@ -32,6 +31,10 @@ function TopBar({ onAllSongsClick }) {
                     <Music size={18} />
                     <span>All Songs</span>
                 </button>
+                
+                <div className={styles.icon}>
+                    <Bell size={20} />
+                </div>
                 
                 <Link to="/profile">
                     <div className={styles.userIcon}>

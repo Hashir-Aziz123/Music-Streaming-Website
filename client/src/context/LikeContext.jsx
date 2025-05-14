@@ -72,7 +72,30 @@ export const LikeProvider = ({ children }) => {
         }
     };
     
-    // Utility function to sync a song's like status with the Liked Songs playlist
+    // Fetch all liked songs
+    const fetchAllLikedSongs = async () => {
+        try {
+            const response = await axios.get('/api/likes', { withCredentials: true });
+            
+            // Create a map of songId -> true for all liked songs
+            const likesMap = {};
+            response.data.songs.forEach(song => {
+                likesMap[song.trackId] = true;
+            });
+            
+            setLikedSongs(likesMap);
+            return response.data.songs;
+        } catch (error) {
+            console.error("Error fetching liked songs:", error);
+            return [];
+        }
+    };
+    
+    // Fetch all liked songs on initial load
+    useEffect(() => {
+        fetchAllLikedSongs();
+    }, []);
+      // Utility function to sync a song's like status with the Liked Songs playlist
     const syncLikedSongsPlaylist = useCallback(async () => {
         try {
             await axios.post('/api/likes/sync-playlist', {}, { withCredentials: true });
@@ -83,6 +106,7 @@ export const LikeProvider = ({ children }) => {
         isLiked,
         fetchLikeStatus,
         toggleLike,
+        fetchAllLikedSongs,
         syncLikedSongsPlaylist,
         likeChangeNotifier,
         notifyLikeChange
