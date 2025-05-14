@@ -741,6 +741,7 @@ function Home() {
         generatePlaybackQueue(songs, startIndex);
         
         // Set the first song in queue as current
+        setPreviousSong(currentSong)
         setCurrentSong(songs[startIndex]);
         setIsPlaying(true);
         
@@ -792,17 +793,21 @@ function Home() {
                 // Re-generate the queue if shuffle is enabled to get a new order
                 if (shuffleMode) {
                     generatePlaybackQueue(playlistSongs);
+                    setPreviousSong(currentSong)
                     setCurrentSong(playbackQueue[0]);
                 } else {
                     // Just go back to the first song
+                    setPreviousSong(currentSong)
                     setCurrentSong(playbackQueue[0]);
                 }
             } else {
                 // If repeat mode is off, stop playing
+                setPreviousSong(currentSong)
                 setIsPlaying(false);
             }
         } else {
             // Play the next song in the queue
+            setPreviousSong(currentSong)
             setCurrentSong(playbackQueue[currentIndex + 1]);
         }
     };
@@ -817,11 +822,13 @@ function Home() {
         if (currentIndex === 0) {
             if (repeatMode) {
                 // If repeat mode is on, go to the last song in the queue
+                setPreviousSong(currentSong)
                 setCurrentSong(playbackQueue[playbackQueue.length - 1]);
             }
             // Otherwise stay on the first song
         } else {
             // Go to the previous song
+            setPreviousSong(currentSong)
             setCurrentSong(playbackQueue[currentIndex - 1]);
         }
     };
