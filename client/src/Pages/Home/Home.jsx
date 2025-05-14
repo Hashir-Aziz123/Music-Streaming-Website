@@ -12,12 +12,9 @@ import PlaylistView from "./PlaylistView.jsx";
 import CreatePlaylistModal from "./CreatePlaylistModal.jsx";
 import {useAuth} from "../../context/AuthContext.jsx";
 import axios from "axios";
-import {PlaybackProvider, usePlayback} from "../../context/playbackContext.jsx";
+import {PlaybackProvider, usePlayback} from "../../context/PlaybackContext.jsx";
 
 function Home() {
-
-
-
     const [user, setUser] = useState(useAuth());
     const [songs, setSongs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -935,15 +932,5 @@ function Home() {
         </div>
     );
 }
-
-// useful code for later
-// <button onClick={() => {
-//     setShowRecommendations( !showRecommendations);
-//     setSelectedAlbum(null);
-//     setSelectedArtist(null);
-//     loadRecommendations("681b690549be81240cd1c847"); // replace with actual userId
-// }}>
-//     Show Recommendations
-// </button>
 
 export default Home;
