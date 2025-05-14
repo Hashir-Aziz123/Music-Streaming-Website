@@ -12,8 +12,11 @@ import PlaylistView from "./PlaylistView.jsx";
 import CreatePlaylistModal from "./CreatePlaylistModal.jsx";
 import {useAuth} from "../../context/AuthContext.jsx";
 import axios from "axios";
+import {PlaybackProvider, usePlayback} from "../../context/playbackContext.jsx";
 
 function Home() {
+
+
 
     const [user, setUser] = useState(useAuth());
     const [songs, setSongs] = useState([]);
@@ -904,6 +907,7 @@ function Home() {
                 </div>}
             </div>
             {currentSong && <div className={styles.bottomSection}>
+                <PlaybackProvider>
                 <MediaControlBar
                     currentSong={currentSong}
                     isPlaying={isPlaying}
@@ -918,7 +922,9 @@ function Home() {
                     toggleShuffle={toggleShuffle}
                     toggleRepeat={toggleRepeat}
                     handleSongEnded={handleSongEnded}
-                /></div>}
+                />
+                </PlaybackProvider>
+            </div>}
             
             {showCreatePlaylistModal && (
                 <CreatePlaylistModal 
