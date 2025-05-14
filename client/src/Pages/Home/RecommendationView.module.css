@@ -33,9 +33,11 @@
 
 .weeklyRecommendationBar {
     border: none;
-    background: transparent;
+    background: rgba(0, 0, 0, 0.3);
     color: #b3b3b3;
     padding: 6px 12px;
+    width: 49%;
+    height: 36px;
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s;
@@ -43,13 +45,13 @@
 }
 
 .weeklyRecommendationBar:hover {
-    color: white;
+    color: #e75454;
 }
-
+/* 
 .weeklyRecommendationBar.active {
     background-color: #e75454;
     color: white;
-}
+} */
 
 /* We're removing the ::before pseudo-element and span styling to match sidebar buttons */
 
