@@ -62,10 +62,15 @@ export async function getTopRecommendations(userId) {
             .sort({ score: -1 })
             .limit(LIMIT);
 
+        console.log("Fetched topScores:", topScores);
+        // console.log("Is array:", Array.isArray(topScores));
+
         // Only return actual Song documents that were successfully populated
         const trackIds = topScores
             .filter(entry => entry.trackId )
             .map(entry => entry.trackId); // this is now the full Song document
+
+        console.log("Recommended Songs:", trackIds);
 
         return await Song.find({trackId: {$in: trackIds}}) ;
     } catch (error) {

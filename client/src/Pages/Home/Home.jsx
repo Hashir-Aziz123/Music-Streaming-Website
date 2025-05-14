@@ -742,6 +742,7 @@ function Home() {
         generatePlaybackQueue(songs, startIndex);
         
         // Set the first song in queue as current
+        setPreviousSong(currentSong);
         setCurrentSong(songs[startIndex]);
         setIsPlaying(true);
         

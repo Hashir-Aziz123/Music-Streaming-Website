@@ -1,4 +1,4 @@
-import {Listening_History } from "../db_entities.js";
+import {Listening_History , Song , User , Artist } from "../db_entities.js";
 
 const normalize = (value , min , max) => {
     if (max === min)
@@ -37,7 +37,22 @@ export async function calculateUserSongScore(user , song , userHistoryMap ) {
         0.10 * recencyScore -
         0.10 * repetitionPenalty;
 
+    console.log("Song duration:", song.duration_seconds);
+    console.log("User avg duration:", avgSongDurationSeconds);
+
+
+    console.log({
+        genreScore,
+        artistScore,
+        durationScore,
+        popularityScore,
+        recencyScore,
+        repetitionPenalty
+    });
+
+
     return parseFloat(score.toFixed(4));
+
 }
 
 export async function buildUserHistoryMap(userId){

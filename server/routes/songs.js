@@ -9,6 +9,7 @@ import {
     getAllArtists,
     getAllAlbums,
     getSongsByArtist,
+    debugArtist
 } from "../controllers/songs.js";
 
 const router = express.Router();
@@ -23,6 +24,7 @@ router.post('/', insertSong);
 router.get('/artists', getAllArtists);
 router.get('/artist/:id', getArtistById);
 router.get('/artist/:artistId/songs', getSongsByArtist);
+router.get('/debug/artist/:id', debugArtist);
 
 // Album routes
 router.get('/albums', getAllAlbums);

@@ -183,3 +183,34 @@ export const removeFromLikedSongsPlaylist = async (userId, songId) => {
         return null;
     }
 };
+
+// Sync the Liked Songs playlist with the user's liked_songs array
+export const syncLikedSongsPlaylist = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        
+        // Find the user and their liked songs
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        
+        // Get or create the Liked Songs playlist
+        const likedSongsPlaylist = await ensureLikedSongsPlaylist(userId);
+        if (!likedSongsPlaylist) {
+            return res.status(500).json({ error: "Failed to ensure Liked Songs playlist" });
+        }
+        
+        // Update the playlist with all the songs from liked_songs
+        likedSongsPlaylist.songs = [...user.liked_songs]; // Convert to new array to ensure it's modified
+        await likedSongsPlaylist.save();
+        
+        res.status(200).json({ 
+            message: "Liked Songs playlist synchronized successfully",
+            playlist: likedSongsPlaylist 
+        });
+    } catch (error) {
+        console.error("Error syncing Liked Songs playlist:", error);
+        res.status(500).json({ error: error.message });
+    }
+};

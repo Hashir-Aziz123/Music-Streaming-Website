@@ -1,5 +1,5 @@
 import {Listening_History} from "../db_entities.js";
-import {recommendSongsForUser} from "../services/recommendationService.js";
+import { recommendSongsForUser} from "../services/recommendationService.js";
 import {User} from "../db_entities.js";
 
 const LISTEN_THRESHOLD = 10;
@@ -17,6 +17,9 @@ export async function logListening(req, res) {
 
 
         const ListenCount = await Listening_History.countDocuments({userId});
+
+        console.log(userId, songId,duration_listened , new Date());
+        console.log(ListenCount);
 
         if (ListenCount % LISTEN_THRESHOLD === 0) {
             const user = await User.findById(userId);
