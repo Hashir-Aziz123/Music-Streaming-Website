@@ -53,7 +53,7 @@ function ProfileUserStats({playlistsNum}) {
                     <button className={styles.moreButton}>See All</button>
                 </div>
                 <div className={styles.songGrid}>
-                    {stats.topSongs.map(song => (
+                    {stats.topSongs.slice(0, 10).map(song => (
                         <CustomCard
                             key={song._id}
                             title={song.title}
