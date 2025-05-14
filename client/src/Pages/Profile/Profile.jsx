@@ -12,7 +12,29 @@ function Profile() {
     const { isAuthenticated, user, logout, updateProfile, updatePassword } = useAuth();
     const [playlists, setPlaylists] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [userStats, setUserStats] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setIsLoading(true);
+                const [playlistsResponse, statsResponse] = await Promise.all([
+                    axios.get(`http://localhost:5173/api/playlists/user/${user.id}`, { withCredentials: true }),
+                    axios.get(`http://localhost:5173/api/history/stats/${user.id}`, { withCredentials: true })
+                ]);
+                
+                setPlaylists(playlistsResponse.data);
+                setUserStats(statsResponse.data);
+            } catch (err) {
+                console.error("Failed to fetch user data:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (user) fetchData();
+    }, [user]);
 
     const countries = [
         "Afghanistan", "Argentina", "Australia", "Brazil", "Canada", "China", "Egypt", "France", "Germany", "India",
@@ -120,11 +142,11 @@ function Profile() {
                                 <span className={styles.statLabel}>Playlists</span>
                             </div>
                             <div className={styles.statItem}>
-                                <span className={styles.statValue}>136</span>
+                                <span className={styles.statValue}>{userStats ? Math.round(userStats.totalListeningTime / 3600) : 0}</span>
                                 <span className={styles.statLabel}>Hours</span>
                             </div>
                             <div className={styles.statItem}>
-                                <span className={styles.statValue}>325</span>
+                                <span className={styles.statValue}>{userStats ? userStats.totalSongs : 0}</span>
                                 <span className={styles.statLabel}>Songs</span>
                             </div>
                         </div>
