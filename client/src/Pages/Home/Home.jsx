@@ -22,6 +22,7 @@ function Home() {
     const [error, setError] = useState(null);
     const [previousSong, setPreviousSong] = useState(null);
     const [currentSong, setCurrentSong] = useState(null);
+    const [songsPlayed, setSongsPlayed] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [artistsMap, setArtistsMap] = useState({});
     const [albumsMap, setAlbumsMap] = useState({});
@@ -86,6 +87,8 @@ function Home() {
             userIdToSend = user.user.id;
 
             console.log(user);
+
+            setSongsPlayed( prevSongsPlayed => prevSongsPlayed +1 );
 
             if (userIdToSend) {
                 logListening({ userId: userIdToSend, songId, duration_listened: 100 })
@@ -714,13 +717,14 @@ function Home() {
             // Default to recommendation view
             return (
                 <RecommendationView
-                    recommendedSongs={recommendedSongs}
                     isLoading={loadingRecommendations}
                     currentSong={currentSong}
                     isPlaying={isPlaying}
                     handlePlayClick={handlePlayClick}
                     artistsMap={artistsMap}
                     albumsMap={albumsMap}
+                    user={user}
+                    songsNumber = {songsPlayed}
                 />
             );
         }
