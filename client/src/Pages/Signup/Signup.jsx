@@ -34,36 +34,6 @@ function Signup() {
         if (result.success) {
             navigate('/');
         }
-
-        // try {
-        //     const response = await fetch("http://localhost:3000/api/auth/register", {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json"
-        //         },
-        //         credentials: "include",
-        //         body: JSON.stringify({
-        //             username: formData.username,
-        //             email: formData.email,
-        //             password: formData.password,
-        //             dob: formData.dob,
-        //             country: formData.country
-        //         })
-        //     });
-
-        //     const data = await response.json();
-
-        //     if (response.ok) {
-        //         console.log("Registration successful:", data);
-        //         navigate('/');
-        //     } else {
-        //         console.error("Registration failed:", data.message);
-        //         alert(data.message || "Registration failed.");
-        //     }
-        // } catch (err) {
-        //     console.error("Error while registering user:", err);
-        //     alert("An error occurred during registration.");
-        // }
     };
 
     const countries = [
