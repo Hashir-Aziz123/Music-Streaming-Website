@@ -1,7 +1,7 @@
-import Home from "./Pages/Home/Home.jsx";
-import Login from "./Pages/Login/Login.jsx";
-import Signup from "./Pages/Signup/Signup.jsx";
-import Profile from "./Pages/Profile/Profile.jsx";
+import Home from "./pages/Home/Home.jsx";
+import Login from "./pages/Login/Login.jsx";
+import Signup from "./pages/Signup/Signup.jsx";
+import Profile from "./pages/Profile/Profile.jsx";
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import { useAuth } from './context/AuthContext.jsx';
 import { LikeProvider } from './context/LikeContext.jsx';

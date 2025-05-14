@@ -3,6 +3,6 @@ import { fetchTopRecommendations } from '../controllers/recommendationController
 
 const router = express.Router();
 
-router.get('/recommendations/:userId', fetchTopRecommendations);
+router.get('/:userId', fetchTopRecommendations);
 
 export default router;

@@ -149,7 +149,7 @@ function Profile() {
     return (
         <div className={styles.pageContainer}>
             <div className={styles.topSection}>
-                <TopBar />
+                <TopBar onAllSongsClick={() => {navigate('/')}}/>
             </div>
 
             <div className={styles.contentSection}>

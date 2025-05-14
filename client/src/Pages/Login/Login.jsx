@@ -30,29 +30,6 @@ function Login() {
         if (result.success) {
             navigate('/');
         }
-
-    //     try {
-    //         const response = await fetch("http://localhost:3000/api/auth/login", {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json"
-    //             },
-    //             credentials: "include",
-    //             body: JSON.stringify({ username: formData.username, password: formData.password })
-    //         });
-
-    //         const data = await response.json();
-
-    //         if (response.ok) {
-    //             console.log("Login successful:", data);
-    //         } else {
-    //             console.error("Login failed:", data.message);
-    //             alert(data.message || "Login failed.");
-    //         }
-    //     } catch (err) {
-    //         console.error("Error logging in:", err);
-    //         alert("An error occurred during login.");
-    //     }
     };
 
     return (

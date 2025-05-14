@@ -11,7 +11,6 @@ import RecommendationView from "./RecommendationView.jsx";
 import PlaylistView from "./PlaylistView.jsx";
 import CreatePlaylistModal from "./CreatePlaylistModal.jsx";
 import {useAuth} from "../../context/AuthContext.jsx";
-import { ArrowLeft } from "lucide-react";
 import axios from "axios";
 
 function Home() {
