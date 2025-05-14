@@ -10,12 +10,17 @@ import ArtistView from "./ArtistView.jsx";
 import RecommendationView from "./RecommendationView.jsx";
 import PlaylistView from "./PlaylistView.jsx";
 import CreatePlaylistModal from "./CreatePlaylistModal.jsx";
+import {useAuth} from "../../context/AuthContext.jsx";
 import { ArrowLeft } from "lucide-react";
+import axios from "axios";
 
 function Home() {
+
+    const [user, setUser] = useState(useAuth());
     const [songs, setSongs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [previousSong, setPreviousSong] = useState(null);
     const [currentSong, setCurrentSong] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [artistsMap, setArtistsMap] = useState({});
@@ -58,6 +63,39 @@ function Home() {
     const [loadingMore, setLoadingMore] = useState(false);
     const observer = useRef();
     const lastSongElementRef = useRef(null);
+
+    // log function
+    async function logListening({ userId, songId, duration_listened }) {
+        try {
+            const response = await axios.post('/api/listening/log', {
+                userId,
+                songId,
+                duration_listened,
+            });
+            console.log('Listening logged:', response.data);
+        } catch (error) {
+            console.error('Error logging listening:', error);
+        }
+    }
+
+    useEffect(() => {
+        // Only proceed if Song and its _id exist
+        if (previousSong && previousSong._id) {
+            const songId = previousSong._id;
+            let userIdToSend = null;
+            userIdToSend = user.user.id;
+
+            console.log(user);
+
+            if (userIdToSend) {
+                logListening({ userId: userIdToSend, songId, duration_listened: 100 })
+                    .then(() => console.log("Listening logged for song:", songId , previousSong.title))
+                    .catch(error => console.error("Error in useEffect after logListening call:", error)); // Good practice to catch here too
+            } else {
+                console.warn("Skipping listening log: userId could not be determined from user state.", user);
+            }
+        }
+    }, [previousSong, user]); //
 
     // Function to fetch songs with pagination
     const fetchSongs = useCallback(async (pageNum = 1, append = false) => {
@@ -576,6 +614,7 @@ function Home() {
             setIsPlaying(!isPlaying);
         } else {
             // If clicking a new song, set it as current and start playing
+            setPreviousSong(currentSong || null);
             setCurrentSong(song);
             setIsPlaying(true);
             

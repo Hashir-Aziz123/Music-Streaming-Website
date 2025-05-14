@@ -16,14 +16,8 @@ function AlbumCard({ album, onClick, isActive }) {
                     />
             </div>
             <div className={styles.cardContent}>
-                <h4 className={styles.title}>{album.title}</h4>                <p className={styles.subtitle}>
-                    {album.artistName && `By ${album.artistName}`}
-                    {typeof album.songsCount === 'number' ? 
-                        ` • ${album.songsCount} ${album.songsCount === 1 ? 'song' : 'songs'}` : 
-                        album.songs && Array.isArray(album.songs) ?
-                            ` • ${album.songs.length} ${album.songs.length === 1 ? 'song' : 'songs'}` : 
-                            ''}
-                </p>
+                <h4 className={styles.title}>{album.title}</h4>
+                <p className={styles.subtitle}>Album</p>
             </div>
         </div>
     );

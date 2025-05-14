@@ -15,13 +15,8 @@ function ArtistCard({ artist, onClick, isActive }) {
                 />
             </div>
             <div className={styles.cardContent}>
-                <h4 className={styles.title}>{artist.name}</h4>                <p className={styles.subtitle}>
-                    {typeof artist.songsCount === 'number' ? 
-                        `${artist.songsCount} ${artist.songsCount === 1 ? 'song' : 'songs'}` : 
-                        artist.songs && Array.isArray(artist.songs) ? 
-                            `${artist.songs.length} ${artist.songs.length === 1 ? 'song' : 'songs'}` : 
-                            'Artist'}
-                </p>
+                <h4 className={styles.title}>{artist.name}</h4>
+                <p className={styles.subtitle}>Artist</p>
             </div>
         </div>
     );

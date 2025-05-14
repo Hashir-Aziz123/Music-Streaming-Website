@@ -32,9 +32,7 @@ function PlaylistCard({ playlist, onClick, isActive, title, imgSrc, subtitle, in
                 </div>
             </div>
         );
-    }
-
-    // Default horizontal card layout for playlists
+    }    // Default horizontal card layout for playlists
     return (
         <div 
             className={`${styles.card} ${isActive ? styles.active : ''}`} 
@@ -52,7 +50,7 @@ function PlaylistCard({ playlist, onClick, isActive, title, imgSrc, subtitle, in
                 <h4 className={styles.title}>{isPlaylistObject ? playlist.name : title}</h4>
                 <p className={styles.subtitle}>
                     {isPlaylistObject 
-                        ? `Playlist • ${playlist.songsCount || "0"} songs`
+                        ? `${playlist.is_system || playlist.name === "Liked Songs" ? "System • " : ""}Playlist`
                         : subtitle
                     }
                 </p>

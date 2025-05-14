@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './MediaControlBar.module.css';
 import PropTypes from 'prop-types';
-import { Play, Pause, Shuffle, Repeat, SkipForward, SkipBack, Volume2, Volume1, VolumeX } from 'lucide-react';
+import { Play, Pause, Shuffle, Repeat, SkipForward, SkipBack, Volume2, Volume1, VolumeX, Heart } from 'lucide-react';
+import { useLikes } from '../../context/LikeContext';
 
 function MediaControlBar({ 
     currentSong,
@@ -19,6 +20,7 @@ function MediaControlBar({
     handleSongEnded = null
 }) {
     const [volume, setVolume] = useState(0.7); // Default volume is 70%
+    const [isLiked, setIsLiked] = useState(false);
     const audioRef = useRef(null);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
@@ -91,7 +93,42 @@ function MediaControlBar({
             
             progressBarFillRef.current.style.width = `${percent}%`;
         }
-    }, [currentTime, duration, isDraggingProgress, seekTime]);
+    }, [currentTime, duration, isDraggingProgress, seekTime]);    // Use the like context
+    const { isLiked: checkIsLiked, fetchLikeStatus: contextFetchLikeStatus, toggleLike: contextToggleLike, likeChangeNotifier } = useLikes();
+    
+    // Fetch like status when song changes or when like status changes anywhere
+    useEffect(() => {
+        if (currentSong && currentSong.trackId) {
+            fetchLikeStatus();
+        }
+    }, [currentSong, likeChangeNotifier]); // Re-run when likeChangeNotifier changes
+
+    // Function to fetch the like status for the current song
+    const fetchLikeStatus = async () => {
+        if (!currentSong || !currentSong.trackId) return;
+        
+        // Use context function
+        const liked = await contextFetchLikeStatus(currentSong.trackId);
+        setIsLiked(liked);
+    };
+    
+    // Function to toggle like status
+    const toggleLike = async () => {
+        if (!currentSong || !currentSong.trackId) return;
+        
+        try {
+            // Use context function
+            const result = await contextToggleLike(currentSong.trackId, currentSong);
+            setIsLiked(result.liked);
+            
+            // Update the song object if needed
+            if (currentSong) {
+                currentSong.likes_count = result.likesCount;
+            }
+        } catch (error) {
+            console.error("Error toggling like:", error);
+        }
+    };
 
     // Update volume fill effect
     useEffect(() => {
@@ -256,8 +293,7 @@ function MediaControlBar({
 
     return (
         <div className={styles.mediaControlBar}>
-            {/* LEFT: Song Info */}
-            <div className={styles.songInfo}>
+            {/* LEFT: Song Info */}            <div className={styles.songInfo}>
                 <img
                     src={albumArt || defaultAlbumArt}
                     alt={title ? `${title} Album Art` : "Album Art"}
@@ -268,8 +304,8 @@ function MediaControlBar({
                     <span className={styles.songArtist}>{artist}</span>
                 </div>
                 {currentSong && (
-                    <div className={styles.likeIcon}>
-                        <i className="fas fa-heart" style={{ color: '#e75454' }}></i>
+                    <div className={styles.likeIcon} onClick={toggleLike} title={isLiked ? "Unlike" : "Like"}>
+                        <Heart size={16} fill={isLiked ? "#e75454" : "none"} color={isLiked ? "#e75454" : "currentColor"} />
                     </div>
                 )}
             </div>

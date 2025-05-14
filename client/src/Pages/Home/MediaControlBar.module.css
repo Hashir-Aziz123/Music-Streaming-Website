@@ -56,6 +56,16 @@
 .likeIcon {
     margin-left: 8px;
     font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.likeIcon:hover {
+    transform: scale(1.1);
+}
+
+.likeIcon:active {
+    transform: scale(0.9);
 }
 
 /*Middle Section*/

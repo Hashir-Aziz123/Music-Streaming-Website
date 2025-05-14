@@ -69,6 +69,7 @@ export const getPlaylistById = async (req, res) => {
 export const addSongToPlaylist = async (req, res) => {
     try {
         const { playlistId, songId } = req.params;
+        const userId = req.user.id;
         
         const song = await Song.findOne({ trackId: parseInt(songId) });
         if (!song) {
@@ -86,6 +87,21 @@ export const addSongToPlaylist = async (req, res) => {
 
         if (!playlist.songs.includes(song.trackId)) {
             playlist.songs.push(song.trackId);
+            
+            // Special handling for Liked Songs playlist
+            if (playlist.name === "Liked Songs" || playlist.is_system === true) {
+                // Also update the user's liked_songs array
+                await User.findByIdAndUpdate(userId, {
+                    $addToSet: { liked_songs: parseInt(songId) }
+                });
+                
+                // Update the song's like count
+                await Song.findOneAndUpdate(
+                    { trackId: parseInt(songId) },
+                    { $inc: { likes_count: 1 } }
+                );
+            }
+            
             await playlist.save();
 
             const updatedPlaylist = await Playlist.findById(playlistId);
@@ -109,10 +125,25 @@ export const addSongToPlaylist = async (req, res) => {
 export const removeSongFromPlaylist = async (req, res) => {
     try {
         const { playlistId, songId } = req.params;
+        const userId = req.user.id;
         
         const playlist = await Playlist.findById(playlistId);
         if (!playlist) {
             return res.status(404).json({ error: "Playlist not found" });
+        }
+
+        // Special handling for Liked Songs playlist
+        if (playlist.name === "Liked Songs" || playlist.is_system === true) {
+            // Also update the user's liked_songs array
+            await User.findByIdAndUpdate(userId, {
+                $pull: { liked_songs: parseInt(songId) }
+            });
+            
+            // Update the song's like count
+            await Song.findOneAndUpdate(
+                { trackId: parseInt(songId) },
+                { $inc: { likes_count: -1 } }
+            );
         }
 
         playlist.songs = playlist.songs.filter(id => id !== parseInt(songId));
@@ -148,6 +179,17 @@ export const deletePlaylist = async (req, res) => {
     try {
         const playlistId = req.params.id;
         const userId = req.user.id;
+        
+        // Check if this is the Liked Songs playlist
+        const playlist = await Playlist.findById(playlistId);
+        if (!playlist) {
+            return res.status(404).json({ error: "Playlist not found" });
+        }
+        
+        // Prevent deletion of the Liked Songs playlist or any system playlist
+        if (playlist.name === "Liked Songs" || playlist.is_system === true) {
+            return res.status(403).json({ error: "Cannot delete system playlists like 'Liked Songs'" });
+        }
 
         await User.findByIdAndUpdate(userId, {
             $pull: { playlists: playlistId }
