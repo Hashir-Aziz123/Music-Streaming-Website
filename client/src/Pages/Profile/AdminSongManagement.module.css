@@ -1,0 +1,371 @@
+/* src/components/Profile/AdminSongManagement.module.css */
+/* ... (previous styles remain the same) ... */
+
+.adminSongManagementContainer {
+    padding: 20px;
+    background-color: #1e1e1e; /* Dark background */
+    color: #fff; /* Light text */
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.mainTitle {
+    font-size: 1.8rem;
+    color: #e75454; /* Accent color */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.message {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.successMessage {
+    background-color: #28a745; /* Green for success */
+    color: white;
+}
+
+.errorMessage {
+    background-color: #dc3545; /* Red for error */
+    color: white;
+}
+
+/* Styles for controls header: Add button and Search bar */
+.controlsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 15px;
+}
+
+.actionButton {
+    padding: 10px 20px; /* Slightly larger padding */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    background-color: #e75454; 
+    color: white;
+    /* margin-right: 0; Removed default margin as it's handled by gap in flex container */
+}
+.actionButton:hover {
+    background-color: #c64343;
+}
+.actionButton:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+.searchContainer {
+    display: flex;
+    align-items: center;
+    background-color: #2a2a2a;
+    border-radius: 5px;
+    padding: 5px 10px;
+    border: 1px solid #444;
+    flex-grow: 1; /* Allow search to take available space */
+    max-width: 400px; /* Optional: constrain max width */
+}
+.searchContainer:focus-within {
+    border-color: #e75454;
+    box-shadow: 0 0 0 2px rgba(231, 84, 84, 0.3);
+}
+
+
+.searchIcon {
+    color: #888;
+    margin-right: 8px;
+}
+
+.searchInput {
+    flex-grow: 1;
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    font-size: 0.95rem;
+    padding: 8px 0;
+}
+.searchInput:focus {
+    outline: none;
+}
+.searchInput::placeholder {
+    color: #777;
+}
+
+.clearSearchButton {
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.clearSearchButton:hover {
+    color: #fff;
+}
+
+
+/* Form Styles (largely unchanged) */
+.songForm {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.formTitle {
+    font-size: 1.5rem;
+    color: #e75454;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+.formGroupFull {
+    grid-column: 1 / -1; /* Span full width */
+    display: flex;
+    flex-direction: column;
+}
+
+
+.formGroup label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ccc;
+}
+
+.formGroup input[type="text"],
+.formGroup input[type="number"],
+.formGroup input[type="file"],
+.formGroup textarea {
+    padding: 10px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+.formGroup input[type="text"]:focus,
+.formGroup input[type="number"]:focus,
+.formGroup input[type="file"]:focus,
+.formGroup textarea:focus {
+    outline: none;
+    border-color: #e75454;
+    box-shadow: 0 0 0 2px rgba(231, 84, 84, 0.3);
+}
+
+.formGroup small {
+    font-size: 0.8em;
+    color: #aaa;
+    margin-top: 5px;
+}
+.formGroup small a {
+    color: #e75454; /* Accent color for links */
+    text-decoration: none;
+}
+.formGroup small a:hover {
+    text-decoration: underline;
+}
+
+
+.formActions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px; /* Add gap between form action buttons */
+}
+
+.submitButton, .cancelButton, .editButton, .deleteButton { /* Common styles for action buttons */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    margin-right: 0; /* Remove individual margins if using gap */
+}
+
+
+.submitButton {
+    background-color: #28a745; /* Green */
+    color: white;
+}
+.submitButton:hover {
+    background-color: #218838;
+}
+.submitButton:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+.cancelButton {
+    background-color: #6c757d; /* Gray */
+    color: white;
+}
+.cancelButton:hover {
+    background-color: #5a6268;
+}
+.cancelButton:disabled {
+    background-color: #444;
+    cursor: not-allowed;
+}
+
+/* Song List Styles */
+.songListSection {
+    margin-top: 30px;
+}
+
+.sectionTitle { /* Title for "Existing Songs" or "Search Results" */
+    font-size: 1.5rem;
+    color: #e75454; 
+    margin-bottom: 15px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.songList {
+    list-style: none;
+    padding: 0;
+}
+
+.songListItem {
+    background-color: #2a2a2a;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease;
+}
+.songListItem:hover {
+    background-color: #333;
+}
+
+.songInfo {
+    flex-grow: 1;
+    margin-right: 15px; /* Space between info and actions */
+}
+
+.songTitle {
+    font-size: 1.2rem;
+    color: #fff;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.songDetails {
+    font-size: 0.9rem;
+    color: #bbb;
+    margin-bottom: 8px;
+}
+.songDetails p { /* If you had <p> inside .songDetails */
+    margin: 2px 0;
+}
+.songInfo small {
+    font-size: 0.8em;
+    color: #999;
+}
+.songInfo small a {
+    color: #aaa;
+    text-decoration: none;
+}
+.songInfo small a:hover {
+    color: #e75454;
+    text-decoration: underline;
+}
+
+
+.songActions {
+    display: flex;
+    gap: 8px; /* Space between edit and delete */
+}
+.songActions button {
+    margin-left: 0; /* Remove individual margin if using gap */
+}
+
+.editButton {
+    background-color: #ffc107; /* Yellow */
+    color: #212529;
+}
+.editButton:hover {
+    background-color: #e0a800;
+}
+.editButton:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+.deleteButton {
+    background-color: #dc3545; /* Red */
+    color: white;
+}
+.deleteButton:hover {
+    background-color: #c82333;
+}
+.deleteButton:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+/* Loading and status messages */
+.loadingText, .allLoadedText {
+    text-align: center;
+    padding: 20px;
+    color: #aaa;
+    font-style: italic;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .controlsHeader {
+        flex-direction: column;
+        align-items: stretch; /* Make search bar full width on small screens */
+    }
+    .searchContainer {
+        max-width: none; /* Allow full width */
+    }
+    .actionButton {
+        width: 100%; /* Full width add button */
+        margin-bottom: 15px; /* Space below add button if it wraps */
+    }
+
+    .formGrid {
+        grid-template-columns: 1fr; /* Stack form groups on smaller screens */
+    }
+    .songListItem {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .songActions {
+        margin-top: 10px;
+        width: 100%; /* Make actions take full width */
+        justify-content: flex-start; /* Align actions to start */
+    }
+    .songActions button {
+      /* margin-left: 0; already handled */
+      /* margin-right: 10px; /* Spacing between buttons if needed, or use gap */
+    }
+}

@@ -1,4 +1,4 @@
-import { Listening_History, User, Song } from "../db_entities.js";
+import { Listening_History, User, Song, Artist } from "../db_entities.js";
 import axios from 'axios';
 
 export const addListeningRecord = async (req, res) => {
@@ -194,5 +194,133 @@ export const getUserStats = async (req, res) => {
     } catch (error) {
         console.error('Error fetching user stats:', error);
         res.status(500).json({ error: error.message });
+    }
+};
+
+export const getGlobalStats = async (req, res) => {
+    try {
+        // Ensure only admin can access
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ error: "Access denied. Admin role required." });
+        }
+
+        const allHistory = await Listening_History.find({})
+            .populate({
+                path: 'song',
+                select: 'trackId title artist genre duration_seconds' // Ensure 'artist' is populated if it's an ID/ref
+            });
+
+        if (!allHistory || allHistory.length === 0) {
+            return res.status(200).json({
+                message: "No listening history found to generate global stats.",
+                topSongs: [],
+                topGenres: [],
+                topArtists: [],
+                totalPlays: 0,
+                uniqueSongsPlayed: 0,
+                uniqueArtistsListened: 0,
+                uniqueGenresListened: 0,
+            });
+        }
+
+        let totalPlays = allHistory.length;
+        const songMap = new Map();
+        const genreMap = new Map();
+        const artistMap = new Map();
+
+        for (const record of allHistory) {
+            if (!record.song) continue; // Skip if song is null
+
+            const songId = record.song.trackId;
+            const songTitle = record.song.title;
+            const songArtists = record.song.artist; // This could be an array of IDs or names
+            const songGenres = record.song.genre;
+
+            // Aggregate song plays
+            songMap.set(songId, (songMap.get(songId) || 0) + 1);
+
+            // Aggregate genre plays
+            if (songGenres && Array.isArray(songGenres)) {
+                songGenres.forEach(genre => {
+                    genreMap.set(genre, (genreMap.get(genre) || 0) + 1);
+                });
+            }
+
+            // Aggregate artist plays
+            // Assuming record.song.artist is an array of artist IDs
+            // We need to fetch artist names for these IDs
+            if (songArtists && Array.isArray(songArtists)) {
+                for (const artistId of songArtists) {
+                    // If artistId is a number (ID)
+                    if (typeof artistId === 'number') {
+                        artistMap.set(artistId, (artistMap.get(artistId) || 0) + 1);
+                    }
+                    // If artistId is an object (e.g. from populate)
+                    else if (typeof artistId === 'object' && artistId.artistID) {
+                         artistMap.set(artistId.artistID, (artistMap.get(artistId.artistID) || 0) + 1);
+                    }
+                     // If artists are stored as strings directly (less ideal but possible)
+                    else if (typeof artistId === 'string') {
+                         artistMap.set(artistId, (artistMap.get(artistId) || 0) + 1); // Assuming artistId is the name
+                    }
+                }
+            }
+        }
+
+        // Get top songs (fetch titles for top song IDs)
+        const topSongEntries = Array.from(songMap.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10);
+
+        const topSongs = await Promise.all(topSongEntries.map(async ([trackId, listens]) => {
+            const songData = await Song.findOne({ trackId }).select('title artist');
+            if (!songData) return { title: `Track ID: ${trackId}`, listens, artist: "Unknown" };
+            // Fetch artist names if songData.artist contains IDs
+            let artistNames = "Unknown";
+            if (songData.artist && Array.isArray(songData.artist)) {
+                const artistsDetails = await Artist.find({ artistID: { $in: songData.artist } }).select('name');
+                artistNames = artistsDetails.map(a => a.name).join(', ') || "Unknown";
+            }
+            return { title: songData.title, artist: artistNames, listens };
+        }));
+
+
+        // Get top genres
+        const topGenres = Array.from(genreMap.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5) // Show top 5 genres
+            .map(([genre, listens]) => ({ genre, listens }));
+
+        // Get top artists (fetch names for top artist IDs)
+        const topArtistEntries = Array.from(artistMap.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5); // Show top 5 artists
+
+        const topArtists = await Promise.all(topArtistEntries.map(async ([artistIdentifier, listens]) => {
+            let artistName = `Artist ID: ${artistIdentifier}`; // Default if name can't be found
+            // Check if identifier is a number (ID) or string (name)
+            if (typeof artistIdentifier === 'number') {
+                 const artistData = await Artist.findOne({ artistID: artistIdentifier }).select('name');
+                 if (artistData) artistName = artistData.name;
+            } else if (typeof artistIdentifier === 'string') {
+                // If it's already a name (less likely if IDs are stored, but handling just in case)
+                artistName = artistIdentifier;
+            }
+            return { artist: artistName, listens };
+        }));
+
+        res.status(200).json({
+            topSongs,
+            topGenres,
+            topArtists,
+            totalPlays,
+            uniqueSongsPlayed: songMap.size,
+            uniqueArtistsListened: artistMap.size,
+            uniqueGenresListened: genreMap.size,
+        });
+
+    } catch (error) {
+        console.error('Error fetching global stats:', error);
+        res.status(500).json({ error: "Failed to fetch global stats: " + error.message });
     }
 };

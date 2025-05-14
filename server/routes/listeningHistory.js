@@ -4,7 +4,8 @@ import {
     addListeningRecord,
     getUserHistory,
     getAllUsersHistory,
-    getUserStats
+    getUserStats,
+    getGlobalStats
 } from "../controllers/listeningHistory.js";
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.post('/', addListeningRecord);
 router.get('/user/:userId', getUserHistory);
 router.get('/all', getAllUsersHistory);
 router.get('/stats/:userId', getUserStats);
+router.get('/global-stats', getGlobalStats);
 
 export default router;

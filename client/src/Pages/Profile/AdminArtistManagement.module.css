@@ -1,0 +1,295 @@
+/* src/components/Profile/AdminArtistManagement.module.css */
+/* Reusing and adapting styles from AdminSongManagement.module.css */
+.adminEntityManagementContainer { /* Generic name for reusability */
+    padding: 20px;
+    background-color: #1e1e1e;
+    color: #fff;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.mainTitle {
+    font-size: 1.8rem;
+    color: #54a0e7; /* Different accent color for artists */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.message {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.successMessage {
+    background-color: #28a745;
+    color: white;
+}
+
+.errorMessage {
+    background-color: #dc3545;
+    color: white;
+}
+
+.actionButton,
+.submitButton,
+.cancelButton,
+.editButton,
+.deleteButton {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    margin-right: 10px; /* Default margin */
+}
+.actionButton:last-child,
+.submitButton:last-child,
+.cancelButton:last-child,
+.editButton:last-child,
+.deleteButton:last-child {
+    margin-right: 0; /* No margin for the last button in a group */
+}
+
+
+.actionButton {
+    background-color: #54a0e7; /* Artist accent */
+    color: white;
+    display: block;
+    margin: 0 auto 20px auto;
+}
+.actionButton:hover {
+    background-color: #4380c6;
+}
+.actionButton:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+.entityForm { /* Generic name */
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.formTitle {
+    font-size: 1.5rem;
+    color: #54a0e7; /* Artist accent */
+    margin-bottom: 20px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+.formGroupFull {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ccc;
+}
+
+.formGroup input[type="text"],
+.formGroup input[type="number"],
+.formGroup input[type="file"],
+.formGroup textarea,
+.formGroup select {
+    padding: 10px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+.formGroup input:focus,
+.formGroup textarea:focus,
+.formGroup select:focus {
+    outline: none;
+    border-color: #54a0e7; /* Artist accent */
+    box-shadow: 0 0 0 2px rgba(84, 160, 231, 0.3);
+}
+.disabledInput {
+    background-color: #444 !important;
+    color: #888 !important;
+    cursor: not-allowed;
+}
+
+
+.formGroup small {
+    font-size: 0.8em;
+    color: #aaa;
+    margin-top: 5px;
+}
+.formGroup small a {
+    color: #54a0e7;
+}
+
+
+.formActions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.submitButton {
+    background-color: #28a745;
+    color: white;
+}
+.submitButton:hover { background-color: #218838; }
+.submitButton:disabled { background-color: #555; cursor: not-allowed; }
+
+.cancelButton {
+    background-color: #6c757d;
+    color: white;
+}
+.cancelButton:hover { background-color: #5a6268; }
+.cancelButton:disabled { background-color: #444; cursor: not-allowed; }
+
+.entityListSection { /* Generic */
+    margin-top: 30px;
+}
+
+.sectionTitle {
+    font-size: 1.5rem;
+    color: #54a0e7; /* Artist accent */
+    margin-bottom: 15px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.entityList { /* Generic */
+    list-style: none;
+    padding: 0;
+}
+
+.entityListItem { /* Generic */
+    background-color: #2a2a2a;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    display: flex;
+    gap: 15px; /* Gap between image and text, and text and actions */
+    justify-content: space-between;
+    align-items: flex-start; /* Align items to the top */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease;
+}
+.entityListItem:hover {
+    background-color: #333;
+}
+
+.entityInfo { /* Generic */
+    flex-grow: 1;
+    display: flex; /* For image and text side-by-side */
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.entityImage {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #444;
+}
+
+
+.entityName { /* Generic */
+    font-size: 1.2rem;
+    color: #fff;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.entityDetails, .entityDetailsBio { /* Generic */
+    font-size: 0.9rem;
+    color: #bbb;
+    margin-bottom: 3px;
+}
+.entityDetailsBio {
+    font-style: italic;
+    color: #aaa;
+    max-height: 60px; /* Limit bio height */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Show 3 lines max */
+    -webkit-box-orient: vertical;
+}
+
+
+.entityActions { /* Generic */
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 8px; /* Space between edit and delete buttons */
+    align-items: flex-end; /* Align buttons to the right if container allows */
+    min-width: 80px; /* Ensure buttons have some space */
+}
+.entityActions button {
+    margin-left: 0; /* Reset margin for column layout */
+    width: 100%; /* Make buttons full width of their container */
+}
+
+
+.editButton {
+    background-color: #ffc107;
+    color: #212529;
+}
+.editButton:hover { background-color: #e0a800; }
+.editButton:disabled { background-color: #555; cursor: not-allowed; }
+
+.deleteButton {
+    background-color: #dc3545;
+    color: white;
+}
+.deleteButton:hover { background-color: #c82333; }
+.deleteButton:disabled { background-color: #555; cursor: not-allowed; }
+
+@media (max-width: 768px) {
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+    .entityListItem {
+        flex-direction: column;
+        align-items: stretch; /* Stretch items to full width */
+    }
+    .entityInfo {
+        flex-direction: column; /* Stack image and text on small screens */
+        align-items: center; /* Center image */
+        text-align: center;
+    }
+    .entityImage {
+        margin-bottom: 10px;
+    }
+    .entityActions {
+        margin-top: 15px;
+        width: 100%;
+        flex-direction: row; /* Buttons side-by-side again */
+        justify-content: space-evenly; /* Distribute buttons */
+    }
+    .entityActions button {
+       flex-grow: 1; /* Allow buttons to grow */
+       margin-right: 5px; /* Add some space back */
+    }
+    .entityActions button:last-child {
+        margin-right: 0;
+    }
+}
