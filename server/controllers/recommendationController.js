@@ -3,8 +3,6 @@ import { getTopRecommendations } from '../services/recommendationService.js';
 export async function fetchTopRecommendations(req, res) {
     const { userId } = req.params;
 
-    console.log(userId);
-
     try {
         const recommendedSongs = await getTopRecommendations(userId);
         res.json(recommendedSongs);

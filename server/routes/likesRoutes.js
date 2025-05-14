@@ -4,7 +4,6 @@ import {
     toggleLikeSong,
     getSongLikedStatus,
     getLikedSongs,
-    syncLikedSongsPlaylist
 } from "../controllers/likes.js";
 
 const router = express.Router();
@@ -23,8 +22,5 @@ router.get('/song/:songId', getSongLikedStatus);
 
 // Toggle like status for a song
 router.post('/song/:songId/toggle', toggleLikeSong);
-
-// Manually sync Liked Songs playlist with liked_songs array
-router.post('/sync-playlist', syncLikedSongsPlaylist);
 
 export default router;

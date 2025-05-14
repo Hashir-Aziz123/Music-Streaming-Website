@@ -1,10 +1,10 @@
-import React, { useState  , useEffect } from "react";
+import { useState  , useEffect } from "react";
 import PlaylistCard from "./PlaylistCard.jsx";
 import styles from "./RecommendationView.module.css";
 import ScrollableSection from "./ScrollableSection.jsx";
 import axios from 'axios';
 
-const COVER_IMG = "https://placehold.co/400/111/e75454?text=Playlist"; // "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQPZcjVw-tHtbV1BTXhSy86q-bARMButrtbA&s";
+const COVER_IMG = "https://placehold.co/400/111/e75454?text=Playlist";
 
 function RecommendationView({  isLoading, handlePlayClick, currentSong, isPlaying, artistsMap, albumsMap , user , songsNumber }) {
     const [activeFilter, setActiveFilter] = useState("Weekly Recommend");
@@ -26,9 +26,7 @@ function RecommendationView({  isLoading, handlePlayClick, currentSong, isPlayin
     async function handleRecommendations() {
         try {
             const userId = user.user.id;
-            console.log(userId);
             const response = await axios.get(`/api/recommendations/${userId}`);
-            console.log(response);
 
             // Process the data directly from response.data instead of using recommendedSongs state
             const songsData = response.data;
@@ -83,11 +81,6 @@ function RecommendationView({  isLoading, handlePlayClick, currentSong, isPlayin
                 topGenreSongs[genre] = genreToSongs[genre];
             });
 
-            console.log("Top 8 Artists:", topArtists);
-            console.log("Top 8 Genres:", topGenres);
-            console.log("Songs by each top artist:", topArtistSongs);
-            console.log("Songs by each top genre:", topGenreSongs);
-
             // You might want to save these processed results to state as well
             setTopArtists(topArtists);
             setTopGenres(topGenres);
@@ -100,16 +93,16 @@ function RecommendationView({  isLoading, handlePlayClick, currentSong, isPlayin
     }
 
         useEffect(() => {
-            handleRecommendations( )
+            handleRecommendations()
                 .then(() => "wohoo it works maybe idk");
-        }, [ user.user._id] )
+        }, [user.user._id] )
 
         useEffect( () => {
             if (songsNumber % 20 === 0) {
                handleRecommendations()
                    .then(() => "wohooo it works maybe idk");
             }
-        } , [ songsNumber] );
+        }, [songsNumber] );
 
 
     if (isLoading) return <div className={styles.loadingIndicator}>Loading recommendations...</div>;

@@ -41,7 +41,7 @@ app.use('/uploads', express.static(`${__dirname}/uploads`));
 app.use('/api/songs', songRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/playlists', playlistRoutes);
-app.use('/api', recommendationRoutes);
+app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/listening', listeningRoute)
 app.use('/api/library', libraryRoutes);
 app.use('/api/history', listeningHistoryRoutes);

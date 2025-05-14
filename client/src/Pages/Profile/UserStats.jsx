@@ -4,7 +4,7 @@ import styles from "./UserStats.module.css";
 import CustomCard from "./CustomCard.jsx";
 import {useState, useEffect} from 'react';
 import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 function ProfileUserStats({playlistsNum}) {
     const getMaxYAxisValue = (data) => {

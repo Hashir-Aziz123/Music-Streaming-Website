@@ -1,23 +1,8 @@
-// /controllers/auth.js
-
-// import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-// import cookieParser from "cookie-parser";
 import { User, Playlist, Listening_History } from "../db_entities.js";
 
 const JWTSECRET = 'JWTSECRET';
-
-// const updateProfile = async (req, res) => {
-//     try {
-//         const { username, email, dob, country } = req.body;
-//         // current user id: req.user.id
-//         console.log(req.body);
-
-//         const currentUser = await User.findOne({ _id: req.user.id });
-        
-//     }
-// }
 
 const updateProfile = async (req, res) => {
     try {
