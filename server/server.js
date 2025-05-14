@@ -11,7 +11,8 @@ import authRoutes from './routes/auth.js';
 import recommendationRoutes from './routes/recommendationRoutes.js';
 import playlistRoutes from './routes/playlists.js';
 import listeningHistoryRoutes from './routes/listeningHistory.js';
-import libraryRoutes from './routes/libraryRoutes.js'
+import libraryRoutes from './routes/libraryRoutes.js';
+import likesRoutes from './routes/likesRoutes.js';
 import listeningRoute from "./routes/listeningRoute.js";
 
 
@@ -44,6 +45,7 @@ app.use('/api', recommendationRoutes);
 app.use('/api/listening', listeningRoute)
 app.use('/api/library', libraryRoutes);
 app.use('/api/history', listeningHistoryRoutes);
+app.use('/api/likes', likesRoutes);
 
 // connect to db and start listening
 mongoose.connect("mongodb://localhost:27017/driftDB")

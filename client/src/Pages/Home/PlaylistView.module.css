@@ -415,3 +415,14 @@
     background-color: rgba(255, 255, 255, 0.1);
     color: #ffffff !important;
 }
+
+.systemPlaylist {
+    background-color: rgba(231, 84, 84, 0.2);
+    color: #e75454;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}

@@ -4,6 +4,7 @@ import { ArrowLeft, Play, Pause, Shuffle, Repeat } from "lucide-react";
 import { LoadingIndicator } from "./AllSongsView";
 import styles from "./PlaylistView.module.css";
 import PropTypes from 'prop-types';
+import { useLikes } from "../../context/LikeContext";
 
 function PlaylistView({
     playlist,
@@ -25,15 +26,15 @@ function PlaylistView({
     repeatMode = false,
     toggleShuffle,
     toggleRepeat
-}) {
-    const [playlistSongs, setPlaylistSongs] = useState([]);
+}) {    const [playlistSongs, setPlaylistSongs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentSongIndex, setCurrentSongIndex] = useState(-1);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [removingSongId, setRemovingSongId] = useState(null);
-
-    useEffect(() => {
+    
+    // Get the notifyLikeChange function from the like context
+    const { likeChangeNotifier, notifyLikeChange } = useLikes();    useEffect(() => {
         const fetchPlaylistSongs = async () => {
             try {
                 setLoading(true);
@@ -52,7 +53,7 @@ function PlaylistView({
         };
 
         fetchPlaylistSongs();
-    }, [playlist, refreshTrigger]);
+    }, [playlist, refreshTrigger, likeChangeNotifier]);
 
     useEffect(() => {
         // Find the index of the current playing song in the playlist
@@ -80,8 +81,6 @@ function PlaylistView({
         handlePlayPlaylist(playlist, playlistSongs, index);
     };
 
-
-
     const handleRemoveSong = async (songId) => {
         try {
             if (playlist && playlist._id) {
@@ -101,6 +100,14 @@ function PlaylistView({
                 // Update playlist counts in sidebar if callback exists
                 if (typeof onPlaylistUpdate === 'function') {
                     onPlaylistUpdate(playlist._id);
+                }
+                
+                // If this is the Liked Songs playlist, notify about the like change
+                if (playlist.name === "Liked Songs" || playlist.is_system) {
+                    // Trigger like status update in other components
+                    if (notifyLikeChange) {
+                        notifyLikeChange();
+                    }
                 }
             }
         } catch (error) {
@@ -164,12 +171,12 @@ function PlaylistView({
                     </div>
                     <div className={styles.playlistDetails}>
                         <h1 className={styles.playlistTitle}>{playlist?.name}</h1>
-                        <p className={styles.playlistDescription}>{playlist?.description || "No description"}</p>
-                        <div className={styles.playlistMeta}>
+                        <p className={styles.playlistDescription}>{playlist?.description || "No description"}</p>                        <div className={styles.playlistMeta}>
                             <span>{playlistSongs.length} songs</span>
                             <span>{playlist?.is_public ? "Public" : "Private"}</span>
+                            {playlist?.name === "Liked Songs" && <span className={styles.systemPlaylist}>System Playlist</span>}
                             
-                            {isOwner && (
+                            {isOwner && playlist?.name !== "Liked Songs" && (
                                 <button 
                                     onClick={() => setShowDeleteConfirmation(true)} 
                                     className={styles.deletePlaylistButton}

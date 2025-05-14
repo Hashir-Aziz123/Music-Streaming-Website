@@ -276,3 +276,12 @@
 .sidebar::-webkit-scrollbar-thumb:hover {
     background-color: #e75454;
 }
+
+.activeLike {
+    color: #e75454;
+    background-color: rgba(231, 84, 84, 0.1);
+}
+
+.activeLike:hover {
+    background-color: rgba(231, 84, 84, 0.2);
+}

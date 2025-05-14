@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { Plus, X, Check } from 'lucide-react';
 import styles from './AddToPlaylistMenu.module.css';
+import { notifyGlobalLikeChange } from '../../context/LikeContext';
 
 function AddToPlaylistMenu({ song, onClose, onPlaylistUpdate }) {
     const [playlists, setPlaylists] = useState([]);
@@ -129,11 +130,15 @@ function AddToPlaylistMenu({ song, onClose, onPlaylistUpdate }) {
                     delete newMessages[playlistId];
                     return newMessages;
                 });
-            }, 2000);
-            
-            // Notify parent component about the update if the callback exists
+            }, 2000);            // Notify parent component about the update if the callback exists
             if (typeof onPlaylistUpdate === 'function') {
                 onPlaylistUpdate(playlistId);
+            }
+            
+            // If this is the Liked Songs playlist, we need to update the like context
+            if (playlists.find(p => p._id === playlistId)?.name === "Liked Songs") {
+                // Use the global function to notify about like changes
+                notifyGlobalLikeChange();
             }
         } catch (err) {
             console.error('Error updating playlist:', err);

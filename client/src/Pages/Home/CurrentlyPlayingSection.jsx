@@ -1,14 +1,56 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './CurrentlyPlayingSection.module.css';
 import PropTypes from 'prop-types';
 import AddToPlaylistMenu from './AddToPlaylistMenu';
 import { Plus, Heart, Share } from 'lucide-react';
+import { useLikes } from '../../context/LikeContext';
 
 function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate, onArtistClick, onAlbumClick }) {
     const [showAddToPlaylistMenu, setShowAddToPlaylistMenu] = useState(false);
+    const [isLiked, setIsLiked] = useState(false);
+    const [likesCount, setLikesCount] = useState(0);
+    // Use the like context
+    const { isLiked: checkIsLiked, fetchLikeStatus: contextFetchLikeStatus, toggleLike: contextToggleLike, likeChangeNotifier } = useLikes();
     // Default placeholder image
     const defaultAlbumArt = "https://placehold.co/400x400/111/e75454?text=Music";
-      // Format artist display - handle array of artist IDs
+    
+    // Fetch like status when song changes
+    useEffect(() => {
+        if (song) {
+            setLikesCount(song.likes_count || 0);
+            fetchLikeStatus();
+        }
+    }, [song, likeChangeNotifier]); // Re-run when likeChangeNotifier changes
+    
+    // Function to fetch the like status for the current song
+    const fetchLikeStatus = async () => {
+        if (!song || !song.trackId) return;
+        
+        // Use context function
+        const liked = await contextFetchLikeStatus(song.trackId);
+        setIsLiked(liked);
+    };
+    
+    // Function to toggle like status
+    const toggleLike = async () => {
+        if (!song || !song.trackId) return;
+        
+        try {
+            // Use context function
+            const result = await contextToggleLike(song.trackId, song);
+            setIsLiked(result.liked);
+            setLikesCount(result.likesCount);
+            
+            // Update the song object if needed
+            if (song) {
+                song.likes_count = result.likesCount;
+            }
+        } catch (error) {
+            console.error("Error toggling like:", error);
+        }
+    };
+
+    // Format artist display - handle array of artist IDs
     const formatArtist = (artistIds) => {
         if (!artistIds) return "Unknown Artist";
         
@@ -139,7 +181,7 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate
                         </div>
                         <div className={styles.statItem}>
                             <i className="fas fa-heart"></i>
-                            <span>{song.likes_count || 0}</span>
+                            <span>{likesCount}</span>
                             <span className={styles.statLabel}>Likes</span>
                         </div>
                         {song.duration_seconds && (
@@ -161,9 +203,12 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate
                             </p>
                         </div>
                     )}
-                    <div className={styles.actionButtons}>
-                        <button className={styles.actionButton}>
-                            <Heart size={18} />
+                    <div className={styles.actionButtons}>                        <button 
+                            className={`${styles.actionButton} ${isLiked ? styles.activeLike : ''}`}
+                            onClick={toggleLike}
+                            title={isLiked ? "Unlike" : "Like"}
+                        >
+                            <Heart size={18} fill={isLiked ? "#e75454" : "none"} color={isLiked ? "#e75454" : "currentColor"} />
                         </button>
                         <button 
                             className={styles.actionButton}

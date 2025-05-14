@@ -98,11 +98,15 @@ const playlist_schema = new mongoose.Schema(
                     type: Number,
                     ref: 'Song'
                 }
-            ],
-        is_public:
+            ],        is_public:
             {
                 type: Boolean,
                 default: true
+            },
+        is_system:
+            {
+                type: Boolean,
+                default: false
             }
     },
     {
