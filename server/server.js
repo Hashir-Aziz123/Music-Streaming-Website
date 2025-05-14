@@ -10,6 +10,7 @@ import songRoutes from './routes/songs.js';
 import authRoutes from './routes/auth.js';
 import recommendationRoutes from './routes/recommendationRoutes.js';
 import playlistRoutes from './routes/playlists.js';
+import listeningHistoryRoutes from './routes/listeningHistory.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -37,6 +38,7 @@ app.use('/uploads', express.static(`${__dirname}/uploads`));
 app.use('/api/songs', songRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/playlists', playlistRoutes);
+app.use('/api/history', listeningHistoryRoutes);
 app.use('/api', recommendationRoutes);
 
 // connect to db and start listening
