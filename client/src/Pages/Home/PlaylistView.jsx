@@ -25,8 +25,11 @@ function PlaylistView({
     shuffleMode = false,
     repeatMode = false,
     toggleShuffle,
-    toggleRepeat
-}) {    const [playlistSongs, setPlaylistSongs] = useState([]);
+    toggleRepeat,
+    // New prop for direct song list override (for genre and artist views)
+    playlistSongsOverride = null
+}) {    
+    const [playlistSongs, setPlaylistSongs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentSongIndex, setCurrentSongIndex] = useState(-1);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -34,10 +37,21 @@ function PlaylistView({
     const [removingSongId, setRemovingSongId] = useState(null);
     
     // Get the notifyLikeChange function from the like context
-    const { likeChangeNotifier, notifyLikeChange } = useLikes();    useEffect(() => {
+    const { likeChangeNotifier, notifyLikeChange } = useLikes();
+    
+    useEffect(() => {
         const fetchPlaylistSongs = async () => {
             try {
                 setLoading(true);
+                
+                // If we have override songs, use them directly
+                if (playlistSongsOverride) {
+                    setPlaylistSongs(playlistSongsOverride);
+                    setLoading(false);
+                    return;
+                }
+                
+                // Otherwise fetch from API as normal
                 if (playlist && playlist._id) {
                     // Get full playlist details including song objects
                     const response = await axios.get(`/api/playlists/${playlist._id}`, { withCredentials: true });
@@ -53,7 +67,7 @@ function PlaylistView({
         };
 
         fetchPlaylistSongs();
-    }, [playlist, refreshTrigger, likeChangeNotifier]);
+    }, [playlist, refreshTrigger, likeChangeNotifier, playlistSongsOverride]);
 
     useEffect(() => {
         // Find the index of the current playing song in the playlist
@@ -340,7 +354,9 @@ PlaylistView.propTypes = {
     shuffleMode: PropTypes.bool,
     repeatMode: PropTypes.bool,
     toggleShuffle: PropTypes.func,
-    toggleRepeat: PropTypes.func
+    toggleRepeat: PropTypes.func,
+    // New prop for direct song list override (for genre and artist views)
+    playlistSongsOverride: PropTypes.array
 };
 
 export default PlaylistView;

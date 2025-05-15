@@ -46,11 +46,20 @@ function Home() {
     const [selectedArtist, setSelectedArtist] = useState(null);
     const [artistSongs, setArtistSongs] = useState([]);
     const [artistAlbums, setArtistAlbums] = useState([]);
-    const [loadingArtist, setLoadingArtist] = useState(false);    // Recommendation view states
+    const [loadingArtist, setLoadingArtist] = useState(false);
+    
+    // Recommendation view states
     const [showRecommendations, setShowRecommendations] = useState(true);
     const [recommendedSongs, setRecommendedSongs] = useState([]);
     const [loadingRecommendations, setLoadingRecommendations] = useState(false);
-      // All songs view state
+    
+    // New states for genre and recommendation artist views
+    const [selectedGenre, setSelectedGenre] = useState(null);
+    const [genreSongs, setGenreSongs] = useState([]);
+    const [selectedRecommendedArtist, setSelectedRecommendedArtist] = useState(null);
+    const [recommendedArtistSongs, setRecommendedArtistSongs] = useState([]);
+      
+    // All songs view state
     const [showAllSongs, setShowAllSongs] = useState(false);
 
     // Playlist view states
@@ -497,7 +506,49 @@ function Home() {
             setLoadingArtist(false);
         }
     };
-      // Function to handle back button for all detailed views
+      // Function to handle genre selection from RecommendationView
+    const handleGenreClick = (genre, songs) => {
+        console.log(`GenreView: Handling click for genre ${genre} with ${songs.length} songs`);
+        
+        // Reset other views
+        setSelectedAlbum(null);
+        setAlbumSongs([]);
+        setSelectedArtist(null);
+        setArtistSongs([]);
+        setArtistAlbums([]);
+        setSelectedPlaylist(null);
+        setSelectedRecommendedArtist(null);
+        setRecommendedArtistSongs([]);
+        setShowRecommendations(false);
+        setShowAllSongs(false);
+        
+        // Set selected genre and its songs
+        setSelectedGenre(genre);
+        setGenreSongs(songs);
+    };
+    
+    // Function to handle artist selection from RecommendationView
+    const handleRecommendedArtistClick = (artistId, songs) => {
+        console.log(`RecommendedArtistView: Handling click for artist ID ${artistId} with ${songs.length} songs`);
+        
+        // Reset other views
+        setSelectedAlbum(null);
+        setAlbumSongs([]);
+        setSelectedArtist(null);
+        setArtistSongs([]);
+        setArtistAlbums([]);
+        setSelectedPlaylist(null);
+        setSelectedGenre(null);
+        setGenreSongs([]);
+        setShowRecommendations(false);
+        setShowAllSongs(false);
+        
+        // Set selected artist and its songs
+        setSelectedRecommendedArtist(artistId);
+        setRecommendedArtistSongs(songs);
+    };
+
+    // Function to handle back button for all detailed views
     const handleBackToAllSongs = () => {
         setSelectedAlbum(null);
         setAlbumSongs([]);
@@ -505,6 +556,10 @@ function Home() {
         setArtistSongs([]);
         setArtistAlbums([]);
         setSelectedPlaylist(null);
+        setSelectedGenre(null);
+        setGenreSongs([]);
+        setSelectedRecommendedArtist(null);
+        setRecommendedArtistSongs([]);
         setShowAllSongs(false);
         setSearchQuery(""); // Clear search query
         setSearchResults(null); // Clear search results
@@ -684,6 +739,74 @@ function Home() {
                     toggleRepeat={toggleRepeat}
                 />
             );
+        } else if (selectedGenre) {
+            // Custom playlist-like view for genres
+            const genrePlaylist = {
+                _id: `genre-${selectedGenre}`,
+                name: `${selectedGenre} Genre`,
+                description: `Songs in the ${selectedGenre} genre`,
+                is_public: true,
+                cover_image_url: genreSongs[0]?.cover_image_url || "https://placehold.co/400/111/e75454?text=Genre",
+            };
+            
+            return (
+                <PlaylistView
+                    playlist={genrePlaylist}
+                    currentSong={currentSong}
+                    isPlaying={isPlaying}
+                    handlePlayClick={handlePlayClick}
+                    handleBackToAllSongs={handleBackToAllSongs}
+                    artistsMap={artistsMap}
+                    albumsMap={albumsMap}
+                    isOwner={false}
+                    // Playlist functionality props
+                    playlistMode={playlistMode && currentPlaylist?._id === genrePlaylist._id}
+                    handlePlayPlaylist={handlePlayPlaylist}
+                    shuffleMode={shuffleMode}
+                    repeatMode={repeatMode}
+                    toggleShuffle={toggleShuffle}
+                    toggleRepeat={toggleRepeat}
+                    // Override playlist songs with genre songs
+                    playlistSongsOverride={genreSongs}
+                />
+            );
+        } else if (selectedRecommendedArtist) {
+            // Get artist name from the map
+            const artistName = artistsMap[selectedRecommendedArtist]?.name || "Unknown Artist";
+            const artistImage = artistsMap[selectedRecommendedArtist]?.image_url || 
+                               recommendedArtistSongs[0]?.cover_image_url || 
+                               "https://placehold.co/400/111/e75454?text=Artist";
+            
+            // Custom playlist-like view for recommended artist songs
+            const artistPlaylist = {
+                _id: `artist-${selectedRecommendedArtist}`,
+                name: `${artistName}`,
+                description: `Songs by ${artistName}`,
+                is_public: true,
+                cover_image_url: artistImage,
+            };
+            
+            return (
+                <PlaylistView
+                    playlist={artistPlaylist}
+                    currentSong={currentSong}
+                    isPlaying={isPlaying}
+                    handlePlayClick={handlePlayClick}
+                    handleBackToAllSongs={handleBackToAllSongs}
+                    artistsMap={artistsMap}
+                    albumsMap={albumsMap}
+                    isOwner={false}
+                    // Playlist functionality props
+                    playlistMode={playlistMode && currentPlaylist?._id === artistPlaylist._id}
+                    handlePlayPlaylist={handlePlayPlaylist}
+                    shuffleMode={shuffleMode}
+                    repeatMode={repeatMode}
+                    toggleShuffle={toggleShuffle}
+                    toggleRepeat={toggleRepeat}
+                    // Override playlist songs with artist songs
+                    playlistSongsOverride={recommendedArtistSongs}
+                />
+            );
         } else if (selectedArtist) {
             return (
                 <ArtistView 
@@ -740,7 +863,9 @@ function Home() {
                     artistsMap={artistsMap}
                     albumsMap={albumsMap}
                     user={user}
-                    songsNumber = {songsPlayed}
+                    songsNumber={songsPlayed}
+                    onGenreClick={handleGenreClick}
+                    onArtistClick={handleRecommendedArtistClick}
                 />
             );
         }

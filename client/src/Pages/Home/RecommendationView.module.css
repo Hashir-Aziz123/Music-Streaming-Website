@@ -1,73 +1,249 @@
 .recommendationContainer {
-    padding: 20px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 24px;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
-.recommendationToggle {
-    text-align: left;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.weeklyRecommendation {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-bottom: 10px;
+/* Welcome section styling */
+.welcomeSection {
+    margin-bottom: 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.weeklyRecommendation h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
+.welcomeTitle {
+    font-size: 32px;
     font-weight: 700;
+    margin-bottom: 8px;
     color: #ffffff;
+    animation: slideIn 0.6s ease-out;
 }
 
-.weeklyRecommendationBarSpace {
-    margin-top: 16px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.weeklyRecommendationBar {
-    border: none;
-    background: linear-gradient(90deg, #333 , #1e1e1e);
+.welcomeSubtitle {
+    font-size: 16px;
     color: #b3b3b3;
-    padding: 6px 12px;
-    width: 45%;
-    height: 36px;
-    border-radius: 14px;
+    margin-bottom: 24px;
+    animation: slideIn 0.8s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Song cards */
+.songCard {
+    min-width: 50px;
+    background: rgba(30, 30, 30, 0.7);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
     cursor: pointer;
-    transition: all 0.2s;
+    position: relative;
+    margin-right: 16px;
+}
+
+.songCard:hover {
+    background: rgba(40, 40, 40, 0.8);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.songCardContent {
+    padding: 12px;
+}
+
+.songCoverContainer {
+    position: relative;
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.songCover {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.songCard:hover .songCover {
+    transform: scale(1.05);
+}
+
+.songInfo {
+    padding: 0 4px;
+}
+
+.songTitle {
     font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.weeklyRecommendationBar:hover {
-    background: linear-gradient(90deg, #3c3b3b, #222121);
-    color: #efebeb;
+.songArtist {
+    font-size: 12px;
+    color: #b3b3b3;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-/* 
-.weeklyRecommendationBar.active {
-    background-color: #e75454;
+
+/* Play button styling */
+.playSongButton {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
     color: white;
-} */
-
-/* We're removing the ::before pseudo-element and span styling to match sidebar buttons */
-
-.weeklyCard {
-    width: 150px;
-    height: 150px;
-    background-color: steelblue;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-weight: bold;
-    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.2s ease;
 }
 
+.songCard:hover .playSongButton {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.playSongButton:hover {
+    background: #e75454;
+    transform: scale(1.1);
+}
+
+.playSongButton.isPlaying {
+    opacity: 1;
+    background: #e75454;
+    transform: scale(1);
+}
+
+/* Playing animation (sound waves) */
+.playingAnimation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    height: 18px;
+}
+
+.playingAnimation span {
+    display: inline-block;
+    width: 3px;
+    background-color: white;
+    border-radius: 3px;
+    animation: soundBars 1.2s ease-in-out infinite;
+}
+
+.playingAnimation span:nth-child(1) {
+    height: 10px;
+    animation-delay: 0.2s;
+}
+
+.playingAnimation span:nth-child(2) {
+    height: 16px;
+    animation-delay: 0.6s;
+}
+
+.playingAnimation span:nth-child(3) {
+    height: 12px;
+    animation-delay: 0.4s;
+}
+
+@keyframes soundBars {
+    0%, 100% {
+        height: 6px;
+    }
+    50% {
+        height: 16px;
+    }
+}
+
+/* Genre and Artist cards */
+.genreCard, .artistCard {
+    min-width: 200px;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    margin-right: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.genreCard:hover, .artistCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.genreCover, .artistCover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.genreCard:hover .genreCover, .artistCard:hover .artistCover {
+    transform: scale(1.1);
+}
+
+.genreOverlay, .artistOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8) 70%);
+    color: white;
+}
+
+.genreTitle, .artistTitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    margin-bottom: 4px;
+    color: #e75454;
+}
+
+.genreCount, .artistCount {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+/* Loading indicator */
 .loadingIndicator {
     color: #b3b3b3;
     padding: 20px;

@@ -53,10 +53,36 @@
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* IE and Edge */
     scroll-behavior: smooth;
+    padding: 8px 0; /* Add padding to show box-shadow */
 }
 
 .scrollContainer::-webkit-scrollbar {
     display: none; /* Chrome, Safari */
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 24px;
+    width: 100%;
+    padding: 16px 0;
+}
+
+.gridItem {
+    width: 100%;
+}
+
+.scrollItem {
+    flex-shrink: 0;
+    margin-right: 16px;
+    width: 160px; /* Fixed width for scroll items */
+}
+
+/* The song card inside scroll item should take full width */
+.scrollItem > div {
+    width: 100%;
+    height: 100%;
+    margin: 0;
 }
 
 .playlistCard {
