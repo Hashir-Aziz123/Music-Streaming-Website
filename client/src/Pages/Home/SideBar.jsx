@@ -177,7 +177,8 @@ function SideBar({ onPlaylistClick, onCreatePlaylistClick, onArtistClick, onAlbu
             }
         }
     }, [refreshTrigger, user, activeTab]);
-      // Filter items based on search term
+    
+    // Filter items based on search term
     useEffect(() => {
         if (!searchTerm.trim()) {
             setFilteredPlaylists(playlists);
@@ -248,13 +249,13 @@ function SideBar({ onPlaylistClick, onCreatePlaylistClick, onArtistClick, onAlbu
                     </div>
                 </div>
                 
-                <div className={styles.orderSelectContainer}>
+                {/* <div className={styles.orderSelectContainer}>
                     <select className={styles.orderSelect}>
                         <option value="recent">Recent</option>
                         <option value="alphabetical">A-Z</option>
                         <option value="creator">Creator</option>
                     </select>
-                </div>
+                </div> */}
             </div>
               {/* Scrollable List Section */}
             <div className={styles.scrollSection}>
