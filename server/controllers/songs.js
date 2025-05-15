@@ -3,6 +3,93 @@ import fs from 'fs';
 import path from 'path';
 import mongoose from 'mongoose';
 
+/*
+{
+            "_id": "681a4eba7cc70cac900183e2",
+            "trackId": 26600,
+            "title": "\"(Me up at does)\" by E. E. Cummings",
+            "artist": [
+                5994
+            ],
+            "album": 5784,
+            "genre": [
+                "Experimental"
+            ],
+            "duration_seconds": 68,
+            "audio_url": "/uploads/songs/fma_small/026600.mp3",
+            "cover_image_url": "",
+            "likes_count": 0,
+            "play_count": 0,
+            "description": "",
+            "uploaded_at": "2025-05-06T18:02:34.085Z",
+            "__v": 0,
+            "artistDetails": [
+                {
+                    "_id": "681a4fb55c073f62fa1b8e26",
+                    "artistID": 5994,
+                    "name": "Lezet",
+                    "bio": "\"Someone's comment about the sound of Lezet was \"like Zorn without saxophone\"...And indeed, Lezet's work could remind the results of \"the game theory\", which John Zorn exercised on his debut \"Locus Solus\"\", for example...The fact that LEZET don't use only live instruments will probably disconnect it from the avantgarde free jazz scene, but I suppose the coming under some specific style wasn't the intent in this case anyway. It's about free experiments with sound captures in search for the surprises.And it can't be pretentious as such... \" (extract taken from issue2 of the \"Black Syrup\" zine (Serbia,2007)",
+                    "songs": [
+                        26583,
+                        26600,
+                        26605,
+                        47826,
+                        91894,
+                        91897,
+                        91899,
+                        91900,
+                        126510,
+                        128825,
+                        128827,
+                        128828
+                    ],
+                    "__v": 0
+                }
+            ],
+            "albumDetails": {
+                "_id": "681a5060b6d45a0f41fda937",
+                "album_id": 5784,
+                "title": "Characters",
+                "artist": 5994,
+                "cover_image_url": "",
+                "release_date": "2010-03-04T19:00:00.000Z",
+                "songs": [
+                    [
+                        26583,
+                        26600,
+                        26605
+                    ]
+                ],
+                "__v": 0,
+                "createdAt": "2025-05-06T18:09:36.150Z",
+                "updatedAt": "2025-05-06T18:09:36.150Z"
+            }
+        }
+*/
+
+/*
+{
+        "_id": "681a4eb97cc70cac90017fdb",
+        "trackId": 705,
+        "title": "Tio Cocodrilo",
+        "artist": [
+            140
+        ],
+        "album": 199,
+        "genre": [
+            "International"
+        ],
+        "duration_seconds": 369,
+        "audio_url": "/uploads/songs/fma_small/000705.mp3",
+        "cover_image_url": "",
+        "likes_count": 0,
+        "play_count": 0,
+        "description": "",
+        "uploaded_at": "2025-05-06T18:02:33.839Z",
+        "__v": 0
+    }
+*/
+
 async function populateSongDetails(songDoc) {
     if (!songDoc) return null;
     const song = songDoc.toObject(); 

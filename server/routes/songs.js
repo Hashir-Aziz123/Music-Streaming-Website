@@ -105,25 +105,31 @@ const adminUploadFields = upload.fields([
 ]);
 
 router.post('/admin/song', verifyToken, isAdmin, adminUploadFields, adminCreateSong);
+// router.post('/admin/song', verifyToken, isAdmin, adminCreateSong);
 router.get('/admin', verifyToken, isAdmin, getSongs); // Reusing public getSongs, or create adminGetSongs
 router.get('/admin/song/:id', verifyToken, isAdmin, adminGetSongById); // :id is MongoDB ObjectId
-router.put('/admin/song/:id', verifyToken, isAdmin, adminUploadFields, adminUpdateSong); // :id is MongoDB ObjectId
+// router.put('/admin/song/:id', verifyToken, isAdmin, adminUploadFields, adminUpdateSong); // :id is MongoDB ObjectId
+router.put('/admin/song/:id', verifyToken, isAdmin, adminUpdateSong); // :id is MongoDB ObjectId
 router.delete('/admin/song/:id', verifyToken, isAdmin, adminDeleteSong); // :id is MongoDB ObjectId
 
 
 // === Admin Artist CRUD Routes (New) ===
-router.post('/admin/artist', verifyToken, isAdmin, adminUploadFields, adminCreateArtist);
+// router.post('/admin/artist', verifyToken, isAdmin, adminUploadFields, adminCreateArtist);
+router.post('/admin/artist', verifyToken, isAdmin, adminCreateArtist);
 router.get('/admin/artists', verifyToken, isAdmin, getAllArtists); // Reusing public getAllArtists
 router.get('/admin/artist/:id', verifyToken, isAdmin, getArtistById); // :id is numeric artistID, reusing public getArtistById
-router.put('/admin/artist/:id', verifyToken, isAdmin, adminUploadFields, adminUpdateArtist); // :id is numeric artistID
+// router.put('/admin/artist/:id', verifyToken, isAdmin, adminUploadFields, adminUpdateArtist); // :id is numeric artistID
+router.put('/admin/artist/:id', verifyToken, isAdmin, adminUpdateArtist); // :id is numeric artistID
 router.delete('/admin/artist/:id', verifyToken, isAdmin, adminDeleteArtist); // :id is numeric artistID
 
 
 // === Admin Album CRUD Routes (New) ===
-router.post('/admin/album', verifyToken, isAdmin, adminUploadFields, adminCreateAlbum);
+// router.post('/admin/album', verifyToken, isAdmin, adminUploadFields, adminCreateAlbum);
+router.post('/admin/album', verifyToken, isAdmin, adminCreateAlbum);
 router.get('/admin/albums', verifyToken, isAdmin, getAllAlbums); // Reusing public getAllAlbums
 router.get('/admin/album/:id', verifyToken, isAdmin, getAlbumById); // :id is numeric album_id, reusing public getAlbumById
-router.put('/admin/album/:id', verifyToken, isAdmin, adminUploadFields, adminUpdateAlbum); // :id is numeric album_id
+// router.put('/admin/album/:id', verifyToken, isAdmin, adminUploadFields, adminUpdateAlbum); // :id is numeric album_id
+router.put('/admin/album/:id', verifyToken, isAdmin, adminUpdateAlbum); // :id is numeric album_id
 router.delete('/admin/album/:id', verifyToken, isAdmin, adminDeleteAlbum); // :id is numeric album_id
 
 

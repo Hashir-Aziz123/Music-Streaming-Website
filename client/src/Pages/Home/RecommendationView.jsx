@@ -111,8 +111,20 @@ function RecommendationView({
     if (isLoading) return <div className={styles.loadingIndicator}>Loading recommendations...</div>;
 
     // Helper function to get artist name from artistsMap
-    const getArtistName = (artistId) => {
-        return artistsMap[artistId]?.name || "Unknown Artist";
+    // const getArtistName = (artistId) => {
+    //     return artistsMap[artistId]?.name || "Unknown Artist";
+    // };
+
+    const getArtistName = (song) => {
+        // Check if song exists and has artistDetails
+        if (song && song.artistDetails && song.artistDetails[0] && song.artistDetails[0].name) {
+            return song.artistDetails[0].name;
+        }
+        // Fallback to artistsMap using the artist ID
+        if (song && song.artist && song.artist[0]) {
+            return artistsMap[song.artist[0]]?.name || "Unknown Artist";
+        }
+        return "Unknown Artist";
     };
 
     // Helper function to create a song card
@@ -120,6 +132,14 @@ function RecommendationView({
         const isCurrentlyPlaying = currentSong && currentSong._id === song._id;
 
         return (
+            // <div 
+            //     key={`${song._id}-${index}`} 
+            //     className={`${homeStyles.songCard} ${isCurrentlyPlaying ? homeStyles.playing : ''}`}
+            //     onClick={(e) => {
+            //         e.stopPropagation();
+            //         handlePlayClick(song);
+            //     }}
+            // >
             <div 
                 key={`${song._id}-${index}`} 
                 className={`${homeStyles.songCard} ${isCurrentlyPlaying ? homeStyles.playing : ''}`}
@@ -150,8 +170,8 @@ function RecommendationView({
                 </div>
                 <div className={homeStyles.songInfo}>
                     <div className={homeStyles.songTitle}>{song.title}</div>
-                    <div className={homeStyles.songArtist}>{getArtistName(song.artist)}</div>
-                    <div className={homeStyles.songAlbum}>{albumsMap[song.album]?.title || "Unknown Album"}</div>
+                    <div className={homeStyles.songArtist}>{getArtistName(song)}</div>
+                    {/* <div className={homeStyles.songAlbum}>{albumsMap[song.album]?.title || "Unknown Album"}</div> */}
                 </div>
             </div>
         );
