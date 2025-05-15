@@ -37,6 +37,7 @@ app.use((req, res, next) => {
 
 // for static files
 app.use('/uploads', express.static(`${__dirname}/uploads`));
+// app.use('/covers', express.static(path.join(__dirname, 'server/uploads/covers')));
 
 app.use('/api/songs', songRoutes);
 app.use('/api/auth', authRoutes);

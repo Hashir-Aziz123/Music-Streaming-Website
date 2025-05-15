@@ -122,9 +122,31 @@ export const getUserStats = async (req, res) => {
             songStats.playCount += 1;
         });
 
-        const topSongs = Array.from(songMap.values())
-            .sort((a, b) => b.playCount - a.playCount)
-            .slice(0, 5);
+        // const topSongs = Array.from(songMap.values())
+        //     .sort((a, b) => b.playCount - a.playCount)
+        //     .slice(0, 5);
+
+        const topSongs = await Promise.all(
+            Array.from(songMap.values())
+                .sort((a, b) => b.playCount - a.playCount)
+                .slice(0, 10)
+                .map(async (item) => {
+                    // Get artist details for each song
+                    const artists = await Promise.all(
+                        item.song.artist.map(async (artistId) => {
+                            const artist = await Artist.findOne({ artistID: artistId });
+                            return artist ? artist.name : 'Unknown Artist';
+                        })
+                    );
+
+                    return {
+                        _id: item.song._id,
+                        title: item.song.title,
+                        artist: artists,
+                        timesListened: item.playCount
+                    };
+                })
+        );
 
         const genreMap = new Map();
         history.forEach(record => {
@@ -173,20 +195,34 @@ export const getUserStats = async (req, res) => {
             })
         );
 
+        // res.status(200).json({
+        //     totalListeningTime,
+        //     topSongs: topSongs.map(item => ({
+        //         title: item.song.title,
+        //         artist: item.song.artist,
+        //         timesListened: item.playCount
+        //     })),
+        //     topGenres,
+        //     topArtists,
+        //     totalSongs: songMap.size,
+        //     totalArtists: artistMap.size,
+        //     totalGenres: genreMap.size,
+        //     listeningStats: {
+        //         daily: Math.round(dailyListening / 60),   // Convert seconds to minutes
+        //         monthly: Math.round(monthlyListening / 60),
+        //         yearly: Math.round(yearlyListening / 60)
+        //     }
+        // }
         res.status(200).json({
             totalListeningTime,
-            topSongs: topSongs.map(item => ({
-                title: item.song.title,
-                artist: item.song.artist,
-                timesListened: item.playCount
-            })),
+            topSongs,
             topGenres,
             topArtists,
             totalSongs: songMap.size,
             totalArtists: artistMap.size,
             totalGenres: genreMap.size,
             listeningStats: {
-                daily: Math.round(dailyListening / 60),   // Convert seconds to minutes
+                daily: Math.round(dailyListening / 60),
                 monthly: Math.round(monthlyListening / 60),
                 yearly: Math.round(yearlyListening / 60)
             }

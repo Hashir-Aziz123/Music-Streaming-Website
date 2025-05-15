@@ -205,11 +205,11 @@ function AdminArtistManagement() {
                     <label htmlFor="bio">Bio (optional):</label>
                     <textarea id="bio" name="bio" value={artistFormData.bio} onChange={handleInputChange} rows="4"></textarea>
                 </div>
-                <div className={styles.formGroupFull}>
+                {/* <div className={styles.formGroupFull}>
                     <label htmlFor="artistImageFile">{isEditMode ? "Replace Artist Image (optional):" : "Artist Image (JPG, PNG, GIF, optional):"}</label>
                     <input type="file" id="artistImageFile" name="artistImageFile" onChange={handleImageFileChange} accept=".jpg,.jpeg,.png,.gif" />
                     {isEditMode && artistToEdit?.image_url && !artistImageFile && <small>Current Image: <a href={artistToEdit.image_url} target="_blank" rel="noopener noreferrer">{artistToEdit.image_url.split('/').pop()}</a></small>}
-                </div>
+                </div> */}
             </div>
 
             <div className={styles.formActions}>

@@ -104,7 +104,7 @@ const adminUploadFields = upload.fields([
     { name: 'albumImageFile', maxCount: 1 }   // For album covers
 ]);
 
-router.post('/admin', verifyToken, isAdmin, adminUploadFields, adminCreateSong);
+router.post('/admin/song', verifyToken, isAdmin, adminUploadFields, adminCreateSong);
 router.get('/admin', verifyToken, isAdmin, getSongs); // Reusing public getSongs, or create adminGetSongs
 router.get('/admin/song/:id', verifyToken, isAdmin, adminGetSongById); // :id is MongoDB ObjectId
 router.put('/admin/song/:id', verifyToken, isAdmin, adminUploadFields, adminUpdateSong); // :id is MongoDB ObjectId

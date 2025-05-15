@@ -50,7 +50,6 @@ function ProfileUserStats({playlistsNum}) {
             <div className={styles.statsSection}>
                 <div className={styles.sectionHeader}>
                     <h3>Top Songs</h3>
-                    <button className={styles.moreButton}>See All</button>
                 </div>
                 <div className={styles.songGrid}>
                     {stats.topSongs.slice(0, 10).map(song => (
@@ -75,7 +74,7 @@ function ProfileUserStats({playlistsNum}) {
                     <div className={styles.chartContainer}>
                         <ResponsiveContainer width="100%" height={250}>
                             <BarChart
-                                data={stats.topGenres} // genreData
+                                data={stats.topGenres.slice(0, 5)} // genreData
                                 margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
                                 barCategoryGap={8}
                             >
@@ -128,7 +127,7 @@ function ProfileUserStats({playlistsNum}) {
                     <div className={styles.chartContainer}>
                         <ResponsiveContainer width="100%" height={250}>
                             <BarChart
-                                data={stats.topArtists} //artistData
+                                data={stats.topArtists.slice(0, 5)} //artistData
                                 margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
                                 barCategoryGap={8}
                             >

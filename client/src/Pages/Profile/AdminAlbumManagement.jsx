@@ -222,7 +222,7 @@ function AdminAlbumManagement() {
                     <input type="text" id="title" name="title" value={albumFormData.title} onChange={handleInputChange} required />
                 </div>
                 <div className={styles.formGroup}>
-                    <label htmlFor="artist">Artist IDs (comma-separated):</label>
+                    <label htmlFor="artist">Artist ID:</label>
                     <input type="text" id="artist" name="artist" value={albumFormData.artist} onChange={handleInputChange} placeholder="e.g., 101,102" required />
                     {/* Optional: <select multiple name="artist" value={albumFormData.artist} onChange={handleMultiSelectChange}> {allArtists.map(a => <option key={a.artistID} value={a.artistID}>{a.name}</option>)} </select> */}
                 </div>

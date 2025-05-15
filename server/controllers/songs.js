@@ -469,34 +469,23 @@ export const adminDeleteArtist = async (req, res) => {
     }
 };
 
-
-// --- Admin Album CRUD Functions ---
 export const adminCreateAlbum = async (req, res) => {
+    let coverImageUrl = '';
     try {
-        const { album_id, title, artist, release_date, genre, description } = req.body; // artist is comma-separated artistIDs
-        let coverImageUrl = '';
+        const { album_id, title, artist, release_date, genre, description } = req.body;
 
         if (!album_id || !title || !artist) {
-            return res.status(400).json({ message: "Album ID, Title, and Artist ID(s) are required." });
-        }
-        if (isNaN(parseInt(album_id))) {
-            return res.status(400).json({ message: "Album ID must be a number." });
+            return res.status(400).json({ message: "Album ID, Title, and Artist ID are required." });
         }
         
-        const artistArray = artist.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
-        if (artistArray.length === 0) {
-            return res.status(400).json({ message: "Valid Artist ID(s) (comma-separated numbers) are required." });
+        // Convert artist ID to number and validate
+        const artistId = parseInt(artist);
+        if (isNaN(artistId)) {
+            return res.status(400).json({ message: "Artist ID must be a valid number." });
         }
 
-        // Optional: Validate if artist IDs exist in the Artist collection
-        // const existingArtists = await Artist.find({ artistID: { $in: artistArray } });
-        // if (existingArtists.length !== artistArray.length) {
-        //     return res.status(400).json({ message: "One or more artist IDs are invalid or do not exist." });
-        // }
-
-
         if (req.files && req.files.albumImageFile && req.files.albumImageFile[0]) {
-            coverImageUrl = `/covers/${req.files.albumImageFile[0].filename}`; // Using 'covers' path
+            coverImageUrl = `/covers/${req.files.albumImageFile[0].filename}`;
         }
         
         const genreArray = genre ? genre.split(',').map(g => g.trim()).filter(g => g) : [];
@@ -504,7 +493,7 @@ export const adminCreateAlbum = async (req, res) => {
         const newAlbum = new Album({
             album_id: parseInt(album_id),
             title,
-            artist: artistArray, // Store as an array of numbers (artistIDs)
+            artist: artistId, // Store single artist ID instead of array
             release_date: release_date ? new Date(release_date) : undefined,
             genre: genreArray,
             cover_image_url: coverImageUrl,
@@ -513,11 +502,10 @@ export const adminCreateAlbum = async (req, res) => {
 
         const savedAlbum = await newAlbum.save();
         res.status(201).json(savedAlbum);
-
     } catch (error) {
         console.error("Error creating album:", error);
         if (req.files && req.files.albumImageFile && req.files.albumImageFile[0] && coverImageUrl) {
-             const imagePath = path.join(path.resolve(), 'server/uploads', coverImageUrl.replace(/^\//, ''));
+            const imagePath = path.join(path.resolve(), 'server/uploads', coverImageUrl.replace(/^\//, ''));
             fs.unlink(imagePath, err => {
                 if (err) console.error("Error deleting orphaned album image on creation failure:", err);
             });

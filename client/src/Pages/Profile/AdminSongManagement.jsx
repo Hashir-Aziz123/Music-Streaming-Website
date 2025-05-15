@@ -293,11 +293,11 @@ function AdminSongManagement() {
                     <input type="file" id="audioFile" name="audioFile" onChange={handleAudioFileChange} accept=".mp3,.wav,.ogg" />
                     {isEditMode && songToEdit?.audio_url && !audioFile && <small>Current: {songToEdit.audio_url.split('/').pop()}</small>}
                 </div>
-                <div className={styles.formGroup}>
+                {/* <div className={styles.formGroup}>
                     <label htmlFor="coverImageFile">{isEditMode ? "Replace Cover (optional):" : "Cover Image (optional):"}</label>
                     <input type="file" id="coverImageFile" name="coverImageFile" onChange={handleCoverImageFileChange} accept=".jpg,.jpeg,.png,.gif" />
                      {isEditMode && songToEdit?.cover_image_url && !coverImageFile && <small>Current: {songToEdit.cover_image_url.split('/').pop()}</small>}
-                </div>
+                </div> */}
             </div>
             <div className={styles.formActions}>
                 <button type="submit" className={styles.submitButton} disabled={isLoading || isLoadingMore}>
