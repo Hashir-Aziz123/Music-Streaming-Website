@@ -174,11 +174,11 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate
                     )}
 
                     <div className={styles.statSection}>
-                        <div className={styles.statItem}>
+                        {/* <div className={styles.statItem}>
                             <i className="fas fa-play-circle"></i>
                             <span>{song.play_count || 0}</span>
                             <span className={styles.statLabel}>Plays</span>
-                        </div>
+                        </div> */}
                         <div className={styles.statItem}>
                             <i className="fas fa-heart"></i>
                             <span>{likesCount}</span>
@@ -203,7 +203,8 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate
                             </p>
                         </div>
                     )}
-                    <div className={styles.actionButtons}>                        <button 
+                    <div className={styles.actionButtons}>
+                        <button 
                             className={`${styles.actionButton} ${isLiked ? styles.activeLike : ''}`}
                             onClick={toggleLike}
                             title={isLiked ? "Unlike" : "Like"}
@@ -217,9 +218,10 @@ function CurrentlyPlayingSection({ song, artistsMap, albumsMap, onPlaylistUpdate
                         >
                             <Plus size={18} />
                         </button>
-                        <button className={styles.actionButton}>
+                        {/* <button className={styles.actionButton}>
                             <Share size={18} />
-                        </button>                        {showAddToPlaylistMenu && (
+                        </button> */}
+                        {showAddToPlaylistMenu && (
                             <AddToPlaylistMenu 
                                 song={song} 
                                 onClose={() => setShowAddToPlaylistMenu(false)}

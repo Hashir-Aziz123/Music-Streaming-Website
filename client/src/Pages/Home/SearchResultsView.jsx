@@ -90,7 +90,8 @@ function SearchResultsView({
                       const albumInfo = song.album ? 
                         (typeof song.album === 'object' ? song.album : albumsMap[song.album]) : null;
                       
-                      return (                        <tr 
+                      return (
+                      <tr 
                           key={`${song._id}-${index}`}
                           className={`${styles.songRow} ${isCurrentSong ? styles.currentSong : ''}`}
                           onClick={() => handlePlayClick(song)}
@@ -238,7 +239,8 @@ function SearchResultsView({
                     View all {counts.playlists} playlists <ChevronRight size={16} />
                   </button>
                 )}
-              </div>              <div className={styles.cardsGrid}>
+              </div>
+              <div className={styles.cardsGrid}>
                 {playlists.map((playlist) => (
                   <div 
                     key={playlist._id}
