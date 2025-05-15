@@ -10,6 +10,7 @@ import ArtistView from "./ArtistView.jsx";
 import RecommendationView from "./RecommendationView.jsx";
 import PlaylistView from "./PlaylistView.jsx";
 import CreatePlaylistModal from "./CreatePlaylistModal.jsx";
+import SearchResultsView from "./SearchResultsView.jsx";
 import {useAuth} from "../../context/AuthContext.jsx";
 import axios from "axios";
 import {PlaybackProvider, usePlayback} from "../../context/PlaybackContext.jsx";
@@ -49,13 +50,18 @@ function Home() {
     const [showRecommendations, setShowRecommendations] = useState(true);
     const [recommendedSongs, setRecommendedSongs] = useState([]);
     const [loadingRecommendations, setLoadingRecommendations] = useState(false);
-    
-    // All songs view state
+      // All songs view state
     const [showAllSongs, setShowAllSongs] = useState(false);
 
     // Playlist view states
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
     const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false);
+    
+    // Search state
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState(null);
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchError, setSearchError] = useState(null);
 
     // Pagination states
     const [page, setPage] = useState(1);
@@ -491,8 +497,7 @@ function Home() {
             setLoadingArtist(false);
         }
     };
-    
-    // Function to handle back button for all detailed views
+      // Function to handle back button for all detailed views
     const handleBackToAllSongs = () => {
         setSelectedAlbum(null);
         setAlbumSongs([]);
@@ -501,6 +506,8 @@ function Home() {
         setArtistAlbums([]);
         setSelectedPlaylist(null);
         setShowAllSongs(false);
+        setSearchQuery(""); // Clear search query
+        setSearchResults(null); // Clear search results
         setShowRecommendations(true);
     };
     
@@ -871,10 +878,74 @@ function Home() {
         }
     };
 
-    return (
+    // Function to handle search submission from TopBar
+    const handleSearch = async (query) => {
+        // Clear search if query is empty
+        if (!query.trim()) {
+            setSearchQuery("");
+            setSearchResults(null);
+            setSearchError(null);
+            return;
+        }
+        
+        try {
+            setIsSearching(true);
+            setSearchError(null);
+            setSearchQuery(query);
+            
+            // Hide other views when searching
+            setShowAllSongs(false);
+            setShowRecommendations(false);
+            setSelectedAlbum(null);
+            setSelectedArtist(null);
+            setSelectedPlaylist(null);
+            
+            // Make API call to search endpoint
+            const response = await axios.get(`/api/search?query=${encodeURIComponent(query)}&limit=10`);
+            
+            if (response.data) {
+                setSearchResults(response.data);
+            }
+        } catch (error) {
+            console.error("Search error:", error);
+            setSearchError("Failed to perform search. Please try again.");
+        } finally {
+            setIsSearching(false);
+        }
+    };
+    
+    // Function to handle "View more" clicks in search results
+    const handleViewMoreClick = async (type) => {
+        if (!searchQuery || !type) return;
+        
+        try {
+            setIsSearching(true);
+            
+            // Make API call to search/more endpoint for specific type
+            const response = await axios.get(`/api/search/more?query=${encodeURIComponent(searchQuery)}&type=${type}&page=1&limit=50`);
+            
+            if (response.data && response.data.results) {
+                // Create a deep copy of current search results
+                const updatedResults = {...searchResults};
+                
+                // Update just the specific section that was requested
+                updatedResults[type] = response.data.results;
+                
+                setSearchResults(updatedResults);
+            }
+        } catch (error) {
+            console.error(`Error fetching more ${type}:`, error);
+            setSearchError(`Failed to load more ${type}. Please try again.`);
+        } finally {
+            setIsSearching(false);
+        }
+    };    return (
         <div className={styles.pageContainer}>
             <div className={styles.topSection}>
-                <TopBar onAllSongsClick={handleAllSongsClick} />
+                <TopBar 
+                    onAllSongsClick={handleAllSongsClick}
+                    onSearch={handleSearch}
+                />
             </div>
             <div className={styles.midSection}>
                 <div className={styles.leftMiddle}>
@@ -888,18 +959,37 @@ function Home() {
                         selectedAlbumId={selectedAlbum}
                         refreshTrigger={playlistRefreshTrigger}
                     />
-                </div>
-
-                <div className={styles.centerMiddle}>
-                    {loading && <LoadingIndicator message="Loading songs..." />}
+                </div>                <div className={styles.centerMiddle}>
+                    {loading && !searchQuery && <LoadingIndicator message="Loading songs..." />}
                     
-                    {error && <p className={styles.errorMessage}>Error: {error}</p>}
+                    {error && !searchQuery && <p className={styles.errorMessage}>Error: {error}</p>}
                     
-                    {!loading && !error && !selectedAlbum && !selectedArtist && songs.length === 0 && (
+                    {!loading && !error && !searchQuery && !selectedAlbum && !selectedArtist && songs.length === 0 && (
                         <p className={styles.noSongsMessage}>No songs found</p>
                     )}
                     
-                    {!loading && !error && renderContentView()}
+                    {/* Show search results when there's an active search */}
+                    {searchQuery && (
+                        <SearchResultsView 
+                            searchQuery={searchQuery}
+                            searchResults={searchResults}
+                            isLoading={isSearching}
+                            error={searchError}
+                            currentSong={currentSong}
+                            isPlaying={isPlaying}
+                            handlePlayClick={handlePlayClick}
+                            handleAlbumClick={handleAlbumClick}
+                            handleArtistClick={handleArtistClick}
+                            handlePlaylistClick={handlePlaylistClick}
+                            handleBackToAllSongs={handleBackToAllSongs}
+                            handleViewMoreClick={handleViewMoreClick}
+                            artistsMap={artistsMap}
+                            albumsMap={albumsMap}
+                        />
+                    )}
+                    
+                    {/* Show regular content view when not searching */}
+                    {!searchQuery && !loading && !error && renderContentView()}
                 </div>
 
                 {<div className={styles.rightMiddle}>

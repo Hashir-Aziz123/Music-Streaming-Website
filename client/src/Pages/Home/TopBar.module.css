@@ -53,6 +53,27 @@
     pointer-events: none;
 }
 
+.clearSearchButton {
+    position: absolute;
+    right: -90px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 50%;
+}
+
+.clearSearchButton:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 .right {
     display: flex;
     align-items: center;

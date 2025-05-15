@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Play, Pause } from 'lucide-react';
 import styles from './SearchResultsView.module.css';
 import AlbumCard from './AlbumCard.jsx';
 import ArtistCard from './ArtistCard.jsx';
@@ -32,10 +32,13 @@ function SearchResultsView({
   return (
     <div className={styles.searchResultsView}>
       <div className={styles.header}>
-        <button className={styles.backButton} onClick={handleBackToAllSongs}>
-          ← Back
+        <button 
+            className={styles.backButton} 
+            onClick={handleBackToAllSongs}
+        >
+            <ArrowLeft size={24} />
         </button>
-        <h1>Search Results for "{searchQuery}"</h1>
+        <h1>Search Results for <span className={styles.queryHighlight}>"{searchQuery}"</span></h1>
       </div>
 
       {isLoading && (
@@ -87,18 +90,27 @@ function SearchResultsView({
                       const albumInfo = song.album ? 
                         (typeof song.album === 'object' ? song.album : albumsMap[song.album]) : null;
                       
-                      return (
-                        <tr 
+                      return (                        <tr 
                           key={`${song._id}-${index}`}
                           className={`${styles.songRow} ${isCurrentSong ? styles.currentSong : ''}`}
-                        >
-                          <td>
-                            <button 
-                              className={`${styles.playButton} ${isCurrentSong && isPlaying ? styles.playing : ''}`}
-                              onClick={() => handlePlayClick(song)}
-                            >
-                              {isCurrentSong && isPlaying ? '■' : '▶'}
-                            </button>
+                          onClick={() => handlePlayClick(song)}
+                        ><td>
+                            <div className={styles.playButtonContainer} onClick={(e) => {
+                              e.stopPropagation();
+                              handlePlayClick(song);
+                            }}>
+                              {isCurrentSong && isPlaying ? (
+                                <div className={styles.playingAnimation}>
+                                  <span></span>
+                                  <span></span>
+                                  <span></span>
+                                </div>
+                              ) : (
+                                <button className={styles.playButton}>
+                                  <Play size={16} />
+                                </button>
+                              )}
+                            </div>
                           </td>
                           <td>{song.title}</td>
                           <td>
@@ -143,14 +155,30 @@ function SearchResultsView({
                     View all {counts.artists} artists <ChevronRight size={16} />
                   </button>
                 )}
-              </div>
-              <div className={styles.cardsGrid}>
+              </div>              <div className={styles.cardsGrid}>
                 {artists.map((artist) => (
-                  <ArtistCard 
+                  <div 
                     key={artist._id} 
-                    artist={artist}
+                    className={styles.cardItem}
                     onClick={() => handleArtistClick(artist._id)}
-                  />
+                  >
+                    <ArtistCard 
+                      artist={artist}
+                      onClick={() => handleArtistClick(artist._id)}
+                    />
+                    <div className={styles.cardOverlay}>
+                      <button 
+                        className={styles.cardPlayButton}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // If we had artist songs, we could play them here
+                          handleArtistClick(artist._id);
+                        }}
+                      >
+                        <Play size={20} />
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -169,14 +197,29 @@ function SearchResultsView({
                     View all {counts.albums} albums <ChevronRight size={16} />
                   </button>
                 )}
-              </div>
-              <div className={styles.cardsGrid}>
+              </div>              <div className={styles.cardsGrid}>
                 {albums.map((album) => (
-                  <AlbumCard 
-                    key={album._id} 
-                    album={album}
+                  <div 
+                    key={album._id}
+                    className={styles.cardItem}
                     onClick={() => handleAlbumClick(album._id)}
-                  />
+                  >
+                    <AlbumCard 
+                      album={album}
+                      onClick={() => handleAlbumClick(album._id)}
+                    />
+                    <div className={styles.cardOverlay}>
+                      <button 
+                        className={styles.cardPlayButton}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAlbumClick(album._id);
+                        }}
+                      >
+                        <Play size={20} />
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -195,14 +238,30 @@ function SearchResultsView({
                     View all {counts.playlists} playlists <ChevronRight size={16} />
                   </button>
                 )}
-              </div>
-              <div className={styles.cardsGrid}>
+              </div>              <div className={styles.cardsGrid}>
                 {playlists.map((playlist) => (
-                  <PlaylistCard 
-                    key={playlist._id} 
-                    playlist={playlist}
+                  <div 
+                    key={playlist._id}
+                    className={styles.cardItem}
                     onClick={() => handlePlaylistClick(playlist)}
-                  />
+                  >
+                    <PlaylistCard 
+                      playlist={playlist}
+                      onClick={() => handlePlaylistClick(playlist)}
+                    />
+                    <div className={styles.cardOverlay}>
+                      <button 
+                        className={styles.cardPlayButton}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Ideally we would start playing the playlist here
+                          handlePlaylistClick(playlist);
+                        }}
+                      >
+                        <Play size={20} />
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

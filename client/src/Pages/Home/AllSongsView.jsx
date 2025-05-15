@@ -1,6 +1,7 @@
 import styles from './Home.module.css';
 import PropTypes from 'prop-types';
-
+import { ArrowLeft } from "lucide-react";
+        
 // Loading indicator component for reuse
 const LoadingIndicator = ({ message = "Loading songs..." }) => (
     <div className={styles.loadingMoreContainer}>
@@ -9,7 +10,6 @@ const LoadingIndicator = ({ message = "Loading songs..." }) => (
     </div>
 );
 
-import { ArrowLeft } from "lucide-react";
 
 function AllSongsView({ 
     songs, 
@@ -86,7 +86,9 @@ function AllSongsView({
         }
         
         return genreData;
-    };    return (
+    };
+    
+    return (
         <div className={styles.songsContainer}>
             <div className={styles.viewHeader}>
                 <button 
@@ -95,7 +97,6 @@ function AllSongsView({
                 >
                     <ArrowLeft size={24} />
                 </button>
-                <h2>All Songs</h2>
             </div>
             
             <div className={styles.songsList}>

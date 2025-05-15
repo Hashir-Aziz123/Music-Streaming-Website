@@ -1,7 +1,7 @@
 import styles from './PlaylistCard.module.css';
 
 function AlbumCard({ album, onClick, isActive }) {
-    const defaultImage = "https://placehold.co/400/111/e75454?text=Playlist";
+    const defaultImage = "https://placehold.co/400/111/e75454?text=Album";
 
     return (
         <div 
@@ -10,7 +10,7 @@ function AlbumCard({ album, onClick, isActive }) {
         >
             <div className={styles.imageContainer}>
                     <img 
-                        src={album.cover_image_url ? (album.cover_image_url) : defaultImage} 
+                        src={defaultImage} 
                         alt={album.title} 
                         className={styles.playlistImage} 
                     />
