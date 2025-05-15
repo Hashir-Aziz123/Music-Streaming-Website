@@ -64,6 +64,11 @@ function Home() {
     const observer = useRef();
     const lastSongElementRef = useRef(null);
 
+    // tracking time duration
+    const { currentTime } = usePlayback();
+
+
+
     // log function
     async function logListening({ userId, songId, duration_listened }) {
         try {
@@ -79,25 +84,30 @@ function Home() {
     }
 
     useEffect(() => {
-        // Only proceed if Song and its _id exist
         if (previousSong && previousSong._id) {
             const songId = previousSong._id;
-            let userIdToSend = null;
-            userIdToSend = user.user.id;
+            const userIdToSend = user?.user?.id;
 
-            console.log(user);
+            console.log(currentTime);
+            const listenedDuration = Math.floor( currentTime ); // capture once
+            console.log(listenedDuration);
 
-            setSongsPlayed( prevSongsPlayed => prevSongsPlayed +1 );
+            setSongsPlayed(prev => prev + 1);
 
             if (userIdToSend) {
-                logListening({ userId: userIdToSend, songId, duration_listened: 100 })
-                    .then(() => console.log("Listening logged for song:", songId , previousSong.title))
-                    .catch(error => console.error("Error in useEffect after logListening call:", error)); // Good practice to catch here too
+                logListening({
+                    userId: userIdToSend,
+                    songId,
+                    duration_listened: listenedDuration || 0,
+                })
+                    .then(() => console.log("Listening logged:", songId, previousSong.title, "Duration:", listenedDuration))
+                    .catch((error) => console.error("Error logging listening:", error));
             } else {
-                console.warn("Skipping listening log: userId could not be determined from user state.", user);
+                console.warn("Skipping logListening: No userId");
             }
         }
-    }, [previousSong, user]); //
+    }, [previousSong, user]); // Do NOT add currentTime
+
 
     // Function to fetch songs with pagination
     const fetchSongs = useCallback(async (pageNum = 1, append = false) => {
@@ -904,7 +914,7 @@ function Home() {
                 </div>}
             </div>
             {currentSong && <div className={styles.bottomSection}>
-                <PlaybackProvider>
+                {/*<PlaybackProvider>*/}
                 <MediaControlBar
                     currentSong={currentSong}
                     isPlaying={isPlaying}
@@ -920,7 +930,7 @@ function Home() {
                     toggleRepeat={toggleRepeat}
                     handleSongEnded={handleSongEnded}
                 />
-                </PlaybackProvider>
+                {/*</PlaybackProvider>*/}
             </div>}
             
             {showCreatePlaylistModal && (

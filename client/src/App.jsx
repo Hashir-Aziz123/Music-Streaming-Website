@@ -6,6 +6,7 @@ import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import { useAuth } from './context/AuthContext.jsx';
 import { LikeProvider } from './context/LikeContext.jsx';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import {PlaybackProvider} from "./context/playbackContext.jsx";
 
 const ProtectedRoute = ({ children }) => {
     const { isAuthenticated, isLoading } = useAuth();
@@ -28,7 +29,9 @@ function App() {
                 <Routes>
                     <Route path='/' element={
                         <ProtectedRoute>
-                            <Home />
+                                <PlaybackProvider>
+                                    <Home />
+                                </PlaybackProvider>
                         </ProtectedRoute>
                     } />
                 <Route path='/login' element={<Login />} />
