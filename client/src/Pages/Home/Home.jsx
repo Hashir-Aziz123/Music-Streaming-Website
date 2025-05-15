@@ -771,43 +771,45 @@ function Home() {
                 />
             );
         } else if (selectedRecommendedArtist) {
-            // Get artist name from the map
-            const artistName = artistsMap[selectedRecommendedArtist]?.name || "Unknown Artist";
-            const artistImage = artistsMap[selectedRecommendedArtist]?.image_url || 
-                               recommendedArtistSongs[0]?.cover_image_url || 
-                               "https://placehold.co/400/111/e75454?text=Artist";
-            
-            // Custom playlist-like view for recommended artist songs
-            const artistPlaylist = {
-                _id: `artist-${selectedRecommendedArtist}`,
-                name: `${artistName}`,
-                description: `Songs by ${artistName}`,
-                is_public: true,
-                cover_image_url: artistImage,
-            };
-            
-            return (
-                <PlaylistView
-                    playlist={artistPlaylist}
-                    currentSong={currentSong}
-                    isPlaying={isPlaying}
-                    handlePlayClick={handlePlayClick}
-                    handleBackToAllSongs={handleBackToAllSongs}
-                    artistsMap={artistsMap}
-                    albumsMap={albumsMap}
-                    isOwner={false}
-                    // Playlist functionality props
-                    playlistMode={playlistMode && currentPlaylist?._id === artistPlaylist._id}
-                    handlePlayPlaylist={handlePlayPlaylist}
-                    shuffleMode={shuffleMode}
-                    repeatMode={repeatMode}
-                    toggleShuffle={toggleShuffle}
-                    toggleRepeat={toggleRepeat}
-                    // Override playlist songs with artist songs
-                    playlistSongsOverride={recommendedArtistSongs}
-                />
-            );
-        } else if (selectedArtist) {
+    // Get artist details from the first song's artistDetails
+    const firstSong = recommendedArtistSongs[0];
+    const artistDetails = firstSong?.artistDetails?.find(
+        artist => artist.artistID === selectedRecommendedArtist
+    );
+    const artistName = artistDetails?.name || artistsMap[selectedRecommendedArtist]?.name || "Unknown Artist";
+    const artistImage = artistDetails?.image_url || 
+                    recommendedArtistSongs[0]?.cover_image_url || 
+                    "https://placehold.co/400/111/e75454?text=Artist";
+    
+    // Custom playlist-like view for recommended artist songs
+    const artistPlaylist = {
+        _id: `artist-${selectedRecommendedArtist}`,
+        name: artistName,
+        description: `Songs by ${artistName}`,
+        is_public: true,
+        cover_image_url: artistImage,
+    };
+    
+    return (
+        <PlaylistView
+            playlist={artistPlaylist}
+            currentSong={currentSong}
+            isPlaying={isPlaying}
+            handlePlayClick={handlePlayClick}
+            handleBackToAllSongs={handleBackToAllSongs}
+            artistsMap={artistsMap}
+            albumsMap={albumsMap}
+            isOwner={false}
+            playlistMode={playlistMode && currentPlaylist?._id === artistPlaylist._id}
+            handlePlayPlaylist={handlePlayPlaylist}
+            shuffleMode={shuffleMode}
+            repeatMode={repeatMode}
+            toggleShuffle={toggleShuffle}
+            toggleRepeat={toggleRepeat}
+            playlistSongsOverride={recommendedArtistSongs}
+        />
+    );
+} else if (selectedArtist) {
             return (
                 <ArtistView 
                     artist={artistsMap[selectedArtist]}

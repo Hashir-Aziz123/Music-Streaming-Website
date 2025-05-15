@@ -29,73 +29,67 @@ function RecommendationView({
     const [top35Songs, setTop35Songs] = useState({});
 
     async function handleRecommendations() {
-        try {
-            const userId = user.user.id;
-            const response = await axios.get(`/api/recommendations/${userId}`);
+    try {
+        const userId = user.user.id;
+        const response = await axios.get(`/api/recommendations/${userId}`);
+        const songsData = response.data;
+        
+        // Process songs
+        setRecommendedSongs(songsData);
+        setTop35Songs(songsData.slice(0, 35));
 
-            // Process the data directly from response.data instead of using recommendedSongs state
-            const songsData = response.data;
-            const topSongs = songsData.slice(0,35)
-            setTop35Songs(topSongs);
+        const artistCount = {};
+        const genreCount = {};
+        const artistToSongs = {};
+        const genreToSongs = {};
 
-            setRecommendedSongs(songsData);
-
-            const artistCount = {};
-            const genreCount = {};
-            const artistToSongs = {};
-            const genreToSongs = {};
-
-            // Step 1: Group by artist & genre
-            songsData.forEach(song => {
-                const { artist, genre } = song;
-
-                // Artist logic
-                if (artist) {
-                    artistCount[artist] = (artistCount[artist] || 0) + 1;
-                    if (!artistToSongs[artist]) artistToSongs[artist] = [];
-                    artistToSongs[artist].push(song);
+        // Step 1: Group by artist & genre
+        songsData.forEach(song => {
+            // Handle artist grouping - use artistDetails instead of artist array
+            if (song.artistDetails && song.artistDetails.length > 0) {
+                const artistDetail = song.artistDetails[0];
+                const artistId = artistDetail.artistID;
+                
+                artistCount[artistId] = (artistCount[artistId] || 0) + 1;
+                if (!artistToSongs[artistId]) {
+                    artistToSongs[artistId] = [];
                 }
+                artistToSongs[artistId].push(song);
+            }
 
-                // Genre logic
-                if (genre) {
-                    genreCount[genre] = (genreCount[genre] || 0) + 1;
-                    if (!genreToSongs[genre]) genreToSongs[genre] = [];
-                    genreToSongs[genre].push(song);
-                }
-            });
+            // Handle genre grouping
+            if (song.genre) {
+                song.genre.forEach(genreName => {
+                    genreCount[genreName] = (genreCount[genreName] || 0) + 1;
+                    if (!genreToSongs[genreName]) {
+                        genreToSongs[genreName] = [];
+                    }
+                    genreToSongs[genreName].push(song);
+                });
+            }
+        });
 
-            // Step 2: Get top 8 artists and genres
-            const topArtists = Object.entries(artistCount)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 8)
-                .map(([artist]) => artist);
+        // Get top artists and genres
+        const topArtists = Object.entries(artistCount)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 8)
+            .map(([artistId]) => parseInt(artistId));
 
-            const topGenres = Object.entries(genreCount)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 8)
-                .map(([genre]) => genre);
+        const topGenres = Object.entries(genreCount)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 8)
+            .map(([genre]) => genre);
 
-            // Step 3: Create separate arrays
-            const topArtistSongs = {};
-            topArtists.forEach(artist => {
-                topArtistSongs[artist] = artistToSongs[artist];
-            });
+        // Update state
+        setTopArtists(topArtists);
+        setTopGenres(topGenres);
+        setArtistSongs(artistToSongs);
+        setGenreSongs(genreToSongs);
 
-            const topGenreSongs = {};
-            topGenres.forEach(genre => {
-                topGenreSongs[genre] = genreToSongs[genre];
-            });
-
-            // You might want to save these processed results to state as well
-            setTopArtists(topArtists);
-            setTopGenres(topGenres);
-            setArtistSongs(topArtistSongs);
-            setGenreSongs(topGenreSongs);
-
-        } catch (error) {
-            console.error('Error fetching recommendations:', error);
-        }
+    } catch (error) {
+        console.error('Error fetching recommendations:', error);
     }
+}
 
         useEffect(() => {
             handleRecommendations()
@@ -206,12 +200,27 @@ function RecommendationView({
         );
     };
 
-    // Helper function to create an artist card
+    // const getArtistNameById = (artistId) => {
+    //     if (!artistId) return "Unknown Artist";
+    //     return artistsMap[artistId]?.name || "Unknown Artist";
+    // };
+
     const createArtistCard = (artistId, songs) => {
         if (!songs || songs.length === 0) return null;
         
-        const artistName = getArtistName(artistId);
-        const artistImageUrl = artistsMap[artistId]?.image_url;
+        // Find the first song that has artist details
+        const songWithArtist = songs.find(song => 
+            song.artistDetails && 
+            song.artistDetails.find(artist => artist.artistID === artistId)
+        );
+
+        // Get artist details from the song
+        const artistDetails = songWithArtist?.artistDetails?.find(artist => 
+            artist.artistID === artistId
+        );
+
+        const artistName = artistDetails?.name || "Unknown Artist";
+        const artistImageUrl = artistDetails?.image_url;
 
         return (
             <div 
